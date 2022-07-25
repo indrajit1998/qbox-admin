@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "41577480555",
+    "project_id": "notes-app-6da4e",
+    "storage_bucket": "notes-app-6da4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41577480555:android:a086a6c8e0e4a761b64c2e",
+        "android_client_info": {
+          "package_name": "com.example.notes_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41577480555-rh37ppbbmgitmlouvnp9nji7b97its4r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notes_app",
+            "certificate_hash": "377fcd87b389c40dcfba92d8de9c8c1a2adc697e"
+          }
+        },
+        {
+          "client_id": "41577480555-fqb9aoqs44optra3cplhdciggi4lh9r6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEhiqU3Wtag0Q-02RLDAneUHfBs48ATI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41577480555-fqb9aoqs44optra3cplhdciggi4lh9r6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "41577480555-4aqkt8h8e8hobsefn8m9mitjs05u4cb4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.qboxAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41577480555:android:223ff584e87665bfb64c2e",
+        "android_client_info": {
+          "package_name": "com.example.qbox_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41577480555-fqb9aoqs44optra3cplhdciggi4lh9r6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEhiqU3Wtag0Q-02RLDAneUHfBs48ATI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41577480555-fqb9aoqs44optra3cplhdciggi4lh9r6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "41577480555-4aqkt8h8e8hobsefn8m9mitjs05u4cb4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.qboxAdmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
