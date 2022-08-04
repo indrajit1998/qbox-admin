@@ -7,7 +7,9 @@ import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/free_video_management.dart';
 import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
+import 'package:qbox_admin/screens/managements/profile/profile.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
+import 'package:qbox_admin/screens/managements/teacher/batches.dart';
 import 'package:qbox_admin/screens/managements/teacher_management.dart';
 import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
@@ -35,6 +37,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    getUserRole();
+    getRole();
+    getName();
+  }
+
+  String name = '';
+  getName() async {
+    var user = FirebaseAuth.instance.currentUser!;
+
+    FirebaseFirestore.instance
+        .collection('teachers')
+        .doc(user.email)
+        .get()
+        .then((value) {
+      setState(() {
+        setState(() {
+          name = value.data()!['firstName']! + ' ' + value.data()!['lastName']!;
+        });
+      });
+    });
+  }
+
   int bodyIndex = 0;
   Management selectManagement = Management.courseManagement;
   List<Widget> displayList = [];
@@ -49,17 +76,22 @@ class _HomePageState extends State<HomePage> {
     final snapshot = await docData.get();
     if (snapshot.exists) {
       var data = snapshot.data() as Map<String, dynamic>;
+
       return data['role'] as String;
     }
     return '';
   }
 
+  String _role = '';
+
   Future<List> getHomeList() async {
     String role = await getUserRole();
-    if (role == 'Teacher') {
+
+    if (role == 'teacher') {
       displayList = <Widget>[] + teachersList;
       sideDisplayList = <String>[] + sideTeachersList;
       sideManagementList = [] + sideTeachersManagementList;
+
       return [teachersList, sideTeachersList, sideTeachersManagementList];
     } else if (role == 'Admin') {
       displayList = <Widget>[] + adminList;
@@ -71,13 +103,17 @@ class _HomePageState extends State<HomePage> {
       sideDisplayList = <String>[] + sideAdminList + sideTeachersList;
       sideManagementList =
           [] + sideAdminManagementList + sideTeachersManagementList;
+
       return [displayList, sideDisplayList, sideManagementList];
     }
     return [];
   }
 
-  // Left Panel Display Name
-  List<String> sideTeachersList = ['Free Videos', 'Practice'];
+  List<String> sideTeachersList = [
+    'Free Videos',
+    'DPB',
+    'Batches',
+  ];
 
   List<String> sideAdminList = [
     'Courses ',
@@ -93,6 +129,7 @@ class _HomePageState extends State<HomePage> {
   List sideTeachersManagementList = [
     Management.freeVideosManagement,
     Management.practiceQuestionManagement,
+    Management.batchManagement,
   ];
 
   List sideAdminManagementList = [
@@ -110,6 +147,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> teachersList = [
     const FreeVideoManagement(),
     const PracticeManagement(),
+    const TeacherSideBatchePage(),
   ];
 
   List<Widget> adminList = [
@@ -123,10 +161,9 @@ class _HomePageState extends State<HomePage> {
     const VideoManagement(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    getUserRole();
+  getRole() async {
+    _role = await getUserRole();
+    setState(() {});
   }
 
   @override
@@ -153,7 +190,14 @@ class _HomePageState extends State<HomePage> {
                                 MediaQuery.of(context).size.width / 537.6,
                             vertical: MediaQuery.of(context).size.height / 198),
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            if (_role == 'teacher') {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Profile()));
+                            }
+                          },
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Text(
-                                'Indrajit Sikdar',
+                                name,
                                 style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width / 70,

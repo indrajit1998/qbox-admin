@@ -38,7 +38,7 @@ class _BatchManagementState extends State<BatchManagement> {
         .then((value) {
       setState(() {
         for (var element in value.docs) {
-          print(element.data());
+          // print(element.data());
           batchesList.add(element.data());
         }
       });
@@ -102,7 +102,7 @@ class _BatchManagementState extends State<BatchManagement> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
                           CategoryModel model = CategoryModel.fromJson(data);
-                          print(data);
+                          // print(data);
                           categoryModelsList.add(model);
                           List<Courses>? courses = model.courses;
                           return ExpansionTile(
@@ -342,6 +342,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                             ),
                                                           ),
                                                         ),
+                                                        
                                                         actions: [
                                                           Material(
                                                             color: Colors

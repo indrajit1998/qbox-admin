@@ -10,7 +10,6 @@ import 'package:qbox_admin/models/live_video_model.dart';
 import 'package:qbox_admin/screens/golive/golive.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
-import 'package:qbox_admin/widgets/submit_button.dart';
 
 class VideoManagement extends StatefulWidget {
   const VideoManagement({Key? key}) : super(key: key);
@@ -30,7 +29,18 @@ class _VideoManagementState extends State<VideoManagement> {
   late String videoFileName;
   double progress = 0.0;
   String? errorMessage;
-
+@override
+  void initState() {
+   getUserEmail();
+    super.initState();
+  }
+String userEmail = "";
+  getUserEmail()async{
+    User? user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      userEmail = user!.email!;
+    });
+  }
   Future uploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -60,6 +70,7 @@ class _VideoManagementState extends State<VideoManagement> {
       });
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +161,6 @@ class _VideoManagementState extends State<VideoManagement> {
                                                   subtitle: Row(
                                                     children: [
                                                       Text(
-
                                                           'category : ${data['category']} - course : ${data['course']}')
                                                     ],
                                                   ),
@@ -164,9 +174,7 @@ class _VideoManagementState extends State<VideoManagement> {
                                                 ),
                                                 trailing: MaterialButton(
                                                   color: Colors.amber,
-                                                  onPressed: () {
-                                                  
-                                                  },
+                                                  onPressed: () {},
                                                   child: const Text('Edit'),
                                                 ),
                                               );
@@ -247,13 +255,29 @@ class _VideoManagementState extends State<VideoManagement> {
                                                 'Schedule Date : ${data['scheduleDate']}'),
                                           ),
                                           leading: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              var collection = FirebaseFirestore
+                                                  .instance
+                                                  .collection('liveVideos');
+                                              collection
+                                                  .doc(document.id)
+                                                  .update({
+                                                    'live': true
+                                                  }) 
+                                                  .then((_) => Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                               JoinMeeting(nameText: userEmail, roomText: document.id, subjectText: data['course'],))))
+                                                  .catchError((error) =>
+                                                      print('Failed: $error'));
+                                            },
                                             icon: const Icon(Icons
                                                 .play_circle_outline_rounded),
                                           ),
                                           trailing: MaterialButton(
                                             color: Colors.amber,
-                                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=> const GoLive())),
+                                            onPressed: () {},
                                             child: const Text('Edit'),
                                           ),
                                         );
@@ -377,7 +401,8 @@ class _VideoManagementState extends State<VideoManagement> {
                                         scheduleDate:
                                             _scheduleDateController.text.trim(),
                                         endDate: _endDateController.text.trim(),
-                                        link: "")
+                                        link: "",
+                                        isLive: false)
                                     .toJson())
                                 .then((value) => print("Video Added"))
                                 .catchError((error) =>

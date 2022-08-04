@@ -5,6 +5,7 @@ class LiveVideoModel {
   String? course;
   String? category;
   String? link;
+  bool? isLive;
 
   LiveVideoModel(
       {this.title,
@@ -12,7 +13,8 @@ class LiveVideoModel {
       this.scheduleDate,
       this.course,
       this.category,
-      this.link});
+      this.link,
+      this.isLive});
 
   LiveVideoModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -21,6 +23,7 @@ class LiveVideoModel {
     course = json['course'];
     category = json['category'];
     link = json['link'];
+    isLive = json['live'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class LiveVideoModel {
     data['course'] = course;
     data['category'] = category;
     data['link'] = link;
+    data['live'] = isLive;
     return data;
   }
 }

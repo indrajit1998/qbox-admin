@@ -14,7 +14,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final _auth = FirebaseAuth.instance;
+  // final _auth = FirebaseAuth.instance;
   bool _signInFetching = false;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -274,7 +274,7 @@ class _SignInState extends State<SignIn> {
   Future<void> signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _auth
+        await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: _emailController.text.trim(),
                 password: _passwordController.text.trim())
