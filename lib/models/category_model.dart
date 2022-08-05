@@ -36,11 +36,13 @@ class Courses {
   String? courseName;
   List<String>? batches;
   Payment? payment;
+  String? cid;
 
-  Courses({this.courseName, this.batches, this.payment});
+  Courses({this.courseName, this.batches, this.payment, required this.cid});
 
   Courses.fromJson(Map<String, dynamic> json) {
     courseName = json['courseName'];
+    cid = json['cid'];
     if (json['batches'] != null) {
       batches = json['batches'].cast<String>();
     } else {
@@ -54,6 +56,7 @@ class Courses {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['courseName'] = courseName;
     data['batches'] = [batches];
+    data['cid'] = cid;
     if (payment != null) {
       data['payment'] = payment!.toJson();
     }

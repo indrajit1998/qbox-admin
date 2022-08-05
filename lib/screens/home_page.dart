@@ -35,7 +35,6 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
@@ -61,6 +60,8 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
+
 
   int bodyIndex = 0;
   Management selectManagement = Management.courseManagement;

@@ -6,8 +6,10 @@ import 'package:qbox_admin/models/category_model.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
+
 class CourseManagement extends StatefulWidget {
   const CourseManagement({Key? key}) : super(key: key);
+
 
   @override
   State<CourseManagement> createState() => _CourseManagementState();
@@ -19,6 +21,7 @@ class _CourseManagementState extends State<CourseManagement> {
   final _courseEditingFormKey = GlobalKey<FormState>();
   String? errorMessage;
   List categoryModelsList = [];
+  String newCid = DateTime.now().microsecondsSinceEpoch.toString();
 
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
@@ -26,6 +29,7 @@ class _CourseManagementState extends State<CourseManagement> {
   final _sixMonthFeeController = TextEditingController();
   final _oneYearFeeController = TextEditingController();
   final _twoYearFeeController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +254,7 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                             .trim(),
                                                                     "batches":
                                                                         [],
+                                                                        "cid": newCid,
                                                                     "payment": {
                                                                       "1month": _oneMonthFeeController
                                                                           .text
@@ -335,7 +340,14 @@ class _CourseManagementState extends State<CourseManagement> {
                               if (courses != null)
                                 for (Courses course in courses)
                                   ListTile(
-                                    title: Text(course.courseName!),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(course.courseName!),
+                                        Text("CID : ${course.cid}", style: TextStyle(fontSize: 12),)
+                                      ],
+                                    ),
                                     onTap: () {
                                       showDialog(
                                           context: context,

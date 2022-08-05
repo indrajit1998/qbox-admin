@@ -19,6 +19,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
   final _chapterController = TextEditingController();
   final _subjectController = TextEditingController();
   final _courseController = TextEditingController();
+  final _cidController = TextEditingController();
   final _categoryController = TextEditingController();
   final _paperSetController = TextEditingController();
   final _durationController = TextEditingController();
@@ -238,6 +239,18 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                         },
                       ),
                       PopUpTextField(
+                        controller: _cidController,
+                        hint: 'Enter the respective Course ID',
+                        label: 'CID',
+                        widthRatio: 1,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return ("Field cannot be empty");
+                          }
+                          return null;
+                        },
+                      ),
+                      PopUpTextField(
                         controller: _chapterController,
                         hint: 'web',
                         label: 'Chapter Name',
@@ -315,6 +328,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                   LevelUpQuestionAddingScreen(
                                 category: _categoryController.text.trim(),
                                 course: _courseController.text.trim(),
+                                cid:_cidController.text.trim(),
                                 chapter: _chapterController.text.trim(),
                                 subject: _subjectController.text.trim(),
                                 testName: _testNameController.text.trim(),

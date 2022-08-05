@@ -18,6 +18,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   final GlobalKey<FormState> _fullLengthTestFormKey = GlobalKey<FormState>();
   final _testNameController = TextEditingController();
   final _courseController = TextEditingController();
+  final _cidController = TextEditingController();
   final _categoryController = TextEditingController();
   final _paperSetController = TextEditingController();
   final _durationController = TextEditingController();
@@ -235,6 +236,18 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                         },
                       ),
                       PopUpTextField(
+                        controller: _cidController,
+                        hint: 'Enter the Course ID',
+                        label: 'CID',
+                        widthRatio: 2,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return ("Field cannot be empty");
+                          }
+                          return null;
+                        },
+                      ),
+                      PopUpTextField(
                         controller: _paperSetController,
                         hint: 'Set 1',
                         label: 'Paper Set',
@@ -289,6 +302,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                                 course: _courseController.text.trim(),
                                 chapter: "",
                                 subject: "",
+                                cid: _cidController.text.trim(),
                                 testName: _testNameController.text.trim(),
                                 duration:
                                     int.parse(_durationController.text.trim()),

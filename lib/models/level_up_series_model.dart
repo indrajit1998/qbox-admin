@@ -7,6 +7,7 @@ class LevelUpTestModel {
   String? course;
   String? chapter;
   String? subject;
+  String? cid;
   int? paperSet;
   List<QuestionsList>? questionsList;
 
@@ -20,6 +21,7 @@ class LevelUpTestModel {
       this.chapter,
       this.paperSet,
       this.subject,
+        this.cid,
       this.questionsList});
 
   LevelUpTestModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class LevelUpTestModel {
     chapter = json['chapter'];
     subject = json['subject'];
     paperSet = json['paperSet'];
+    cid = json['cid'];
     if (json['questionsList'] != null) {
       questionsList = <QuestionsList>[];
       json['questionsList'].forEach((k, v) {
@@ -51,6 +54,7 @@ class LevelUpTestModel {
     data['chapter'] = chapter;
     data['subject'] = subject;
     data['paperSet'] = paperSet;
+    data['cid'] = cid;
     if (questionsList != null) {
       data['questionsList'] = questionsList!.map((v) => v.toJson()).toList();
     }

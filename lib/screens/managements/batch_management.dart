@@ -19,6 +19,7 @@ class _BatchManagementState extends State<BatchManagement> {
   List<String> teachersList = [];
   List categoryModelsList = [];
   List batchesList = [];
+  List batchIdList = [];
 
   final _batchController = TextEditingController();
   final GlobalKey<FormState> _batchFormKey = GlobalKey<FormState>();
@@ -40,6 +41,8 @@ class _BatchManagementState extends State<BatchManagement> {
         for (var element in value.docs) {
           // print(element.data());
           batchesList.add(element.data());
+          print("element id --> ${element.id}");
+          batchIdList.add(element.id);
         }
       });
     });
@@ -53,7 +56,7 @@ class _BatchManagementState extends State<BatchManagement> {
         .then((value) {
       for (var element in value.docs) {
         teachersList.add(
-            element.data()['firstName'] + " " + element.data()['lastName']);
+            "teachers/${element.data()['email']}");
       }
     });
   }
@@ -367,8 +370,8 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         .instance
                                                                         .collection(
                                                                             'batches')
-                                                                        .doc()
-                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase())
+                                                                        .doc(_batchController.text.trim())
+                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid)
                                                                             .toJson())
                                                                         .then((value) =>
                                                                             print(
@@ -396,6 +399,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                               {
                                                                             "courseName":
                                                                                 course.courseName,
+                                                                                "cid":course.cid,
                                                                             "payment":
                                                                                 {
                                                                               "1month": course.payment!.s1month,
@@ -710,6 +714,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                                   "12month": course.payment!.s12month,
                                                                                   "24months": course.payment!.s24months,
                                                                                 },
+                                                                                "cid":course.cid,
                                                                                 "batches": documentBatches +
                                                                                     [
                                                                                       _batchController.text.trim()
@@ -814,6 +819,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                           {
                                                         "courseName":
                                                             course.courseName!,
+                                                            "cid":course.cid,
                                                         "payment": {
                                                           "1month": course
                                                               .payment!.s1month,
