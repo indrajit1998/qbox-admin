@@ -14,6 +14,7 @@ class LevelUpQuestionAddingScreen extends StatefulWidget {
   final String subject;
   final String testName;
   final int duration;
+  final String cid;
   final String examTime;
   final int paperSet;
   String? collectionName;
@@ -27,7 +28,7 @@ class LevelUpQuestionAddingScreen extends StatefulWidget {
       required this.duration,
       required this.paperSet,
       required this.examTime,
-      this.collectionName = "levelUpTest"})
+      this.collectionName = "levelUpTest", required this.cid})
       : super(key: key);
 
   @override
@@ -413,6 +414,7 @@ class _LevelUpQuestionAddingScreenState
                                 "examTime": (widget.examTime).toString(),
                                 "duration": widget.duration,
                                 "category": widget.category,
+                            "cid":widget.cid,
                                 "course": widget.course,
                                 "chapter": widget.chapter,
                                 "subject": widget.subject,

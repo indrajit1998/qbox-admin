@@ -17,6 +17,7 @@ class PracticeManagement extends StatefulWidget {
 class _PracticeManagementState extends State<PracticeManagement> {
   final _chapterController = TextEditingController();
   final _courseController = TextEditingController();
+  final _cidController = TextEditingController();
   final _categoryController = TextEditingController();
   final _subjectController = TextEditingController();
 
@@ -126,6 +127,18 @@ class _PracticeManagementState extends State<PracticeManagement> {
                           },
                         ),
                         PopUpTextField(
+                          controller: _cidController,
+                          hint: 'Enter the Course ID',
+                          label: 'CID',
+                          widthRatio: 2,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        PopUpTextField(
                           controller: _chapterController,
                           hint: 'Vectors',
                           label: 'Chapter Name',
@@ -169,6 +182,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
                                             _categoryController.text.trim(),
                                         course: _courseController.text.trim(),
                                         chapter: _chapterController.text.trim(),
+                                        cid:_cidController.text.trim(),
                                         subject: _subjectController.text.trim(),
                                       )),
                             );
