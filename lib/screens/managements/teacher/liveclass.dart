@@ -1,28 +1,28 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:qbox_admin/models/live_video_model.dart';
 import 'package:qbox_admin/screens/golive/golive.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
-class VideoManagement extends StatefulWidget {
-  const VideoManagement({Key? key}) : super(key: key);
+class TeacherSideLiveClassPage extends StatefulWidget {
+  const TeacherSideLiveClassPage({Key? key}) : super(key: key);
 
   @override
-  State<VideoManagement> createState() => _VideoManagementState();
+  State<TeacherSideLiveClassPage> createState() =>
+      _TeacherSideLiveClassPageState();
 }
 
-class _VideoManagementState extends State<VideoManagement> {
+class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
   final _titleController = TextEditingController();
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
   final _cidController = TextEditingController();
+  final _chapterController = TextEditingController();
   final _scheduleDateController = TextEditingController();
   final _endDateController = TextEditingController();
   final GlobalKey<FormState> _liveVideoFormKey = GlobalKey<FormState>();
@@ -44,33 +44,55 @@ class _VideoManagementState extends State<VideoManagement> {
     });
   }
 
-  Future uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      Uint8List? file = result.files.first.bytes;
-      String fileName = result.files.first.name;
-      UploadTask task = FirebaseStorage.instance
-          .ref()
-          .child("Videos/video/$fileName")
-          .putData(
-              file!,
-              SettableMetadata(
-                contentType: "video",
-              ));
-      task.snapshotEvents.listen((event) {
+  setStartTime() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        String newDate = f.format(picked);
+        print(newDate);
         setState(() {
-          progress = ((event.bytesTransferred.toDouble() /
-                      event.totalBytes.toDouble()) *
-                  100)
-              .roundToDouble();
-          if (progress == 100) {
-            event.ref.getDownloadURL().then((downloadUrl) {
-              videoFileName = downloadUrl.toString();
-              return Fluttertoast.showToast(msg: "video Added Successfully");
-            });
-          }
+          _scheduleDateController.text =
+              "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
         });
-      });
+      } else {
+        Fluttertoast.showToast(msg: "Date & Time not selected is not selected");
+      }
+    }
+  }
+
+  var f = DateFormat('yyyy-MM-dd');
+  setEndTime() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          String newDate = f.format(picked);
+          print(newDate);
+          _endDateController.text =
+              "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Date & Time not selected is not selected");
+      }
     }
   }
 
@@ -95,7 +117,6 @@ class _VideoManagementState extends State<VideoManagement> {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                //color: Colors.amberAccent,
                 margin: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.width * (1 / 153.6),
                 ),
@@ -170,15 +191,38 @@ class _VideoManagementState extends State<VideoManagement> {
                                                       'Schedule Date : ${data['scheduleDate']}'),
                                                 ),
                                                 leading: IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    var collection =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'liveVideos');
+                                                    collection
+                                                        .doc(document.id)
+                                                        .update({'live': true})
+                                                        .then((_) =>
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            JoinMeeting(
+                                                                              nameText: userEmail,
+                                                                              roomText: document.id,
+                                                                              subjectText: data['course'],
+                                                                            ))))
+                                                        .catchError((error) =>
+                                                            print(
+                                                                'Failed: $error'));
+                                                  },
                                                   icon: const Icon(Icons
                                                       .play_circle_outline_rounded),
                                                 ),
-                                                trailing: MaterialButton(
-                                                  color: Colors.amber,
-                                                  onPressed: () {},
-                                                  child: const Text('Edit'),
-                                                ),
+                                                // trailing: MaterialButton(
+                                                //   color: Colors.amber,
+                                                //   onPressed: () {},
+                                                //   child: const Text('Edit'),
+                                                // ),
                                               );
                                             } else {
                                               return Container();
@@ -206,94 +250,64 @@ class _VideoManagementState extends State<VideoManagement> {
                           ),
                           SingleChildScrollView(
                             child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('liveVideos')
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (snapshot.hasError) {
-                                    return const Text('Something went wrong!');
-                                  }
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  return ListView(
-                                    shrinkWrap: true,
-                                    physics: const ClampingScrollPhysics(),
-                                    children: snapshot.data!.docs
-                                        .map((DocumentSnapshot document) {
-                                      Map<String, dynamic> data = document
-                                          .data()! as Map<String, dynamic>;
-                                      DateTime endTime =
-                                          DateTime.parse(data['endDate']);
-                                      DateTime now = DateTime.now();
-                                      if (DateTime(
-                                                  endTime.year,
-                                                  endTime.month,
-                                                  endTime.day,
-                                                  endTime.hour,
-                                                  endTime.minute,
-                                                  endTime.second)
-                                              .difference(DateTime(
-                                                  now.year,
-                                                  now.month,
-                                                  now.day,
-                                                  now.hour,
-                                                  now.second))
-                                              .inSeconds <
-                                          0) {
-                                        return ListTile(
-                                          title: ListTile(
-                                            title: Text(data['title']),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                    'category : ${data['category']} - course : ${data['course']}')
-                                              ],
-                                            ),
-                                            trailing: Text(
-                                                'Schedule Date : ${data['scheduleDate']}'),
+                              stream: FirebaseFirestore.instance
+                                  .collection('liveVideos')
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasError) {
+                                  return const Text('Something went wrong!');
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                return ListView(
+                                  shrinkWrap: true,
+                                  physics: const ClampingScrollPhysics(),
+                                  children: snapshot.data!.docs
+                                      .map((DocumentSnapshot document) {
+                                    Map<String, dynamic> data = document.data()!
+                                        as Map<String, dynamic>;
+                                    DateTime endTime =
+                                        DateTime.parse(data['endDate']);
+                                    DateTime now = DateTime.now();
+                                    if (DateTime(
+                                                endTime.year,
+                                                endTime.month,
+                                                endTime.day,
+                                                endTime.hour,
+                                                endTime.minute,
+                                                endTime.second)
+                                            .difference(DateTime(
+                                                now.year,
+                                                now.month,
+                                                now.day,
+                                                now.hour,
+                                                now.second))
+                                            .inSeconds <
+                                        0) {
+                                      return ListTile(
+                                        title: ListTile(
+                                          title: Text(data['title']),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                  'category : ${data['category']} - course : ${data['course']}')
+                                            ],
                                           ),
-                                          leading: IconButton(
-                                            onPressed: () {
-                                              var collection = FirebaseFirestore
-                                                  .instance
-                                                  .collection('liveVideos');
-                                              collection
-                                                  .doc(document.id)
-                                                  .update({'live': true})
-                                                  .then((_) => Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              JoinMeeting(
-                                                                nameText:
-                                                                    userEmail,
-                                                                roomText:
-                                                                    document.id,
-                                                                subjectText: data[
-                                                                    'course'],
-                                                              ))))
-                                                  .catchError((error) =>
-                                                      print('Failed: $error'));
-                                            },
-                                            icon: const Icon(Icons
-                                                .play_circle_outline_rounded),
-                                          ),
-                                          trailing: MaterialButton(
-                                            color: Colors.amber,
-                                            onPressed: () {},
-                                            child: const Text('Edit'),
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    }).toList(),
-                                  );
-                                }),
+                                          trailing: Text(
+                                              'Schedule Date : ${data['scheduleDate']}'),
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }).toList(),
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -362,6 +376,18 @@ class _VideoManagementState extends State<VideoManagement> {
                         },
                       ),
                       PopUpTextField(
+                        controller: _chapterController,
+                        hint: 'Chapter Name',
+                        label: 'Chapter',
+                        widthRatio: 1,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return ("Field cannot be empty");
+                          }
+                          return null;
+                        },
+                      ),
+                      PopUpTextField(
                         controller: _scheduleDateController,
                         hint: 'YYYY-MM-DD hh:mm:ss',
                         label: 'Schedule Date & Time',
@@ -385,22 +411,44 @@ class _VideoManagementState extends State<VideoManagement> {
                           return null;
                         },
                       ),
-                      // Material(
-                      //   type: MaterialType.button,
-                      //   color: Colors.amber,
-                      //   borderRadius: BorderRadius.circular(50),
-                      //   child: MaterialButton(
-                      //     padding: const EdgeInsets.all(20),
-                      //     onPressed: () async {
-                      //       await uploadFile();
-                      //     },
-                      //     child: const Text('Pick Image'),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
                 popUpactions: [
+                  Material(
+                    color: Colors.amberAccent,
+                    elevation: 4,
+                    type: MaterialType.button,
+                    child: MaterialButton(
+                      onPressed: setStartTime,
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width / 76.8),
+                      child: Text(
+                        'Start Time',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width / 86,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Material(
+                    color: Colors.amberAccent,
+                    elevation: 4,
+                    type: MaterialType.button,
+                    child: MaterialButton(
+                      onPressed: setEndTime,
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width / 76.8),
+                      child: Text(
+                        'End Time',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width / 86,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                   Material(
                     color: Colors.amberAccent,
                     elevation: 4,
@@ -421,7 +469,7 @@ class _VideoManagementState extends State<VideoManagement> {
                                         scheduleDate:
                                             _scheduleDateController.text.trim(),
                                         endDate: _endDateController.text.trim(),
-                                        chapter: "",
+                                        chapter: _chapterController.text.trim(),
                                         isLive: false)
                                     .toJson())
                                 .then((value) => print("Video Added"))

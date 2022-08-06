@@ -5,7 +5,7 @@ class LiveVideoModel {
   String? course;
   String? category;
   String? cid;
-  String? link;
+  String? chapter;
   bool? isLive;
 
   LiveVideoModel(
@@ -14,8 +14,8 @@ class LiveVideoModel {
       this.scheduleDate,
       this.course,
       this.category,
-        this.cid,
-      this.link,
+      this.cid,
+      this.chapter,
       this.isLive});
 
   LiveVideoModel.fromJson(Map<String, dynamic> json) {
@@ -24,7 +24,7 @@ class LiveVideoModel {
     endDate = json['endDate'];
     course = json['course'];
     category = json['category'];
-    link = json['link'];
+    chapter = json['chapter'];
     cid = json['cid'];
     isLive = json['live'];
   }
@@ -36,8 +36,8 @@ class LiveVideoModel {
     data['endDate'] = endDate;
     data['course'] = course;
     data['category'] = category;
-    data['link'] = link;
-    data['cid']=course;
+    data['chapter'] = chapter;
+    data['cid'] = course;
     data['live'] = isLive;
     return data;
   }

@@ -9,7 +9,10 @@ import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
 import 'package:qbox_admin/screens/managements/profile/profile.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
+import 'package:qbox_admin/screens/managements/teacher/assigned_courses.dart';
 import 'package:qbox_admin/screens/managements/teacher/batches.dart';
+import 'package:qbox_admin/screens/managements/teacher/followed_me.dart';
+import 'package:qbox_admin/screens/managements/teacher/liveclass.dart';
 import 'package:qbox_admin/screens/managements/teacher_management.dart';
 import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
@@ -35,6 +38,7 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
@@ -60,8 +64,6 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
-
-
 
   int bodyIndex = 0;
   Management selectManagement = Management.courseManagement;
@@ -116,7 +118,8 @@ class _HomePageState extends State<HomePage> {
     'Batches',
     'Courses',
     'Students',
-    'Level up Tests'
+    'Level up Tests',
+    'Live Classes'
   ];
 
   List<String> sideAdminList = [
@@ -136,7 +139,8 @@ class _HomePageState extends State<HomePage> {
     Management.batchManagement,
     Management.courseManagement,
     Management.studentManagement,
-    Management.levelUpSeriesManagement
+    Management.levelUpSeriesManagement,
+    Management.videoManagement
   ];
 
   List sideAdminManagementList = [
@@ -150,14 +154,14 @@ class _HomePageState extends State<HomePage> {
     Management.videoManagement,
   ];
 
-  // Right Panel Display List
   List<Widget> teachersList = [
     const FreeVideoManagement(),
     const PracticeManagement(),
     const TeacherSideBatchePage(),
-    const CourseManagement(),
-    const StudentManagement(),
-    const LevelUpManagement()
+    const TeacherSideCoursePage(),
+    const TeacherSideStudentPage(),
+    const LevelUpManagement(),
+    const TeacherSideLiveClassPage()
   ];
 
   List<Widget> adminList = [

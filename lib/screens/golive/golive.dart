@@ -28,7 +28,6 @@ class JoinMeetingState extends State<JoinMeeting> {
   bool? isAudioMuted = true;
   bool? isVideoMuted = true;
 
-
   void initialize() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -39,26 +38,21 @@ class JoinMeetingState extends State<JoinMeeting> {
         emailText = user.email!;
       });
     }
-  
   }
 
   @override
   void initState() {
     super.initState();
     initialize();
-   
   }
-
 
   bool isJoined = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Meeting"),
-      ),
       body: WebViewX(
+        ignoreAllGestures: false,
         height: MediaQuery.of(context).size.height,
         initialContent: """
       <!DOCTYPE html>
@@ -83,8 +77,6 @@ class JoinMeetingState extends State<JoinMeeting> {
         initialSourceType: SourceType.html,
         width: MediaQuery.of(context).size.width,
       ),
-      
-     
     );
   }
 }

@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class TeacherSideBatchePage extends StatefulWidget {
-  const TeacherSideBatchePage({Key? key}) : super(key: key);
+class TeacherSideCoursePage extends StatefulWidget {
+  const TeacherSideCoursePage({Key? key}) : super(key: key);
 
   @override
-  State<TeacherSideBatchePage> createState() => _TeacherSideBatchePageState();
+  State<TeacherSideCoursePage> createState() => _TeacherSideCoursePageState();
 }
 
-class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
+class _TeacherSideCoursePageState extends State<TeacherSideCoursePage> {
   @override
   void initState() {
     getData();
@@ -17,8 +17,9 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
   }
 
   List<Map<String, dynamic>> data = [];
-  List subjects = [];
-  List batches = [];
+
+  List courses = [];
+  List cid = [];
   getData() async {
     var email = FirebaseAuth.instance.currentUser!.email;
 
@@ -35,13 +36,11 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
     });
   }
 
-  List keys = [];
-  List values = [];
   cleanData() async {
     for (var i = 0; i < data.length; i++) {
       setState(() {
-        subjects.add(data[i]['subjects']);
-        batches.add(data[i]['batchName']);
+        courses.add(data[i]['courseName']);
+        cid.add(data[i]['cid']);
       });
     }
   }
@@ -56,7 +55,7 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Assigned Batches',
+            'Assigned Courses',
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width / 32,
             ),
@@ -66,14 +65,12 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
           ),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: subjects.length,
+            itemCount: courses.length,
             itemBuilder: (context, index) {
               return ListTile(
-                  title: Text(batches[index]),
-                  subtitle: Text(subjects[index]
-                      .toString()
-                      .replaceAll("[", "")
-                      .replaceAll("]", "")));
+                title: Text(courses[index]),
+                subtitle: SelectableText(cid[index]),
+              );
             },
           ),
         ],
