@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jitsi_meet/jitsi_meet.dart';
 import 'package:webviewx/webviewx.dart';
 
 class JoinMeeting extends StatefulWidget {

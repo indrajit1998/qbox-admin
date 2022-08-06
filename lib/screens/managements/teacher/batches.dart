@@ -50,6 +50,7 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
             batchName = batchesData['batchName'];
             courseName = batchesData['courseName'];
             subjects = batchesData['subjects'];
+            print(batchesData['subjects'].toString());
           });
         }
       });
@@ -59,9 +60,11 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
   @override
   Widget build(BuildContext context) {
     searchTeacherName();
-
+    print(subjects);
     return Scaffold(
         body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Assigned Subjects',
@@ -72,13 +75,16 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
         const Divider(
           color: Colors.amberAccent,
         ),
-        ListView.builder(
-          itemCount: subjects.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(subjects[index]),
-            );
-          },
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 1.2,
+          child: ListView.builder(
+            itemCount: subjects.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(subjects[index]),
+              );
+            },
+          ),
         ),
       ],
     ));
