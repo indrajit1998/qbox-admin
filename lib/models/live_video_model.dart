@@ -4,6 +4,7 @@ class LiveVideoModel {
   String? endDate;
   String? course;
   String? category;
+  String? cid;
   String? link;
   bool? isLive;
 
@@ -13,6 +14,7 @@ class LiveVideoModel {
       this.scheduleDate,
       this.course,
       this.category,
+        this.cid,
       this.link,
       this.isLive});
 
@@ -23,6 +25,7 @@ class LiveVideoModel {
     course = json['course'];
     category = json['category'];
     link = json['link'];
+    cid = json['cid'];
     isLive = json['live'];
   }
 
@@ -34,6 +37,7 @@ class LiveVideoModel {
     data['course'] = course;
     data['category'] = category;
     data['link'] = link;
+    data['cid']=course;
     data['live'] = isLive;
     return data;
   }

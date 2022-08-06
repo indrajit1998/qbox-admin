@@ -35,7 +35,6 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
@@ -61,6 +60,8 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
+
 
   int bodyIndex = 0;
   Management selectManagement = Management.courseManagement;
@@ -113,6 +114,9 @@ class _HomePageState extends State<HomePage> {
     'Free Videos',
     'DPB',
     'Batches',
+    'Courses',
+    'Students',
+    'Level up Tests'
   ];
 
   List<String> sideAdminList = [
@@ -130,6 +134,9 @@ class _HomePageState extends State<HomePage> {
     Management.freeVideosManagement,
     Management.practiceQuestionManagement,
     Management.batchManagement,
+    Management.courseManagement,
+    Management.studentManagement,
+    Management.levelUpSeriesManagement
   ];
 
   List sideAdminManagementList = [
@@ -148,6 +155,9 @@ class _HomePageState extends State<HomePage> {
     const FreeVideoManagement(),
     const PracticeManagement(),
     const TeacherSideBatchePage(),
+    const CourseManagement(),
+    const StudentManagement(),
+    const LevelUpManagement()
   ];
 
   List<Widget> adminList = [

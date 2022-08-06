@@ -22,6 +22,7 @@ class _VideoManagementState extends State<VideoManagement> {
   final _titleController = TextEditingController();
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
+  final _cidController = TextEditingController();
   final _scheduleDateController = TextEditingController();
   final _endDateController = TextEditingController();
   final GlobalKey<FormState> _liveVideoFormKey = GlobalKey<FormState>();
@@ -343,6 +344,18 @@ String userEmail = "";
                         },
                       ),
                       PopUpTextField(
+                        controller: _cidController,
+                        hint: 'Enter the COURSE ID',
+                        label: 'CID',
+                        widthRatio: 1,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return ("Field cannot be empty");
+                          }
+                          return null;
+                        },
+                      ),
+                      PopUpTextField(
                         controller: _scheduleDateController,
                         hint: 'YYYY-MM-DD hh:mm:ss',
                         label: 'Schedule Date & Time',
@@ -398,6 +411,7 @@ String userEmail = "";
                                         category:
                                             _categoryController.text.trim(),
                                         course: _courseController.text.trim(),
+                                        cid:_cidController.text.trim(),
                                         scheduleDate:
                                             _scheduleDateController.text.trim(),
                                         endDate: _endDateController.text.trim(),

@@ -16,7 +16,7 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
     super.initState();
   }
 
-  List _teacherAdded = [];
+  List teacherAdded = [];
   Map<String, dynamic> batchesData = {};
   getData() async {
     FirebaseFirestore.instance.collection('batches').get().then((value) {
@@ -27,10 +27,12 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
         });
 
         data['teachers']?.forEach((element) {
+          print("getData()-->$element\n");
           setState(() {
-            _teacherAdded.add(element);
+            teacherAdded.add(element);
           });
         });
+        print("----");
       }
     });
   }
@@ -42,18 +44,14 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
   DocumentReference? reference;
   searchTeacherName() async {
     var email = FirebaseAuth.instance.currentUser!.email;
-    for (var element in _teacherAdded) {
-      element.get().then((value) {
-        Map<String, dynamic> data = value.data();
-        if (data['email'] == email) {
-          setState(() {
-            batchName = batchesData['batchName'];
-            courseName = batchesData['courseName'];
-            subjects = batchesData['subjects'];
-            print(batchesData['subjects'].toString());
-          });
-        }
-      });
+    for (var element in teacherAdded) {
+      if(element.toString().split('/')[1]==email){
+        setState(() {
+          batchName = batchesData['batchName'];
+          courseName = batchesData['courseName'];
+          subjects = batchesData['subjects'];
+        });
+      }
     }
   }
 
@@ -75,16 +73,14 @@ class _TeacherSideBatchePageState extends State<TeacherSideBatchePage> {
         const Divider(
           color: Colors.amberAccent,
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height / 1.2,
-          child: ListView.builder(
-            itemCount: subjects.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(subjects[index]),
-              );
-            },
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: subjects.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(subjects[index]),
+            );
+          },
         ),
       ],
     ));
