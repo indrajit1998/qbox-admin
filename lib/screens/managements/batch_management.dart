@@ -860,6 +860,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             .catchError((error) {
                                                                           print(
                                                                               "Failed to add Batch: $error");
+                                                                          // ignore: invalid_return_type_for_catch_error
                                                                           return Fluttertoast.showToast(
                                                                               msg: error!);
                                                                         });

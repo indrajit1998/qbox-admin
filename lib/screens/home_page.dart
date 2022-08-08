@@ -13,6 +13,7 @@ import 'package:qbox_admin/screens/managements/teacher/assigned_courses.dart';
 import 'package:qbox_admin/screens/managements/teacher/batches.dart';
 import 'package:qbox_admin/screens/managements/teacher/followed_me.dart';
 import 'package:qbox_admin/screens/managements/teacher/liveclass.dart';
+import 'package:qbox_admin/screens/managements/teacher/meeting.dart';
 import 'package:qbox_admin/screens/managements/teacher_management.dart';
 import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
@@ -29,6 +30,7 @@ enum Management {
   freeVideosManagement,
   levelUpSeriesManagement,
   practiceQuestionManagement,
+  patentsTeacherMeeting,
 }
 
 class HomePage extends StatefulWidget {
@@ -112,7 +114,8 @@ class _HomePageState extends State<HomePage> {
     'Courses',
     'Students',
     'Level up Tests',
-    'Live Classes'
+    'Live Classes',
+    'Parents Teacher Meeting',
   ];
 
   List<String> sideAdminList = [
@@ -135,7 +138,8 @@ class _HomePageState extends State<HomePage> {
     Management.courseManagement,
     Management.studentManagement,
     Management.levelUpSeriesManagement,
-    Management.videoManagement
+    Management.videoManagement,
+    Management.patentsTeacherMeeting,
   ];
 
   List sideAdminManagementList = [
@@ -158,7 +162,8 @@ class _HomePageState extends State<HomePage> {
     const TeacherSideCoursePage(),
     const TeacherSideStudentPage(),
     const LevelUpManagement(),
-    const TeacherSideLiveClassPage()
+    const TeacherSideLiveClassPage(),
+    const StudentTeacherMeeting()
   ];
 
   List<Widget> adminList = [

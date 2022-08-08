@@ -212,37 +212,37 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                               return null;
                             },
                           ),
-                          // Row(
-                          //   children: [
-                          //     const Text("Multiple Correct Answer"),
-                          //     const SizedBox(
-                          //       width: 10,
-                          //     ),
-                          //     TextButton(
-                          //         onPressed: () {
-                          //           if (multAnsCorrect == false) {
-                          //             setState(() {
-                          //               multAnsCorrect = true;
-                          //               _multiCorrectAnswerController.text =
-                          //                   "true";
-                          //               Fluttertoast.showToast(
-                          //                   msg:
-                          //                       "Multiple Correct Answer Enabled");
-                          //             });
-                          //           } else if (multAnsCorrect == true) {
-                          //             setState(() {
-                          //               multAnsCorrect = false;
-                          //               _multiCorrectAnswerController.text =
-                          //                   "false";
-                          //               Fluttertoast.showToast(
-                          //                   msg:
-                          //                       "Multiple Correct Answer Disabled");
-                          //             });
-                          //           }
-                          //         },
-                          //         child:  Text(multAnsCorrect.toString())),
-                          //   ],
-                          // ),
+                          Row(
+                            children: [
+                              const Text("Multiple Correct Answer"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    if (multAnsCorrect == false) {
+                                      setState(() {
+                                        multAnsCorrect = true;
+                                        _multiCorrectAnswerController.text =
+                                            "true";
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Multiple Correct Answer Enabled");
+                                      });
+                                    } else if (multAnsCorrect == true) {
+                                      setState(() {
+                                        multAnsCorrect = false;
+                                        _multiCorrectAnswerController.text =
+                                            "false";
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Multiple Correct Answer Disabled");
+                                      });
+                                    }
+                                  },
+                                  child:  Text(multAnsCorrect.toString())),
+                            ],
+                          ),
                           PopUpTextField(
                             controller: _multiCorrectAnswerController,
                             hint: '',
