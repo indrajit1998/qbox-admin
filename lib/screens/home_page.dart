@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qbox_admin/screens/managements/batch_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
+import 'package:qbox_admin/screens/managements/filters.dart';
 import 'package:qbox_admin/screens/managements/free_video_management.dart';
 import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
@@ -31,6 +32,7 @@ enum Management {
   levelUpSeriesManagement,
   practiceQuestionManagement,
   patentsTeacherMeeting,
+  contentFilter
 }
 
 class HomePage extends StatefulWidget {
@@ -129,6 +131,7 @@ class _HomePageState extends State<HomePage> {
     'Level Up Tests',
     'Live Videos',
     'Free Videos',
+    "Content Filter"
   ];
   // Left Panel Management List
   List sideTeachersManagementList = [
@@ -153,6 +156,7 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.freeVideosManagement,
+    Management.contentFilter
   ];
 
   List<Widget> teachersList = [
@@ -177,6 +181,7 @@ class _HomePageState extends State<HomePage> {
     const LevelUpManagement(),
     const VideoManagement(),
     const FreeVideoManagement(),
+    const ContentFilterPage()
   ];
 
   getRole() async {
