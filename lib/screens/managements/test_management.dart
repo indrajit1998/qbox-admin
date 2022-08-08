@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:qbox_admin/models/level_up_series_model.dart';
 import 'package:qbox_admin/screens/level_up_question_adding_screen.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
@@ -26,6 +28,22 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   bool download = false;
 
   List<LevelUpTestModel> fullLengthModelList = [];
+  setDate() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      setState(() {
+        _examTimeController.text = picked.toString().split(".000")[0];
+      });
+    } else {
+      Fluttertoast.showToast(msg: "Date not selected is not selected");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -319,6 +337,23 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                           MediaQuery.of(context).size.width / 76.8),
                       child: Text(
                         'Next',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width / 86,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Material(
+                    color: Colors.amberAccent,
+                    elevation: 4,
+                    type: MaterialType.button,
+                    child: MaterialButton(
+                      onPressed: setDate,
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width / 76.8),
+                      child: Text(
+                        'Exam Date',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width / 86,
                           color: Colors.black,

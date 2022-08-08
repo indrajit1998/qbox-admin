@@ -7,6 +7,7 @@ import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 import 'package:qbox_admin/widgets/question_preview.dart';
 
+// ignore: must_be_immutable
 class LevelUpQuestionAddingScreen extends StatefulWidget {
   final String category;
   final String course;
@@ -28,7 +29,8 @@ class LevelUpQuestionAddingScreen extends StatefulWidget {
       required this.duration,
       required this.paperSet,
       required this.examTime,
-      this.collectionName = "levelUpTest", required this.cid})
+      this.collectionName = "levelUpTest",
+      required this.cid})
       : super(key: key);
 
   @override
@@ -56,7 +58,6 @@ class _LevelUpQuestionAddingScreenState
   final GlobalKey<FormState> _questionAddScreenFormKey = GlobalKey<FormState>();
 
   List<Questions> questionsList = [];
-  Set<String> tagsList = {"tag"};
 
   String? errorMessage;
 
@@ -414,7 +415,7 @@ class _LevelUpQuestionAddingScreenState
                                 "examTime": (widget.examTime).toString(),
                                 "duration": widget.duration,
                                 "category": widget.category,
-                            "cid":widget.cid,
+                                "cid": widget.cid,
                                 "course": widget.course,
                                 "chapter": widget.chapter,
                                 "subject": widget.subject,

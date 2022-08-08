@@ -6,10 +6,8 @@ import 'package:qbox_admin/models/category_model.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
-
 class CourseManagement extends StatefulWidget {
   const CourseManagement({Key? key}) : super(key: key);
-
 
   @override
   State<CourseManagement> createState() => _CourseManagementState();
@@ -22,7 +20,6 @@ class _CourseManagementState extends State<CourseManagement> {
   String? errorMessage;
   List categoryModelsList = [];
   String newCid = DateTime.now().microsecondsSinceEpoch.toString();
-
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
   final _oneMonthFeeController = TextEditingController();
@@ -30,9 +27,9 @@ class _CourseManagementState extends State<CourseManagement> {
   final _oneYearFeeController = TextEditingController();
   final _twoYearFeeController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
+    print(newCid[3]);
     return Scaffold(
       body: Container(
         padding:
@@ -234,9 +231,8 @@ class _CourseManagementState extends State<CourseManagement> {
                                                     type: MaterialType.button,
                                                     child: MaterialButton(
                                                       onPressed: () async {
-                                                        if (_courseFormKey
-                                                            .currentState!
-                                                            .validate()) {
+                                                        if (_oneMonthFeeController
+                                                            .text.isNotEmpty) {
                                                           final title =
                                                               document.id;
                                                           try {
@@ -254,20 +250,37 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                             .trim(),
                                                                     "batches":
                                                                         [],
-                                                                        "cid": newCid,
+                                                                    "cid":
+                                                                        newCid,
                                                                     "payment": {
                                                                       "1month": _oneMonthFeeController
-                                                                          .text
-                                                                          .trim(),
-                                                                      "6month": _oneMonthFeeController
-                                                                          .text
-                                                                          .trim(),
-                                                                      "12month": _oneMonthFeeController
-                                                                          .text
-                                                                          .trim(),
-                                                                      "24months": _oneMonthFeeController
-                                                                          .text
-                                                                          .trim(),
+                                                                              .text
+                                                                              .isEmpty
+                                                                          ? "0"
+                                                                          : _oneMonthFeeController
+                                                                              .text
+                                                                              .trim(),
+                                                                      "6month": _sixMonthFeeController
+                                                                              .text
+                                                                              .isEmpty
+                                                                          ? "0"
+                                                                          : _sixMonthFeeController
+                                                                              .text
+                                                                              .trim(),
+                                                                      "12month": _oneYearFeeController
+                                                                              .text
+                                                                              .isEmpty
+                                                                          ? "0"
+                                                                          : _oneYearFeeController
+                                                                              .text
+                                                                              .trim(),
+                                                                      "24months": _twoYearFeeController
+                                                                              .text
+                                                                              .isEmpty
+                                                                          ? "0"
+                                                                          : _twoYearFeeController
+                                                                              .text
+                                                                              .trim(),
                                                                     }
                                                                   }
                                                                 })
@@ -341,11 +354,16 @@ class _CourseManagementState extends State<CourseManagement> {
                                 for (Courses course in courses)
                                   ListTile(
                                     title: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Text(course.courseName!),
-                                        Text("CID : ${course.cid}", style: TextStyle(fontSize: 12),)
+                                        Text(
+                                          "CID : ${course.cid}",
+                                          style: TextStyle(fontSize: 12),
+                                        )
                                       ],
                                     ),
                                     onTap: () {

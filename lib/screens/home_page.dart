@@ -101,13 +101,6 @@ class _HomePageState extends State<HomePage> {
       sideDisplayList = <String>[] + sideAdminList;
       sideManagementList = [] + sideAdminManagementList;
       return [adminList, sideAdminList, sideAdminManagementList];
-    } else if (role == 'Super Admin') {
-      displayList = <Widget>[] + adminList + teachersList;
-      sideDisplayList = <String>[] + sideAdminList + sideTeachersList;
-      sideManagementList =
-          [] + sideAdminManagementList + sideTeachersManagementList;
-
-      return [displayList, sideDisplayList, sideManagementList];
     }
     return [];
   }
@@ -125,12 +118,14 @@ class _HomePageState extends State<HomePage> {
   List<String> sideAdminList = [
     'Courses ',
     'Batch',
+    'DPB',
     'Students',
     'Teachers',
     'Coupons',
     'Full Length Tests',
     'Level Up Tests',
     'Live Videos',
+    'Free Videos',
   ];
   // Left Panel Management List
   List sideTeachersManagementList = [
@@ -146,12 +141,14 @@ class _HomePageState extends State<HomePage> {
   List sideAdminManagementList = [
     Management.courseManagement,
     Management.batchManagement,
+    Management.practiceQuestionManagement,
     Management.studentManagement,
     Management.teacherManagement,
     Management.couponManagement,
     Management.fullLengthTestManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
+    Management.freeVideosManagement,
   ];
 
   List<Widget> teachersList = [
@@ -167,12 +164,14 @@ class _HomePageState extends State<HomePage> {
   List<Widget> adminList = [
     const CourseManagement(),
     const BatchManagement(),
+    const PracticeManagement(),
     const StudentManagement(),
     const TeacherManagement(),
     const CouponManagement(),
     const FullLengthTestManagement(),
     const LevelUpManagement(),
     const VideoManagement(),
+    const FreeVideoManagement(),
   ];
 
   getRole() async {
