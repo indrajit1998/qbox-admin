@@ -27,6 +27,11 @@ class _CourseManagementState extends State<CourseManagement> {
   final _oneYearFeeController = TextEditingController();
   final _twoYearFeeController = TextEditingController();
 
+  bool isLoading = false;
+
+  bool _isLoading = false;
+  bool _isLoading1 = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -232,6 +237,9 @@ class _CourseManagementState extends State<CourseManagement> {
                                                       onPressed: () async {
                                                         if (_oneMonthFeeController
                                                             .text.isNotEmpty) {
+                                                          setState(() {
+                                                            isLoading = true;
+                                                          });
                                                           final title =
                                                               document.id;
                                                           try {
@@ -519,6 +527,9 @@ class _CourseManagementState extends State<CourseManagement> {
                                                           onPressed: () async {
                                                             final title =
                                                                 document.id;
+                                                            setState(() {
+                                                              _isLoading = true;
+                                                            });
                                                             try {
                                                               await FirebaseFirestore
                                                                   .instance
@@ -552,6 +563,10 @@ class _CourseManagementState extends State<CourseManagement> {
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Course deleted Successfully");
+                                                            setState(() {
+                                                              _isLoading =
+                                                                  false;
+                                                            });
                                                             if (!mounted) {
                                                               return;
                                                             }
@@ -567,18 +582,20 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                       .size
                                                                       .width /
                                                                   76.8),
-                                                          child: Text(
-                                                            'Delete Course',
-                                                            style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width /
-                                                                  86,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                          ),
+                                                          child: isLoading
+                                                              ? const CircularProgressIndicator()
+                                                              : Text(
+                                                                  'Delete Course',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        86,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                ),
                                                         ),
                                                       ),
                                                       Material(
@@ -592,6 +609,10 @@ class _CourseManagementState extends State<CourseManagement> {
                                                             if (_courseEditingFormKey
                                                                 .currentState!
                                                                 .validate()) {
+                                                              setState(() {
+                                                                _isLoading1 =
+                                                                    true;
+                                                              });
                                                               final title =
                                                                   document.id;
                                                               try {
@@ -647,6 +668,10 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                   .showToast(
                                                                       msg:
                                                                           "Course updated Successfully");
+                                                              setState(() {
+                                                                _isLoading1 =
+                                                                    false;
+                                                              });
                                                               if (!mounted) {
                                                                 return;
                                                               }
@@ -663,18 +688,20 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                       .size
                                                                       .width /
                                                                   76.8),
-                                                          child: Text(
-                                                            'Updated Course',
-                                                            style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width /
-                                                                  86,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                          ),
+                                                          child: _isLoading1
+                                                              ? const CircularProgressIndicator()
+                                                              : Text(
+                                                                  'Updated Course',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        86,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                ),
                                                         ),
                                                       ),
                                                     ],
@@ -729,15 +756,21 @@ class _CourseManagementState extends State<CourseManagement> {
                       child: MaterialButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              _isLoading = true;
+                            });
                             final title =
                                 _categoryController.text.trim().toLowerCase();
                             try {
                               await FirebaseFirestore.instance
                                   .collection('cat')
                                   .doc(title)
-                                  .set({"title": title, "courses": {}})
-                                  .then((value) => print("Category Added"))
-                                  .catchError((error) =>
+                                  .set({"title": title, "courses": {}}).then(
+                                      (value) {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }).catchError((error) =>
                                       print("Failed to add category: $error"));
                             } on FirebaseAuthException catch (error) {
                               switch (error.code) {
@@ -753,13 +786,16 @@ class _CourseManagementState extends State<CourseManagement> {
                         },
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width / 76.8),
-                        child: Text(
-                          'Add Category',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width / 86,
-                            color: Colors.black,
-                          ),
-                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator()
+                            : Text(
+                                'Add Category',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width / 86,
+                                  color: Colors.black,
+                                ),
+                              ),
                       ),
                     ),
                   ],

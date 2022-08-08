@@ -34,6 +34,7 @@ class _CouponManagementState extends State<CouponManagement> {
     return allData;
   }
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,6 +232,9 @@ class _CouponManagementState extends State<CouponManagement> {
                     child: MaterialButton(
                       onPressed: () async {
                         if (_couponFormKey.currentState!.validate()) {
+                          setState(() {
+                            isLoading = true;
+                          });
                           try {
                             await FirebaseFirestore.instance
                                 .collection('coupons')
@@ -253,6 +257,7 @@ class _CouponManagementState extends State<CouponManagement> {
                                     .toJson())
                                 .then((value) => print("Coupon Added"))
                                 .catchError((error) {
+                              // ignore: invalid_return_type_for_catch_error
                               return Fluttertoast.showToast(msg: error!);
                             });
                           } on FirebaseAuthException catch (error) {
@@ -263,6 +268,9 @@ class _CouponManagementState extends State<CouponManagement> {
                             }
                             Fluttertoast.showToast(msg: errorMessage!);
                           }
+                          setState(() {
+                            isLoading = false;
+                          });
                           Fluttertoast.showToast(
                               msg: "Coupon Added Successfully");
                           if (!mounted) {
@@ -273,13 +281,16 @@ class _CouponManagementState extends State<CouponManagement> {
                       },
                       padding: EdgeInsets.all(
                           MediaQuery.of(context).size.width / 76.8),
-                      child: Text(
-                        'Add Coupon',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 86,
-                          color: Colors.black,
-                        ),
-                      ),
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : Text(
+                              'Add Coupon',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 86,
+                                color: Colors.black,
+                              ),
+                            ),
                     ),
                   )
                 ],

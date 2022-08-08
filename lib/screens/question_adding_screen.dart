@@ -18,7 +18,8 @@ class QuestionAddingScreen extends StatefulWidget {
       required this.chapter,
       required this.course,
       required this.category,
-      required this.subject, required this.cid})
+      required this.subject,
+      required this.cid})
       : super(key: key);
 
   @override
@@ -56,6 +57,11 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
     return length;
   }
 
+  bool optionscorrecta = false;
+  bool optionscorrectb = false;
+  bool optionscorrectc = false;
+  bool optionscorrectd = false;
+
   Map<String, dynamic> questionsListToMap(List<Questions> mappingList) {
     Map<String, dynamic> value = {};
     for (var mappingQuestion in mappingList) {
@@ -84,6 +90,8 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
     }
     return value;
   }
+
+  bool multAnsCorrect = false;
 
   @override
   Widget build(BuildContext context) {
@@ -204,11 +212,42 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                               return null;
                             },
                           ),
+                          // Row(
+                          //   children: [
+                          //     const Text("Multiple Correct Answer"),
+                          //     const SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //     TextButton(
+                          //         onPressed: () {
+                          //           if (multAnsCorrect == false) {
+                          //             setState(() {
+                          //               multAnsCorrect = true;
+                          //               _multiCorrectAnswerController.text =
+                          //                   "true";
+                          //               Fluttertoast.showToast(
+                          //                   msg:
+                          //                       "Multiple Correct Answer Enabled");
+                          //             });
+                          //           } else if (multAnsCorrect == true) {
+                          //             setState(() {
+                          //               multAnsCorrect = false;
+                          //               _multiCorrectAnswerController.text =
+                          //                   "false";
+                          //               Fluttertoast.showToast(
+                          //                   msg:
+                          //                       "Multiple Correct Answer Disabled");
+                          //             });
+                          //           }
+                          //         },
+                          //         child:  Text(multAnsCorrect.toString())),
+                          //   ],
+                          // ),
                           PopUpTextField(
                             controller: _multiCorrectAnswerController,
-                            hint: 'write true or false',
+                            hint: '',
                             label: 'Multiple Correct Answer',
-                            widthRatio: 2,
+                            widthRatio: 1,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return ("Field cannot be empty");
@@ -387,7 +426,7 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                                 "course": widget.course,
                                 "chapter": widget.chapter,
                                 "subject": widget.subject,
-                            "cid":widget.cid,
+                                "cid": widget.cid,
                                 "questions": questionsListToMap(questionsList),
                               })
                               .then((value) => print("Practice Set Added"))

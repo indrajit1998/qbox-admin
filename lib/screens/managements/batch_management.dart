@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:qbox_admin/models/batch_model.dart';
 import 'package:qbox_admin/models/category_model.dart';
 import 'package:qbox_admin/utilities/dimensions.dart';
@@ -23,6 +24,8 @@ class _BatchManagementState extends State<BatchManagement> {
 
   final _batchController = TextEditingController();
   final GlobalKey<FormState> _batchFormKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
   @override
   void initState() {
     getTeachers();
@@ -39,9 +42,7 @@ class _BatchManagementState extends State<BatchManagement> {
         .then((value) {
       setState(() {
         for (var element in value.docs) {
-          // print(element.data());
           batchesList.add(element.data());
-          print("element id --> ${element.id}");
           batchIdList.add(element.id);
         }
       });
@@ -55,11 +56,66 @@ class _BatchManagementState extends State<BatchManagement> {
         .get()
         .then((value) {
       for (var element in value.docs) {
-        teachersList.add(
-            "teachers/${element.data()['email']}");
+        teachersList.add("teachers/${element.data()['email']}");
       }
     });
   }
+
+  var f = DateFormat('yyyy-MM-dd');
+  setEndTime() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        String newDate = f.format(picked);
+        print(newDate);
+        setState(() {
+          enddateController.text =
+              "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Date & Time not selected is not selected");
+      }
+    }
+  }
+
+  setStartTime() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        String newDate = f.format(picked);
+        print(newDate);
+        setState(() {
+          startdateController.text =
+              "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Date & Time not selected is not selected");
+      }
+    }
+  }
+
+  TextEditingController startdateController = TextEditingController();
+  TextEditingController enddateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -211,6 +267,10 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                       'Batch Name',
                                                                   widthRatio: 2,
                                                                 ),
+                                                                Text(
+                                                                    "Start Date: ${startdateController.text}"),
+                                                                Text(
+                                                                    "End Date: ${enddateController.text}"),
                                                                 Container(
                                                                   margin: EdgeInsets.all(MediaQuery.of(
                                                                               context)
@@ -345,7 +405,6 @@ class _BatchManagementState extends State<BatchManagement> {
                                                             ),
                                                           ),
                                                         ),
-                                                        
                                                         actions: [
                                                           Material(
                                                             color: Colors
@@ -360,6 +419,10 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                 if (_batchFormKey
                                                                     .currentState!
                                                                     .validate()) {
+                                                                  setState(() {
+                                                                    isLoading =
+                                                                        true;
+                                                                  });
                                                                   try {
                                                                     String
                                                                         title =
@@ -370,13 +433,21 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         .instance
                                                                         .collection(
                                                                             'batches')
-                                                                        .doc(_batchController.text.trim())
+                                                                        .doc(_batchController
+                                                                            .text
+                                                                            .trim())
                                                                         .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid)
                                                                             .toJson())
-                                                                        .then((value) =>
-                                                                            print(
-                                                                                "Batch Added"))
-                                                                        .catchError(
+                                                                        .then(
+                                                                            (value) {
+                                                                      print(
+                                                                          "Batch Added");
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
+                                                                    }).catchError(
                                                                             (error) {
                                                                       print(
                                                                           "Failed to add Batch: $error");
@@ -397,9 +468,14 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         .update({
                                                                           "courses.${course.courseName!.toLowerCase()}":
                                                                               {
+                                                                            "startDate":
+                                                                                startdateController.text,
+                                                                            "endDate":
+                                                                                enddateController.text,
                                                                             "courseName":
                                                                                 course.courseName,
-                                                                                "cid":course.cid,
+                                                                            "cid":
+                                                                                course.cid,
                                                                             "payment":
                                                                                 {
                                                                               "1month": course.payment!.s1month,
@@ -448,21 +524,48 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                           .size
                                                                           .width /
                                                                       76.8),
-                                                              child: Text(
-                                                                'Add Batch',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      86,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                              ),
+                                                              child: isLoading
+                                                                  ? const CircularProgressIndicator(
+                                                                      color: Colors
+                                                                          .white,
+                                                                    )
+                                                                  : Text(
+                                                                      'Add Batch',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            MediaQuery.of(context).size.width /
+                                                                                86,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                    ),
                                                             ),
                                                           ),
+                                                          Material(
+                                                              type: MaterialType
+                                                                  .button,
+                                                              child:
+                                                                  MaterialButton(
+                                                                onPressed:
+                                                                    setStartTime,
+                                                                child:
+                                                                    const Text(
+                                                                  "Start Time",
+                                                                ),
+                                                              )),
+                                                          Material(
+                                                              type: MaterialType
+                                                                  .button,
+                                                              child:
+                                                                  MaterialButton(
+                                                                onPressed:
+                                                                    setEndTime,
+                                                                child:
+                                                                    const Text(
+                                                                  "End Time",
+                                                                ),
+                                                              )),
                                                         ],
                                                       );
                                                     }),
@@ -708,13 +811,15 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             .update({
                                                                               "courses.${course.courseName!.toLowerCase()}": {
                                                                                 "courseName": course.courseName,
+                                                                                "startDate": startdateController.text,
+                                                                                "endDate": enddateController.text,
                                                                                 "payment": {
                                                                                   "1month": course.payment!.s1month,
                                                                                   "6month": course.payment!.s6month,
                                                                                   "12month": course.payment!.s12month,
                                                                                   "24months": course.payment!.s24months,
                                                                                 },
-                                                                                "cid":course.cid,
+                                                                                "cid": course.cid,
                                                                                 "batches": documentBatches +
                                                                                     [
                                                                                       _batchController.text.trim()
@@ -819,7 +924,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                           {
                                                         "courseName":
                                                             course.courseName!,
-                                                            "cid":course.cid,
+                                                        "cid": course.cid,
                                                         "payment": {
                                                           "1month": course
                                                               .payment!.s1month,
