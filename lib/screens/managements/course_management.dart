@@ -29,7 +29,6 @@ class _CourseManagementState extends State<CourseManagement> {
 
   @override
   Widget build(BuildContext context) {
-    print(newCid[3]);
     return Scaffold(
       body: Container(
         padding:

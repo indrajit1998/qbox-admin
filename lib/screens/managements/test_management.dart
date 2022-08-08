@@ -256,7 +256,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                       PopUpTextField(
                         controller: _cidController,
                         hint: 'Enter the Course ID',
-                        label: 'CID',
+                        label: 'ID',
                         widthRatio: 2,
                         validator: (value) {
                           if (value!.isEmpty) {

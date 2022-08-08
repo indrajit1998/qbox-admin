@@ -366,7 +366,7 @@ class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
                       PopUpTextField(
                         controller: _cidController,
                         hint: 'Enter the COURSE ID',
-                        label: 'CID',
+                        label: 'ID',
                         widthRatio: 1,
                         validator: (value) {
                           if (value!.isEmpty) {
