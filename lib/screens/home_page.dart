@@ -20,6 +20,8 @@ import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
 import 'package:qbox_admin/widgets/home_tile.dart';
 
+import 'managements/didyouknow.dart';
+
 enum Management {
   courseManagement,
   batchManagement,
@@ -32,7 +34,8 @@ enum Management {
   levelUpSeriesManagement,
   practiceQuestionManagement,
   patentsTeacherMeeting,
-  contentFilter
+  contentFilter,
+  didYouKnow,
 }
 
 class HomePage extends StatefulWidget {
@@ -118,6 +121,7 @@ class _HomePageState extends State<HomePage> {
     'Level up Tests',
     'Live Classes',
     'Parents Teacher Meeting',
+    'Did You Know',
   ];
 
   List<String> sideAdminList = [
@@ -131,7 +135,8 @@ class _HomePageState extends State<HomePage> {
     'Level Up Tests',
     'Live Videos',
     'Free Videos',
-    "Content Filter"
+    "Content Filter",
+    'Did You Know',
   ];
   // Left Panel Management List
   List sideTeachersManagementList = [
@@ -143,6 +148,7 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
+    Management.didYouKnow,
   ];
 
   List sideAdminManagementList = [
@@ -156,7 +162,8 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.freeVideosManagement,
-    Management.contentFilter
+    Management.contentFilter,
+    Management.didYouKnow
   ];
 
   List<Widget> teachersList = [
@@ -167,7 +174,8 @@ class _HomePageState extends State<HomePage> {
     const TeacherSideStudentPage(),
     const LevelUpManagement(),
     const TeacherSideLiveClassPage(),
-    const StudentTeacherMeeting()
+    const StudentTeacherMeeting(),
+    const DidYouKnow(),
   ];
 
   List<Widget> adminList = [
@@ -181,7 +189,8 @@ class _HomePageState extends State<HomePage> {
     const LevelUpManagement(),
     const VideoManagement(),
     const FreeVideoManagement(),
-    const ContentFilterPage()
+    const ContentFilterPage(),
+    const DidYouKnow(),
   ];
 
   getRole() async {
