@@ -29,6 +29,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
   final _lastNameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _roleController = TextEditingController();
+  final _courseController = TextEditingController();
+  final _subjectController = TextEditingController();
 
   @override
   void dispose() {
@@ -244,6 +246,64 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                 Padding(
                                   padding: EdgeInsets.all(padding20 / 2),
                                   child: TextFormField(
+                                    controller: _subjectController,
+                                    onSaved: (value) {
+                                      _subjectController.text = value!;
+                                    },
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      hintText: "Subject",
+                                      fillColor: Colors.grey[100],
+                                      filled: true,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(padding20 / 2),
+                                  child: TextFormField(
+                                    controller: _courseController,
+                                    onSaved: (value) {
+                                      _courseController.text = value!;
+                                    },
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      hintText: "Course",
+                                      fillColor: Colors.grey[100],
+                                      filled: true,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(padding20 / 2),
+                                  child: TextFormField(
                                     obscureText: true,
                                     controller: _passwordController,
                                     onSaved: (value) {
@@ -419,7 +479,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
                           Map<String, dynamic> data =
                               documentSnapshot.data()! as Map<String, dynamic>;
                           return ListTile(
-                            title: Text(data['firstName']+" "+data['lastName']),
+                            title: Text(
+                                data['firstName'] + " " + data['lastName']),
                             trailing: IconButton(
                               onPressed: () {},
                               icon: const Icon(Icons.delete),
@@ -463,7 +524,6 @@ class _TeacherManagementState extends State<TeacherManagement> {
             ).toJson())
             .then((value) => print("User Added"))
             .catchError((error) => print("Failed to add user: $error"));
-        
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "too-many-requests":

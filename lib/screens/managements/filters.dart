@@ -36,7 +36,7 @@ class _ContentFilterPageState extends State<ContentFilterPage> {
             ),
             const Spacer(),
             BottomMaterialButton(
-              text: 'Add Meeting',
+              text: 'Add Filter',
               popUpChild: Column(children: [
                 PopUpTextField(
                   controller: catController,
