@@ -521,6 +521,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
               phoneNumber: int.parse(_phoneNumberController.text.trim()),
               email: email,
               role: "teacher",
+              courses: [_courseController.text.trim()],
+              subjects: [_subjectController.text.trim()],
             ).toJson())
             .then((value) => print("User Added"))
             .catchError((error) => print("Failed to add user: $error"));
