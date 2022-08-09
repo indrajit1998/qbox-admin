@@ -196,8 +196,18 @@ class _BatchManagementState extends State<BatchManagement> {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
-                                                return Center(
+                                                return SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      (1 / 2),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      (1 / 2),
                                                   child: SingleChildScrollView(
+                                                    controller:
+                                                        ScrollController(),
                                                     child: StatefulBuilder(
                                                         builder: (BuildContext
                                                                 context,
@@ -407,13 +417,15 @@ class _BatchManagementState extends State<BatchManagement> {
                                                         ),
                                                         actions: [
                                                           Material(
-                                                            // color: Colors
-                                                            //     .amberAccent,
+                                                            color: Colors
+                                                                .amberAccent,
                                                             elevation: 4,
                                                             type: MaterialType
                                                                 .button,
                                                             child:
                                                                 MaterialButton(
+                                                              color: Colors
+                                                                  .amberAccent,
                                                               onPressed:
                                                                   () async {
                                                                 if (_batchFormKey
@@ -543,10 +555,13 @@ class _BatchManagementState extends State<BatchManagement> {
                                                             ),
                                                           ),
                                                           Material(
+                                                            color: Colors.amberAccent,
                                                               type: MaterialType
                                                                   .button,
                                                               child:
                                                                   MaterialButton(
+                                                                color: Colors
+                                                                    .amberAccent,
                                                                 onPressed:
                                                                     setStartTime,
                                                                 child:
@@ -555,10 +570,13 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                 ),
                                                               )),
                                                           Material(
+                                                            color: Colors.amberAccent,
                                                               type: MaterialType
                                                                   .button,
                                                               child:
                                                                   MaterialButton(
+                                                                color: Colors
+                                                                    .amberAccent,
                                                                 onPressed:
                                                                     setEndTime,
                                                                 child:
