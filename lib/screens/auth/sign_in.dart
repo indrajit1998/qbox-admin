@@ -220,46 +220,7 @@ class _SignInState extends State<SignIn> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * (20 / 792),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Divider(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                          const Text("Sign up with Us"),
-                          Expanded(
-                              child: Divider(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * (10 / 792),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Text(
-                              "Not Yet Register?",
-                              style: TextStyle(fontSize: smallTextSize),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.popAndPushNamed(
-                                  context, SignUp.routeName);
-                            },
-                            child: Text(
-                              'Create Account',
-                              style: TextStyle(fontSize: smallTextSize! + 3),
-                            ),
-                          ),
-                        ],
-                      ),
+                      
                     ],
                   ),
                 ),
