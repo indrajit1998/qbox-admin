@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -18,6 +19,7 @@ class FreeVideoManagement extends StatefulWidget {
 }
 
 class _FreeVideoManagementState extends State<FreeVideoManagement> {
+  bool isUploaded = false;
   final _titleController = TextEditingController();
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
@@ -57,7 +59,9 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                 imageFileName = downloadUrl.toString();
               } else if (type == 'videos') {
                 videoFileName = downloadUrl.toString();
+              //  log('message');
               }
+            
               return Fluttertoast.showToast(msg: "$type Added Successfully");
             });
           }
@@ -129,9 +133,9 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
+                          return  const Center(
                               child: CircularProgressIndicator());
-                        }
+                        }                      
                         return Wrap(
                           spacing: 20,
                           runSpacing: 15,
@@ -192,8 +196,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                           widthRatio: 1),
                       Container(
                         margin: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.height *
-                                (20 / 792)),
+                            vertical: MediaQuery.of(context).size.height * (20 / 792)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -217,6 +220,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                               child: MaterialButton(
                                 padding: const EdgeInsets.all(20),
                                 onPressed: () async {
+                                  
                                   await uploadFile('videos');
                                 },
                                 child: const Text('Pick Video'),
@@ -232,15 +236,22 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                   ),
                 ),
                 popUpactions: [
+                  isUploaded == true ? const CircularProgressIndicator() :
                   Material(
+
                     color: Colors.amberAccent,
                     elevation: 4,
                     type: MaterialType.button,
                     child: MaterialButton(
                       onPressed: () async {
-                        if (_freeVideoFormKey.currentState!.validate() &&
+                        setState(() {
+                        Center(child: CircularProgressIndicator());            
+                        });
+                        
+                       if (_freeVideoFormKey.currentState!.validate() &&
                             imageFileName.isNotEmpty &&
                             videoFileName.isNotEmpty) {
+
                           try {
                             DateTime currentTime = DateTime.now();
                             await FirebaseFirestore.instance
@@ -258,15 +269,27 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                       .instance.currentUser!.email
                                       .toString(),
                                 ).toJson())
-                                .then((value) => print("Video Added"))
+                                .then((value) {
+                                  setState(() {
+                                    isUploaded = false;
+                                  });
+                                }
+                                )
                                 .catchError((error) =>
-                                    print("Failed to add Video: $error"));
+                                Center(child: CircularProgressIndicator()),
+                                    // print("Failed to add Video: $error")
+                                    );
                           } on FirebaseAuthException catch (error) {
-                            switch (error.code) {
+                            setState(() {
+                              isUploaded==false;
+                            });
+                            switch (error.code) {                             
                               default:
                                 errorMessage =
                                     "An undefined Error happened.+$error";
                             }
+                            
+                          const Center(child: CircularProgressIndicator());
                             Fluttertoast.showToast(msg: errorMessage!);
                           }
                           Fluttertoast.showToast(
@@ -276,19 +299,23 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                           }
                           Navigator.of(context, rootNavigator: true).pop();
                         }
+                        else{
+                         Center(child: CircularProgressIndicator());
+                        }
                       },
                       padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8),
-                      child: Text(
-                        'Add Video',
+                          MediaQuery.of(context).size.width / 76.8
+                          ),
+                      child: Text('Add Video',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width / 86,
                           color: Colors.black,
                         ),
-                      ),
+                        )
                     ),
-                  )
+                    )
                 ],
+            
               ),
             ),
           ],
