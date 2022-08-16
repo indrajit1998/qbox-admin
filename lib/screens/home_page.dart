@@ -7,6 +7,7 @@ import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/filters.dart';
 import 'package:qbox_admin/screens/managements/free_video_management.dart';
 import 'package:qbox_admin/screens/managements/level_up_management.dart';
+import 'package:qbox_admin/screens/managements/parent_teacher_meeting.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
 import 'package:qbox_admin/screens/managements/profile/profile.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
@@ -35,6 +36,7 @@ enum Management {
   practiceQuestionManagement,
   patentsTeacherMeeting,
   contentFilter,
+  teacherMeeting,
   didYouKnow,
 }
 
@@ -126,7 +128,9 @@ class _HomePageState extends State<HomePage> {
 
   List<String> sideAdminList = [
     'Courses ',
+    'Parents Teacher Meeting',
     'Batch',
+
     'DPB',
     'Students',
     'Teachers',
@@ -148,11 +152,13 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
+    
     Management.didYouKnow,
   ];
 
   List sideAdminManagementList = [
     Management.courseManagement,
+    Management.teacherMeeting,
     Management.batchManagement,
     Management.practiceQuestionManagement,
     Management.studentManagement,
@@ -180,6 +186,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> adminList = [
     const CourseManagement(),
+    const ParentTeacherMeeting(),
     const BatchManagement(),
     const PracticeManagement(),
     const StudentManagement(),
@@ -209,6 +216,7 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
+                  primary:false,
                   child: Column(
                     children: [
                       Container(
@@ -261,7 +269,10 @@ class _HomePageState extends State<HomePage> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
+
+                  
                             return ListView(
+                              
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               padding: EdgeInsets.all(
