@@ -28,6 +28,10 @@ dependencies:
   intl: ^0.17.0
   firebase_messaging_web: ^3.1.0
   webviewx: ^0.2.1
+  syncfusion_flutter_xlsio: ^20.2.44-beta
+  path_provider: ^2.0.11
+  open_file: ^3.2.1
+  universal_html: ^2.0.8
   
   
 
