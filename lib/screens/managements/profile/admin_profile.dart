@@ -14,12 +14,22 @@ class AdminProfile extends StatelessWidget {
     }
     return Scaffold(
         body: Center(
-      child: Container(
-        child: IconButton(
-          onPressed: ()=>_logout(context),
-          icon: Icon(Icons.logout),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+
+            ElevatedButton(onPressed: ()=>Navigator.of(context).pop(), child: Text('Back')),
+            SizedBox(height: 22),
+
+            Container(
+            child: ElevatedButton(
+              onPressed: ()=>_logout(context),
+              child: Text('Log Out'),
+            ),
+          ),]
         ),
-      ),
+
     ));
   }
 }
