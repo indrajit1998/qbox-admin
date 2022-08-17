@@ -166,7 +166,7 @@ class _StudentManagementState extends State<StudentManagement> {
           _startDate=pickedDate;
         }else{
           if(_startDate!=null && pickedDate.isBefore(_startDate!)){
-            Fluttertoast.showToast(msg: 'Pick Date Before End Date');
+            Fluttertoast.showToast(msg: 'Pick Date After Start Date');
             return ;
           }
           _toDate=pickedDate;

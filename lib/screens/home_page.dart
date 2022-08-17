@@ -20,6 +20,7 @@ import 'package:qbox_admin/screens/managements/teacher_management.dart';
 import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
 import 'package:qbox_admin/widgets/home_tile.dart';
+import 'package:qbox_admin/screens/managements/profile/admin_profile.dart';
 
 import 'managements/didyouknow.dart';
 
@@ -236,6 +237,12 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const Profile()));
+                            }
+                            if(_role=='Admin'){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const AdminProfile()));
                             }
                           },
                           child: Row(
