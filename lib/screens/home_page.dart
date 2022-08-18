@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qbox_admin/screens/managements/batch_management.dart';
+import 'package:qbox_admin/screens/managements/chapter_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/filters.dart';
@@ -30,6 +31,7 @@ enum Management {
   studentManagement,
   fullLengthTestManagement,
   teacherManagement,
+  chapterManagement,
   couponManagement,
   videoManagement,
   freeVideosManagement,
@@ -121,6 +123,7 @@ class _HomePageState extends State<HomePage> {
     'Batches',
     'Courses',
     'Students',
+    'Chapters'
     'Level up Tests',
     'Live Classes',
     'Parents Teacher Meeting',
@@ -135,6 +138,7 @@ class _HomePageState extends State<HomePage> {
     'DPB',
     'Students',
     'Teachers',
+    'Chapters',
     'Coupons',
     'Full Length Tests',
     'Level Up Tests',
@@ -150,6 +154,7 @@ class _HomePageState extends State<HomePage> {
     Management.batchManagement,
     Management.courseManagement,
     Management.studentManagement,
+    Management.chapterManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
@@ -164,6 +169,7 @@ class _HomePageState extends State<HomePage> {
     Management.practiceQuestionManagement,
     Management.studentManagement,
     Management.teacherManagement,
+    Management.chapterManagement,
     Management.couponManagement,
     Management.fullLengthTestManagement,
     Management.levelUpSeriesManagement,
@@ -192,6 +198,7 @@ class _HomePageState extends State<HomePage> {
     const PracticeManagement(),
     const StudentManagement(),
     const TeacherManagement(),
+    const ChapterManagement(),
     const CouponManagement(),
     const FullLengthTestManagement(),
     const LevelUpManagement(),
@@ -349,15 +356,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                       }
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          !snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'No Data is Available for you. Please Contact the Academics staff\n(Try to Refresh the Page)',
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
+                      // if (snapshot.connectionState == ConnectionState.done &&
+                      //     !snapshot.hasData) {
+                      //   return const Center(
+                      //     child: Text(
+                      //       'No Data is Available for you. Please Contact the Academics staff\n(Try to Refresh the Page)',
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   );
+                      // }
                       return displayList[bodyIndex];
                     }),
               ),
