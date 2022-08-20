@@ -45,6 +45,7 @@ class PracticeModel {
 class Questions {
   int? id;
   String? question;
+  String? equation;
   String? description;
   Options? options;
   bool? multipleCorrectAnswers;
@@ -57,6 +58,7 @@ class Questions {
   Questions(
       {this.id,
       this.question,
+      this.equation,
       this.description,
       this.options,
       this.multipleCorrectAnswers,
@@ -64,11 +66,12 @@ class Questions {
       this.explanation,
       this.tip,
       this.tags,
-      this.difficulty});
+      this.difficulty,});
 
   Questions.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     question = json['question'];
+    equation = json['equation'];
     description = json['description'];
     options =
         json['options'] != null ? Options.fromJson(json['options']) : null;
@@ -86,6 +89,7 @@ class Questions {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['question'] = question;
+    data['equation'] = equation;
     data['description'] = description;
     if (options != null) {
       data['options'] = options!.toJson();

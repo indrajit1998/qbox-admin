@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 import 'package:qbox_admin/models/level_up_series_model.dart';
 import 'package:qbox_admin/widgets/question_paper_options_card.dart';
 
@@ -21,6 +22,21 @@ class LevelUpQuestionPreview extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          SizedBox(
+            height: 50,
+            child: TeXView(
+              renderingEngine: const TeXViewRenderingEngine.katex(),
+              child: TeXViewDocument(
+                  id: question.id.toString(),
+                  r"""<h2>(C)   \(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</h2>""",
+                  style: const TeXViewStyle(textAlign: TeXViewTextAlign.Center)
+                  // style: const TeXViewStyle(
+                  //     // fontSize: 20,
+                  //     // fontWeight: FontWeight.w500,
+                  //     ),
+                  ),
+            ),
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -28,11 +44,11 @@ class LevelUpQuestionPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               QuestionPaperOptionsCard(
-                option: question.answers!.answerA!,
+                option: question.options!.optionA!,
                 correctAnswer: question.correctAnswers!.answerACorrect!,
               ),
               QuestionPaperOptionsCard(
-                option: question.answers!.answerB!,
+                option: question.options!.optionB!,
                 correctAnswer: question.correctAnswers!.answerBCorrect!,
               ),
             ],
@@ -41,11 +57,11 @@ class LevelUpQuestionPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               QuestionPaperOptionsCard(
-                option: question.answers!.answerC!,
+                option: question.options!.optionC!,
                 correctAnswer: question.correctAnswers!.answerCCorrect!,
               ),
               QuestionPaperOptionsCard(
-                option: question.answers!.answerD!,
+                option: question.options!.optionD!,
                 correctAnswer: question.correctAnswers!.answerDCorrect!,
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qbox_admin/screens/managements/batch_management.dart';
+import 'package:qbox_admin/screens/managements/complete_class_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/filters.dart';
@@ -31,6 +32,7 @@ enum Management {
   couponManagement,
   videoManagement,
   freeVideosManagement,
+  completedClassManagement,
   levelUpSeriesManagement,
   practiceQuestionManagement,
   patentsTeacherMeeting,
@@ -134,6 +136,7 @@ class _HomePageState extends State<HomePage> {
     'Full Length Tests',
     'Level Up Tests',
     'Live Videos',
+    'Completed Class',
     'Free Videos',
     "Content Filter",
     'Did You Know',
@@ -161,6 +164,7 @@ class _HomePageState extends State<HomePage> {
     Management.fullLengthTestManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
+    Management.completedClassManagement,
     Management.freeVideosManagement,
     Management.contentFilter,
     Management.didYouKnow
@@ -188,6 +192,7 @@ class _HomePageState extends State<HomePage> {
     const FullLengthTestManagement(),
     const LevelUpManagement(),
     const VideoManagement(),
+    const CompleteClassManagement(),
     const FreeVideoManagement(),
     const ContentFilterPage(),
     const DidYouKnow(),
