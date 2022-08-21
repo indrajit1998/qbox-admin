@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qbox_admin/utilities/dimensions.dart';
+import 'package:universal_html/html.dart';
 
 class CompleteClassManagement extends StatefulWidget {
   const CompleteClassManagement({Key? key}) : super(key: key);
@@ -260,6 +261,25 @@ class _CompleteClassManagementState extends State<CompleteClassManagement> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(
+                      Dimensions.width10 * 8,
+                      Dimensions.height10 * 5,
+                    ),
+                    primary: Colors.amber,
+                    elevation: 0,
+                  ),
+                  child: const Text('Show Result'),
+                ),
+                const SizedBox(width: 30),
+              ],
             ),
             Expanded(
               child: Container(
