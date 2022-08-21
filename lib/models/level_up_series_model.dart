@@ -11,18 +11,19 @@ class LevelUpTestModel {
   int? paperSet;
   List<QuestionsList>? questionsList;
 
-  LevelUpTestModel(
-      {this.uploadedTeacher,
-      this.testName,
-      this.examTime,
-      this.duration,
-      this.category,
-      this.course,
-      this.chapter,
-      this.paperSet,
-      this.subject,
-        this.cid,
-      this.questionsList});
+  LevelUpTestModel({
+    this.uploadedTeacher,
+    this.testName,
+    this.examTime,
+    this.duration,
+    this.category,
+    this.course,
+    this.chapter,
+    this.paperSet,
+    this.subject,
+    this.cid,
+    this.questionsList,
+  });
 
   LevelUpTestModel.fromJson(Map<String, dynamic> json) {
     uploadedTeacher = json['uploadedTeacher'];
@@ -65,6 +66,7 @@ class LevelUpTestModel {
 class QuestionsList {
   int? id;
   String? question;
+  String? equation;
   String? description;
   Options? options;
   bool? multipleCorrectAnswers;
@@ -74,21 +76,24 @@ class QuestionsList {
   List<String>? tags;
   String? difficulty;
 
-  QuestionsList(
-      {this.id,
-      this.question,
-      this.description,
-      this.options,
-      this.multipleCorrectAnswers,
-      this.correctAnswers,
-      this.explanation,
-      this.tip,
-      this.tags,
-      this.difficulty});
+  QuestionsList({
+    this.id,
+    this.question,
+    this.equation,
+    this.description,
+    this.options,
+    this.multipleCorrectAnswers,
+    this.correctAnswers,
+    this.explanation,
+    this.tip,
+    this.tags,
+    this.difficulty,
+  });
 
   QuestionsList.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     question = json['question'];
+    equation = json['equation'];
     description = json['description'];
     options =
         json['options'] != null ? Options.fromJson(json['options']) : null;
@@ -106,6 +111,7 @@ class QuestionsList {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['question'] = question;
+    data['equation'] = equation;
     data['description'] = description;
     if (options != null) {
       data['options'] = options!.toJson();

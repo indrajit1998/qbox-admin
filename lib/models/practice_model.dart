@@ -6,13 +6,14 @@ class PracticeModel {
   String? subject;
   List<Questions>? questions;
 
-  PracticeModel(
-      {this.uploadedTeacher,
-      this.category,
-      this.course,
-      this.chapter,
-      this.subject,
-      this.questions});
+  PracticeModel({
+    this.uploadedTeacher,
+    this.category,
+    this.course,
+    this.chapter,
+    this.subject,
+    this.questions,
+  });
 
   PracticeModel.fromJson(Map<String, dynamic> json) {
     uploadedTeacher = json['uploadedTeacher'] as String;
@@ -55,18 +56,19 @@ class Questions {
   List<String>? tags;
   String? difficulty;
 
-  Questions(
-      {this.id,
-      this.question,
-      this.equation,
-      this.description,
-      this.options,
-      this.multipleCorrectAnswers,
-      this.correctAnswers,
-      this.explanation,
-      this.tip,
-      this.tags,
-      this.difficulty,});
+  Questions({
+    this.id,
+    this.question,
+    this.equation,
+    this.description,
+    this.options,
+    this.multipleCorrectAnswers,
+    this.correctAnswers,
+    this.explanation,
+    this.tip,
+    this.tags,
+    this.difficulty,
+  });
 
   Questions.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -22,21 +22,20 @@ class LevelUpQuestionPreview extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(
-            height: 50,
-            child: TeXView(
-              renderingEngine: const TeXViewRenderingEngine.katex(),
-              child: TeXViewDocument(
+          if ( question.equation != null && question.equation!.isNotEmpty)
+            SizedBox(
+              height: 50,
+              child: TeXView(
+                renderingEngine: const TeXViewRenderingEngine.katex(),
+                child: TeXViewDocument(
                   id: question.id.toString(),
-                  r"""<h2>(C)   \(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</h2>""",
-                  style: const TeXViewStyle(textAlign: TeXViewTextAlign.Center)
-                  // style: const TeXViewStyle(
-                  //     // fontSize: 20,
-                  //     // fontWeight: FontWeight.w500,
-                  //     ),
+                  question.equation!,
+                  style: const TeXViewStyle(
+                    textAlign: TeXViewTextAlign.Center,
                   ),
+                ),
+              ),
             ),
-          ),
           const SizedBox(
             height: 20,
           ),

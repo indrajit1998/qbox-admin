@@ -80,6 +80,7 @@ class _LevelUpQuestionAddingScreenState
       value['id${mappingQuestion.id}'] = {
         "id": mappingQuestion.id,
         "question": mappingQuestion.question,
+        "equation": mappingQuestion.equation,
         "description": mappingQuestion.description,
         "options": {
           "optionA": mappingQuestion.options!.optionA,
@@ -162,8 +163,10 @@ class _LevelUpQuestionAddingScreenState
                         itemCount: questionsLength(),
                         itemBuilder: (BuildContext context, int index) {
                           return QuestionPreview(
-                              question: questionsList[index]);
-                        }),
+                            question: questionsList[index],
+                          );
+                        },
+                      ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -207,7 +210,13 @@ class _LevelUpQuestionAddingScreenState
                             ),
                             onChanged: (String val) {
                               equationString = val;
-                              print(_equationController);
+                              final mathExpression =
+                                  TeXParser(equationString).parse();
+                              final texNode = convertMathExpressionToTeXNode(
+                                  mathExpression);
+                              print(texNode);
+                              final texString = texNode.buildTeXString();
+                              print(texString);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -370,7 +379,7 @@ class _LevelUpQuestionAddingScreenState
                                 Questions(
                                   id: questionsList.length + 1,
                                   question: _questionController.text.trim(),
-                                  equation: equationString,
+                                  equation: '\\( $equationString \\)',
                                   options: Options(
                                     optionA: _optionAController.text.trim(),
                                     optionB: _optionBController.text.trim(),

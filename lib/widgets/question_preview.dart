@@ -21,21 +21,20 @@ class QuestionPreview extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(
-            height: 50,
-            child: TeXView(
-              renderingEngine: const TeXViewRenderingEngine.katex(),
-              child: TeXViewDocument(
+          if (question.equation != null && question.equation!.isNotEmpty)
+            SizedBox(
+              height: 50,
+              child: TeXView(
+                renderingEngine: const TeXViewRenderingEngine.katex(),
+                child: TeXViewDocument(
                   id: question.id.toString(),
-                  r"""8\cdot{b}^{2}+6""",
-                  style: const TeXViewStyle(textAlign: TeXViewTextAlign.Center)
-                  // style: const TeXViewStyle(
-                  //     // fontSize: 20,
-                  //     // fontWeight: FontWeight.w500,
-                  //     ),
+                  question.equation!,
+                  style: const TeXViewStyle(
+                    textAlign: TeXViewTextAlign.Center,
                   ),
+                ),
+              ),
             ),
-          ),
           const SizedBox(
             height: 20,
           ),
