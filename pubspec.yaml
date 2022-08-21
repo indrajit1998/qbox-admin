@@ -31,6 +31,10 @@ dependencies:
   html_editor_enhanced: ^2.5.0
   flutter_tex: ^4.0.3+1
   math_keyboard: ^0.1.7
+  syncfusion_flutter_xlsio: ^20.2.44-beta
+  path_provider: ^2.0.11
+  open_file: ^3.2.1
+  universal_html: ^2.0.8
   
   
 

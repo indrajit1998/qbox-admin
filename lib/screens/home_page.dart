@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qbox_admin/screens/managements/batch_management.dart';
+import 'package:qbox_admin/screens/managements/chapter_management.dart';
 import 'package:qbox_admin/screens/managements/complete_class_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/filters.dart';
 import 'package:qbox_admin/screens/managements/free_video_management.dart';
 import 'package:qbox_admin/screens/managements/level_up_management.dart';
+import 'package:qbox_admin/screens/managements/parent_teacher_meeting.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
 import 'package:qbox_admin/screens/managements/profile/profile.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
@@ -20,6 +22,7 @@ import 'package:qbox_admin/screens/managements/teacher_management.dart';
 import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
 import 'package:qbox_admin/widgets/home_tile.dart';
+import 'package:qbox_admin/screens/managements/profile/admin_profile.dart';
 
 import 'managements/didyouknow.dart';
 
@@ -29,6 +32,7 @@ enum Management {
   studentManagement,
   fullLengthTestManagement,
   teacherManagement,
+  chapterManagement,
   couponManagement,
   videoManagement,
   freeVideosManagement,
@@ -37,6 +41,7 @@ enum Management {
   practiceQuestionManagement,
   patentsTeacherMeeting,
   contentFilter,
+  teacherMeeting,
   didYouKnow,
 }
 
@@ -120,6 +125,7 @@ class _HomePageState extends State<HomePage> {
     'Batches',
     'Courses',
     'Students',
+    'Chapters'
     'Level up Tests',
     'Live Classes',
     'Parents Teacher Meeting',
@@ -128,10 +134,13 @@ class _HomePageState extends State<HomePage> {
 
   List<String> sideAdminList = [
     'Courses ',
+    'Parents Teacher Meeting',
     'Batch',
+
     'DPB',
     'Students',
     'Teachers',
+    'Chapters',
     'Coupons',
     'Full Length Tests',
     'Level Up Tests',
@@ -148,18 +157,22 @@ class _HomePageState extends State<HomePage> {
     Management.batchManagement,
     Management.courseManagement,
     Management.studentManagement,
+    Management.chapterManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
+    
     Management.didYouKnow,
   ];
 
   List sideAdminManagementList = [
     Management.courseManagement,
+    Management.teacherMeeting,
     Management.batchManagement,
     Management.practiceQuestionManagement,
     Management.studentManagement,
     Management.teacherManagement,
+    Management.chapterManagement,
     Management.couponManagement,
     Management.fullLengthTestManagement,
     Management.levelUpSeriesManagement,
@@ -184,10 +197,12 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> adminList = [
     const CourseManagement(),
+    const ParentTeacherMeeting(),
     const BatchManagement(),
     const PracticeManagement(),
     const StudentManagement(),
     const TeacherManagement(),
+    const ChapterManagement(),
     const CouponManagement(),
     const FullLengthTestManagement(),
     const LevelUpManagement(),
@@ -214,6 +229,7 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
+                  primary:false,
                   child: Column(
                     children: [
                       Container(
@@ -233,6 +249,12 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const Profile()));
+                            }
+                            if(_role=='Admin'){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const AdminProfile()));
                             }
                           },
                           child: Row(
@@ -266,7 +288,10 @@ class _HomePageState extends State<HomePage> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
+
+                  
                             return ListView(
+                              
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               padding: EdgeInsets.all(
@@ -336,15 +361,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                       }
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          !snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'No Data is Available for you. Please Contact the Academics staff\n(Try to Refresh the Page)',
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
+                      // if (snapshot.connectionState == ConnectionState.done &&
+                      //     !snapshot.hasData) {
+                      //   return const Center(
+                      //     child: Text(
+                      //       'No Data is Available for you. Please Contact the Academics staff\n(Try to Refresh the Page)',
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   );
+                      // }
                       return displayList[bodyIndex];
                     }),
               ),

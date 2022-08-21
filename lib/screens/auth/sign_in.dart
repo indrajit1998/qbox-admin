@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qbox_admin/screens/auth/sign_up.dart';
 import 'package:qbox_admin/screens/home_page.dart';
 import 'package:qbox_admin/utilities/dimensions.dart';
 
