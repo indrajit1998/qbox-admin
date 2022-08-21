@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qbox_admin/models/admin_ptm_model.dart';
 
@@ -20,18 +19,18 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
   bool _isLoading = false;
   String? errorMessage;
 
-  var _course = ['English', 'Hindi', 'Sanskrit'];
+  final _course = ['English', 'Hindi', 'Sanskrit'];
   String? _selectCourse = 'English';
 
-  var _batch = ['A', 'B', 'C'];
+  final _batch = ['A', 'B', 'C'];
   String? _selectBatch = 'A';
 
-  var _category = ['B Tech', 'B Com', 'MCA'];
+  final _category = ['B Tech', 'B Com', 'MCA'];
   String? _selectCategory = 'B Tech';
 
-  TextEditingController _meetingLinkController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
+  final TextEditingController _meetingLinkController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
 
   Widget getTextField(String title, TextEditingController controller,
       String hintText, bool valid) {
@@ -39,11 +38,12 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 31),
-            child: Text(title)),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 31),
+          child: Text(title),
+        ),
         Container(
           width: MediaQuery.of(context).size.width * (1 / 4),
-          height:  MediaQuery.of(context).size.height *(1/15),
+          height: MediaQuery.of(context).size.height * (1 / 15),
           margin: const EdgeInsets.symmetric(horizontal: 31),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
           decoration:
@@ -51,51 +51,58 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
           child: TextField(
             controller: controller,
             decoration: InputDecoration(
-                hintText: hintText,
-                border: InputBorder.none,
-                errorText: valid ? 'Field Must beFill' : null),
+              hintText: hintText,
+              border: InputBorder.none,
+              errorText: valid ? 'Field Must beFill' : null,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget getDropDownOptions(String title, List _item, String? selection) {
+  Widget getDropDownOptions(String title, List item, String? selection) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 31),
-            child: Text(title)),
+          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 31),
+          child: Text(title),
+        ),
         Container(
           width: MediaQuery.of(context).size.width * (1 / 4),
-          height: MediaQuery.of(context).size.height *(1/15),
+          height: MediaQuery.of(context).size.height * (1 / 15),
           margin: const EdgeInsets.symmetric(horizontal: 31),
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-          decoration:
-              BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
+          ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-                value: selection,
-                isExpanded: true,
-                iconSize: 35,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.black,
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    //selection=value;
-                    if (title == 'Category') {
-                      _selectCategory = value;
-                    } else if (title == 'Batch') {
-                      _selectBatch = value;
-                    } else {
-                      _selectCourse = value;
-                    }
-                  });
-                },
-                items: _item.map((item) => _buildDropMenuItem(item)).toList()),
+              value: selection,
+              isExpanded: true,
+              iconSize: 35,
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.black,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  //selection=value;
+                  if (title == 'Category') {
+                    _selectCategory = value;
+                  } else if (title == 'Batch') {
+                    _selectBatch = value;
+                  } else {
+                    _selectCourse = value;
+                  }
+                });
+              },
+              items: item.map((item) => _buildDropMenuItem(item)).toList(),
+            ),
           ),
         ),
       ],
@@ -106,7 +113,15 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
     return DropdownMenuItem(
       alignment: AlignmentDirectional.topCenter,
       value: item,
-      child: Align(alignment: Alignment.centerLeft,child: Text(item, style: const TextStyle(fontSize: 20))),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontSize: 20,
+          ),
+        ),
+      ),
     );
   }
 
@@ -116,20 +131,20 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
       children: [
         Row(
           children: [
-            Spacer(),
+            const Spacer(),
             ElevatedButton(
               onPressed: () {},
-              child: Text('Show Result'),
               style: ElevatedButton.styleFrom(primary: Colors.amber),
+              child: const Text('Show Result'),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
           ],
         ),
-        SizedBox(height: 3),
-        Divider(
+        const SizedBox(height: 3),
+        const Divider(
           color: Colors.amber,
         ),
-        Text(
+        const Text(
           'Upcoming Meeting',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
@@ -137,7 +152,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height / 2.3,
-            margin: EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance.collection('PTM').snapshots(),
@@ -153,7 +168,8 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                 if (snapshot.hasData) {
                   return SingleChildScrollView(
                     child: Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
                       child: DataTable(
 
                           //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
@@ -167,7 +183,8 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                           ],
                           rows: snapshot.data!.docs
                               .map((rowData) => DataRow(
-                                     color: MaterialStateColor.resolveWith((states) => Colors.black12),
+                                    color: MaterialStateColor.resolveWith(
+                                        (states) => Colors.black12),
                                     cells: <DataCell>[
                                       DataCell(Text(rowData['category'])),
                                       DataCell(Text(rowData['course'])),
@@ -181,7 +198,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                     ),
                   );
                 }
-                return Text('No Meeting');
+                return const Text('No Meeting');
               },
             ),
           )
@@ -211,7 +228,6 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return Container(
       padding: EdgeInsets.all(MediaQuery.of(context).size.width * (1 / 153.6)),
       child: Column(
@@ -232,7 +248,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                     _isCreateMeeting = false;
                   });
                 },
-                icon:const Icon(
+                icon: const Icon(
                   Icons.close,
                   color: Colors.amber,
                 ),
@@ -276,71 +292,74 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                           'Time', _timeController, 'hh:mm:ss', _isTimeValidate),
                     ])),
           if (_isCreateMeeting == false) switchContent(),
-          Container(
-            child: Expanded(
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_isCreateMeeting == true) {
-                          _checkValidation();
-                          if (!_isLinkValidate &&
-                              !_isTimeValidate &&
-                              !_isDateValidate) {
-                            setState(() {
-                              _isLoading = true;
-                            });
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_isCreateMeeting == true) {
+                    _checkValidation();
+                    if (!_isLinkValidate &&
+                        !_isTimeValidate &&
+                        !_isDateValidate) {
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-                            try {
-                              await FirebaseFirestore.instance
-                                  .collection('PTM')
-                                  .doc(
-                                      '${_dateController.text} ${_timeController.text}')
-                                  .set(PTMmodel(
-                                          category: _selectCategory,
-                                          course: _selectCourse,
-                                          date: _dateController.text.trim(),
-                                          batch: _selectBatch,
-                                          meetingLink: _meetingLinkController
-                                              .text
-                                              .trim(),
-                                          time: _timeController.text.trim())
-                                      .toJson())
-                                  .then((value) => print('Meeting Added'))
-                                  .catchError((error) {
-                                Fluttertoast.showToast(msg: error);
-                              });
-                            } on FirebaseAuthException catch (error) {
-                              switch (error.code) {
-                                default:
-                                  errorMessage =
-                                      "An undefined Error happened.+$error";
-                              }
-                              Fluttertoast.showToast(msg: errorMessage!);
-                            }
-                            setState(() {
-                              _meetingLinkController.clear();
-                              _timeController.clear();
-                              _dateController.clear();
-                              _isCreateMeeting = false;
-                              _isLoading = false;
-                            });
-
-                            //Add logic to create admin_ptm_model
-                          }
-                        } else {
-                          setState(() {
-                            _isCreateMeeting = true;
-                          });
+                      try {
+                        await FirebaseFirestore.instance
+                            .collection('PTM')
+                            .doc(
+                                '${_dateController.text} ${_timeController.text}')
+                            .set(PTMmodel(
+                                    category: _selectCategory,
+                                    course: _selectCourse,
+                                    date: _dateController.text.trim(),
+                                    batch: _selectBatch,
+                                    meetingLink:
+                                        _meetingLinkController.text.trim(),
+                                    time: _timeController.text.trim())
+                                .toJson())
+                            .then(
+                              (value) => print('Meeting Added'),
+                            )
+                            .catchError((error) {
+                          Fluttertoast.showToast(msg: error);
+                        });
+                      } on FirebaseAuthException catch (error) {
+                        switch (error.code) {
+                          default:
+                            errorMessage =
+                                "An undefined Error happened.+$error";
                         }
-                      },
-                      style: ElevatedButton.styleFrom(primary: Colors.amber),
-                      child: _isLoading
-                          ? CircularProgressIndicator(color: Colors.black,)
-                          : Text(_isCreateMeeting
-                              ? 'Create New Meeting'
-                              : 'Add Meeting'),
-                    ),),),
+                        Fluttertoast.showToast(msg: errorMessage!);
+                      }
+                      setState(() {
+                        _meetingLinkController.clear();
+                        _timeController.clear();
+                        _dateController.clear();
+                        _isCreateMeeting = false;
+                        _isLoading = false;
+                      });
+
+                      //Add logic to create admin_ptm_model
+                    }
+                  } else {
+                    setState(() {
+                      _isCreateMeeting = true;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(primary: Colors.amber),
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        color: Colors.black,
+                      )
+                    : Text(_isCreateMeeting
+                        ? 'Create New Meeting'
+                        : 'Add Meeting'),
+              ),
+            ),
           ),
         ],
       ),
