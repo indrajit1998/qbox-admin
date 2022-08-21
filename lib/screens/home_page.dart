@@ -12,6 +12,7 @@ import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/parent_teacher_meeting.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
 import 'package:qbox_admin/screens/managements/profile/profile.dart';
+import 'package:qbox_admin/screens/managements/result_management.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
 import 'package:qbox_admin/screens/managements/teacher/assigned_courses.dart';
 import 'package:qbox_admin/screens/managements/teacher/batches.dart';
@@ -39,6 +40,7 @@ enum Management {
   completedClassManagement,
   levelUpSeriesManagement,
   practiceQuestionManagement,
+  resultManagement,
   patentsTeacherMeeting,
   contentFilter,
   teacherMeeting,
@@ -126,7 +128,7 @@ class _HomePageState extends State<HomePage> {
     'Courses',
     'Students',
     'Chapters'
-    'Level up Tests',
+        'Level up Tests',
     'Live Classes',
     'Parents Teacher Meeting',
     'Did You Know',
@@ -142,6 +144,7 @@ class _HomePageState extends State<HomePage> {
     'Chapters',
     'Coupons',
     'Full Length Tests',
+    'Result',
     'Level Up Tests',
     'Live Videos',
     'Completed Class',
@@ -160,7 +163,6 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
-    
     Management.didYouKnow,
   ];
 
@@ -174,6 +176,7 @@ class _HomePageState extends State<HomePage> {
     Management.chapterManagement,
     Management.couponManagement,
     Management.fullLengthTestManagement,
+    Management.resultManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.completedClassManagement,
@@ -204,6 +207,7 @@ class _HomePageState extends State<HomePage> {
     const ChapterManagement(),
     const CouponManagement(),
     const FullLengthTestManagement(),
+    const ResultManagement(),
     const LevelUpManagement(),
     const VideoManagement(),
     const CompleteClassManagement(),
@@ -228,7 +232,7 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
-                  primary:false,
+                  primary: false,
                   child: Column(
                     children: [
                       Container(
@@ -249,11 +253,12 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                       builder: (context) => const Profile()));
                             }
-                            if(_role=='Admin'){
+                            if (_role == 'Admin') {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const AdminProfile()));
+                                      builder: (context) =>
+                                          const AdminProfile()));
                             }
                           },
                           child: Row(
@@ -288,9 +293,7 @@ class _HomePageState extends State<HomePage> {
                                   child: CircularProgressIndicator());
                             }
 
-                  
                             return ListView(
-                              
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               padding: EdgeInsets.all(

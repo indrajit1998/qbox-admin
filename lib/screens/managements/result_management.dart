@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qbox_admin/utilities/dimensions.dart';
 
-class CompleteClassManagement extends StatefulWidget {
-  const CompleteClassManagement({Key? key}) : super(key: key);
+class ResultManagement extends StatefulWidget {
+  const ResultManagement({Key? key}) : super(key: key);
 
   @override
-  State<CompleteClassManagement> createState() =>
-      _CompleteClassManagementState();
+  State<ResultManagement> createState() => _ResultManagementState();
 }
 
-class _CompleteClassManagementState extends State<CompleteClassManagement> {
+class _ResultManagementState extends State<ResultManagement> {
   final TextEditingController _chapterTextController = TextEditingController();
   String? _chapterCourse;
   String? _chapterCategory;
@@ -50,7 +49,7 @@ class _CompleteClassManagementState extends State<CompleteClassManagement> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Completed Class',
+              'Result',
               style: TextStyle(
                 fontSize: Get.width / 45,
               ),
