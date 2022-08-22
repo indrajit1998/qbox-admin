@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:qbox_admin/models/teacher_model.dart';
+import 'package:qbox_admin/models/category_model.dart';
 import 'package:qbox_admin/utilities/dimensions.dart';
 
 class TeacherManagement extends StatefulWidget {
@@ -16,11 +18,15 @@ class _TeacherManagementState extends State<TeacherManagement> {
   final _teacherFormKey = GlobalKey<FormState>();
   final _teacherController = TextEditingController();
   bool _signUpFetching = false;
-  // final _formKey = GlobalKey<FormState>();
+
   final _auth = FirebaseAuth.instance;
   String? errorMessage;
   double? titleSize;
   double? padding;
+
+  List<String?> allCourse = [];
+  List<Map<String?, bool>> batchList = [];
+  List<bool?> optionSelected = [];
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -29,22 +35,32 @@ class _TeacherManagementState extends State<TeacherManagement> {
   final _lastNameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _roleController = TextEditingController();
-  final _courseController = TextEditingController();
   final _subjectController = TextEditingController();
 
   @override
-  void dispose() {
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmedPasswordController.dispose();
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneNumberController.dispose();
-    _roleController.dispose();
+  void initState() {
+    getData();
+    super.initState();
   }
 
-  // String? errorMessage;
+  Future<void> getData() async {
+    final querysnapshot =
+        await FirebaseFirestore.instance.collection('cat').get();
+    for (var docSnap in querysnapshot.docs) {
+      CategoryModel model = CategoryModel.fromJson(docSnap.data());
+      model.courses?.forEach((element) {
+        allCourse.add(element.courseName);
+        optionSelected.add(false);
+        Map<String?, bool> tmpBatchlst = {};
+        for (int i = 0; i < element.batches!.length; i++) {
+          tmpBatchlst.putIfAbsent(element.batches![i], () => false);
+        }
+        batchList.add(tmpBatchlst);
+      });
+      print(allCourse);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double padding20 = MediaQuery.of(context).size.height * (20 / 1563);
@@ -61,6 +77,7 @@ class _TeacherManagementState extends State<TeacherManagement> {
       titleSize = MediaQuery.of(context).size.width * (78 / 1563);
       //smallTextSize = 15;
     }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
@@ -274,31 +291,68 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(padding20 / 2),
-                                  child: TextFormField(
-                                    controller: _courseController,
-                                    onSaved: (value) {
-                                      _courseController.text = value!;
-                                    },
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                          color: Colors.white,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                            Dimensions.borderRadius12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                            Dimensions.borderRadius12),
-                                      ),
-                                      hintText: "Course",
-                                      fillColor: Colors.grey[100],
-                                      filled: true,
-                                    ),
+                                  child: ExpansionTile(
+                                    title: Text('Select Course'),
+                                    children: [
+                                      for (int i = 0;
+                                          i < allCourse.length;
+                                          i++) ...[
+                                        Column(
+                                          children: [
+                                            CheckboxListTile(
+                                              title: Text('(${i+1})  '+ '${allCourse[i]!}'),
+                                              value: optionSelected[i],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  optionSelected[i] = value;
+                                                });
+                                              },
+                                            ),
+                                            if (optionSelected[i] == true)
+                                              Container(
+                                                width: double.maxFinite,
+                                                child: Wrap(
+                                                  spacing: 12,
+                                                  runSpacing: 6,
+                                                  children: [
+                                                    //getList(batchList[i],i)
+                                                    for (int j = 0;
+                                                        j < batchList[i].length;
+                                                        j++) ...[
+                                                      Container(
+                                                        width: 160,
+                                                        child: CheckboxListTile(
+                                                          value: batchList[i]
+                                                              .values
+                                                              .toList()[j],
+                                                          onChanged: (val) {
+                                                            setState(() {
+                                                              batchList[i][batchList[i].keys.toList()[j]] = val!;
+                                                            });
+                                                          },
+                                                          title: Text(
+                                                              'Batch ${batchList[i].keys.toList()[j]}'),
+                                                          shape: RoundedRectangleBorder(
+                                                            side:BorderSide(
+                                                              width: 1.5,color: Colors.amber
+                                                            ) ,
+                                                              borderRadius: BorderRadius.only(
+                                                                  topLeft: Radius.circular(25),
+                                                                  topRight: Radius.circular(25),
+                                                                  bottomRight: Radius.circular(25),
+                                                                  bottomLeft: Radius.circular(25))),//Border.all(),
+
+                                                        ),
+
+                                                      )
+                                                    ]
+                                                  ],
+                                                ),
+                                              )
+                                          ],
+                                        )
+                                      ],
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -512,6 +566,17 @@ class _TeacherManagementState extends State<TeacherManagement> {
                   // Navigator.popAndPushNamed(context, HomePage.routeName),
                   Navigator.pop(context)
                 });
+        List<String> selectedCourses = [];
+        List<String> tmpBatchList=[];
+        for (int i = 0; i < optionSelected.length; i++) {
+          if (optionSelected[i]!) {
+            selectedCourses.add(allCourse[i]!);
+            batchList[i].forEach((key, value) {
+              if(value==true){
+              tmpBatchList.add(key!);
+              }});
+          }
+        }
         await FirebaseFirestore.instance
             .collection('teachers')
             .doc(email)
@@ -521,12 +586,19 @@ class _TeacherManagementState extends State<TeacherManagement> {
               phoneNumber: int.parse(_phoneNumberController.text.trim()),
               email: email,
               role: "teacher",
-              courses: [_courseController.text.trim()],
+              courses: selectedCourses,
               subjects: [_subjectController.text.trim()],
+              batches: tmpBatchList
             ).toJson())
-            .then((value) => print("User Added"))
-            .catchError((error) => print("Failed to add user: $error"));
+            .then((value) {
+          print("User Added");
+          setState(() {
+            _signUpFetching = false;
+          });
+          Navigator.of(context).pop();
+        }).catchError((error) => print("Failed to add user: $error"));
       } on FirebaseAuthException catch (error) {
+        print('error is $error');
         switch (error.code) {
           case "too-many-requests":
             errorMessage = "Too many requests";
@@ -540,8 +612,5 @@ class _TeacherManagementState extends State<TeacherManagement> {
         Fluttertoast.showToast(msg: errorMessage!);
       }
     }
-    setState(() {
-      _signUpFetching = false;
-    });
   }
 }
