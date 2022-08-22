@@ -1,9 +1,12 @@
+import 'dart:core';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qbox_admin/models/admin_ptm_model.dart';
+import 'package:qbox_admin/models/category_model.dart';
 
 class ParentTeacherMeeting extends StatefulWidget {
   const ParentTeacherMeeting({Key? key}) : super(key: key);
@@ -19,15 +22,52 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
   bool _isTimeValidate = false;
   bool _isLoading = false;
   String? errorMessage;
+  List<String?> allCourse = [];
+  List<String?> batchList=[];
+  List<String?> _category=[];
+  String? _selectCourse ;
+  String? _selectCategory ;
+  String? _selectBatch;
 
-  var _course = ['English', 'Hindi', 'Sanskrit'];
-  String? _selectCourse = 'English';
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
 
-  var _batch = ['A', 'B', 'C'];
-  String? _selectBatch = 'A';
+  Future<void> getData() async {
+    final querysnapshot =
+    await FirebaseFirestore.instance.collection('cat').get();
 
-  var _category = ['B Tech', 'B Com', 'MCA'];
-  String? _selectCategory = 'B Tech';
+    for (var docSnap in querysnapshot.docs) {
+      CategoryModel model = CategoryModel.fromJson(docSnap.data());
+      model.courses?.forEach((element) {
+        allCourse.add(element.courseName);
+
+        for (int j = 0; j < element.batches!.length; j++) {
+          batchList.add(element.batches?.elementAt(j));
+        }
+      });
+    }
+    querysnapshot.docs.forEach((document) {
+     _category.add(document.id);
+    });
+    _selectCategory=_category.elementAt(0);
+    _selectCourse=allCourse.elementAt(0);
+    _selectBatch=batchList.elementAt(0);
+
+    print(_category);
+    print(batchList);
+    print(allCourse);
+    print(_selectBatch);
+    print(_selectCourse);
+    print(_selectCategory);
+    setState(() {
+    });
+  }
+
+
+
 
   TextEditingController _meetingLinkController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -60,7 +100,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
     );
   }
 
-  Widget getDropDownOptions(String title, List _item, String? selection) {
+  Widget getDropDownOptions(String title, List item, String? selection) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -95,7 +135,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                     }
                   });
                 },
-                items: _item.map((item) => _buildDropMenuItem(item)).toList()),
+                items: item.map((item) => _buildDropMenuItem(item)).toList()),
           ),
         ),
       ],
@@ -248,7 +288,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 getDropDownOptions('Category', _category, _selectCategory),
-                getDropDownOptions('Course', _course, _selectCourse),
+                getDropDownOptions('Course', allCourse, _selectCourse),
               ],
             ),
           ),
@@ -257,7 +297,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getDropDownOptions('Batch', _batch, _selectBatch),
+                  getDropDownOptions('Batch', batchList, _selectBatch),
                   if (_isCreateMeeting == true)
                     getTextField('Meet Link', _meetingLinkController,
                         'Paste Link', _isLinkValidate),

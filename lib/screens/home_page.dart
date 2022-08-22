@@ -21,7 +21,7 @@ import 'package:qbox_admin/screens/managements/test_management.dart';
 import 'package:qbox_admin/screens/managements/videos_management.dart';
 import 'package:qbox_admin/widgets/home_tile.dart';
 import 'package:qbox_admin/screens/managements/profile/admin_profile.dart';
-
+import 'package:qbox_admin/screens/auth/sign_in.dart';
 import 'managements/didyouknow.dart';
 
 enum Management {
@@ -206,6 +206,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  void _logout(BuildContext context)async{
+    Navigator.of(context).pushReplacementNamed(SignIn.routeName);
+    await FirebaseAuth.instance.signOut();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -263,7 +269,16 @@ class _HomePageState extends State<HomePage> {
                                         MediaQuery.of(context).size.width / 70,
                                     fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(),
+                              SizedBox(width: 5,),
+                              if(_role=='Admin')
+                                IconButton(
+                                 // style: ElevatedButton.styleFrom(primary: Colors.green[300]),
+                                  onPressed: ()=>_logout(context),
+                                  icon: Icon(Icons.logout),
+
+                                  //child: Text('Log Out'),
+                                ),
+
                             ],
                           ),
                         ),
