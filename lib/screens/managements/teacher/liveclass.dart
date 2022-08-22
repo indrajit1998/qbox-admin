@@ -59,7 +59,7 @@ class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
 
       if (pickedTime != null) {
         String newDate = f.format(picked);
-        print(newDate);
+        debugPrint(newDate);
         setState(() {
           _scheduleDateController.text =
               "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
@@ -86,7 +86,7 @@ class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
       if (pickedTime != null) {
         setState(() {
           String newDate = f.format(picked);
-          print(newDate);
+          debugPrint(newDate);
           _endDateController.text =
               "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
         });
@@ -212,7 +212,7 @@ class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
                                                                               subjectText: data['course'],
                                                                             ))))
                                                         .catchError((error) =>
-                                                            print(
+                                                            debugPrint(
                                                                 'Failed: $error'));
                                                   },
                                                   icon: const Icon(Icons
@@ -472,9 +472,9 @@ class _TeacherSideLiveClassPageState extends State<TeacherSideLiveClassPage> {
                                         chapter: _chapterController.text.trim(),
                                         isLive: false)
                                     .toJson())
-                                .then((value) => print("Video Added"))
+                                .then((value) => debugPrint("Video Added"))
                                 .catchError((error) =>
-                                    print("Failed to add Video: $error"));
+                                    debugPrint("Failed to add Video: $error"));
                           } on FirebaseAuthException catch (error) {
                             switch (error.code) {
                               default:

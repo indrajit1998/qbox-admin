@@ -83,7 +83,7 @@ class ProfileState extends State<Profile> {
     List<Widget> pages = [
       profile(context, data),
       accountDetails(context, accountDetailsMap),
-      BioData(),
+      const BioData(),
       infoToShowStudent(context, infoToShowStudentMap),
     ];
     return Scaffold(

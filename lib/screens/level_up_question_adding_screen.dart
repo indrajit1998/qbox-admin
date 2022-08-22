@@ -210,13 +210,6 @@ class _LevelUpQuestionAddingScreenState
                             ),
                             onChanged: (String val) {
                               equationString = val;
-                              final mathExpression =
-                                  TeXParser(equationString).parse();
-                              final texNode = convertMathExpressionToTeXNode(
-                                  mathExpression);
-                              print(texNode);
-                              final texString = texNode.buildTeXString();
-                              print(texString);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -470,9 +463,9 @@ class _LevelUpQuestionAddingScreenState
                                 "questionsList":
                                     questionsListToMap(questionsList),
                               })
-                              .then((value) => print("Practice Set Added"))
+                              .then((value) => debugPrint("Practice Set Added"))
                               .catchError((error) =>
-                                  print("Failed to add Practice Set: $error"));
+                                  debugPrint("Failed to add Practice Set: $error"));
                         } on FirebaseAuthException catch (error) {
                           switch (error.code) {
                             default:

@@ -277,7 +277,7 @@ class _VideoManagementState extends State<VideoManagement> {
                                                                     'course'],
                                                               ))))
                                                   .catchError((error) =>
-                                                      print('Failed: $error'));
+                                                      debugPrint('Failed: $error'));
                                             },
                                             icon: const Icon(Icons
                                                 .play_circle_outline_rounded),
@@ -424,9 +424,9 @@ class _VideoManagementState extends State<VideoManagement> {
                                         chapter: "",
                                         isLive: false)
                                     .toJson())
-                                .then((value) => print("Video Added"))
+                                .then((value) => debugPrint("Video Added"))
                                 .catchError((error) =>
-                                    print("Failed to add Video: $error"));
+                                    debugPrint("Failed to add Video: $error"));
                           } on FirebaseAuthException catch (error) {
                             switch (error.code) {
                               default:

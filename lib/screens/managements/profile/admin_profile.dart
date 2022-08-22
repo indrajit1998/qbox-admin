@@ -7,29 +7,24 @@ class AdminProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _logout(BuildContext context)async{
+    void _logout(BuildContext context) async {
       Navigator.of(context).pushReplacementNamed(SignIn.routeName);
       await FirebaseAuth.instance.signOut();
-
     }
+
     return Scaffold(
-        body: Center(
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:[
-
-            ElevatedButton(onPressed: ()=>Navigator.of(context).pop(), child: Text('Back')),
-            SizedBox(height: 22),
-
-            Container(
-            child: ElevatedButton(
-              onPressed: ()=>_logout(context),
-              child: Text('Log Out'),
-            ),
-          ),]
-        ),
-
-    ));
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Back')),
+          const SizedBox(height: 22),
+          ElevatedButton(
+            onPressed: () => _logout(context),
+            child: const Text('Log Out'),
+          ),
+        ]),
+      ),
+    );
   }
 }

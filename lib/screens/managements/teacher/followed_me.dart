@@ -95,7 +95,7 @@ class _TeacherSideStudentPageState extends State<TeacherSideStudentPage> {
                                     //     data['profileImageName']),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasError) {
-                                        print(
+                                        debugPrint(
                                             'Something went wrong!+ ${snapshot.error}');
                                         return const Icon(
                                           Icons.person,

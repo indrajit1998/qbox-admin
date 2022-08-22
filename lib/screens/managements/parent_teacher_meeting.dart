@@ -321,7 +321,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                                     time: _timeController.text.trim())
                                 .toJson())
                             .then(
-                              (value) => print('Meeting Added'),
+                              (value) => debugPrint('Meeting Added'),
                             )
                             .catchError((error) {
                           Fluttertoast.showToast(msg: error);

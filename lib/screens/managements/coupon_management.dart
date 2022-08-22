@@ -255,7 +255,7 @@ class _CouponManagementState extends State<CouponManagement> {
                                             .text
                                             .trim())
                                     .toJson())
-                                .then((value) => print("Coupon Added"))
+                                .then((value) => debugPrint("Coupon Added"))
                                 .catchError((error) {
                               // ignore: invalid_return_type_for_catch_error
                               return Fluttertoast.showToast(msg: error!);

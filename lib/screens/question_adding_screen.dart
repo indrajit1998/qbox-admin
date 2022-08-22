@@ -429,9 +429,9 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                                 "cid": widget.cid,
                                 "questions": questionsListToMap(questionsList),
                               })
-                              .then((value) => print("Practice Set Added"))
+                              .then((value) => debugPrint("Practice Set Added"))
                               .catchError((error) =>
-                                  print("Failed to add Practice Set: $error"));
+                                  debugPrint("Failed to add Practice Set: $error"));
                         } on FirebaseAuthException catch (error) {
                           switch (error.code) {
                             default:

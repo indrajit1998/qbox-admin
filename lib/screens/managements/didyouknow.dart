@@ -258,9 +258,9 @@ class _DidYouKnowState extends State<DidYouKnow> {
                                       .instance.currentUser!.email
                                       .toString(),
                                 ).toJson())
-                                .then((value) => print("Video Added"))
+                                .then((value) => debugPrint("Video Added"))
                                 .catchError((error) =>
-                                    print("Failed to add Video: $error"));
+                                    debugPrint("Failed to add Video: $error"));
                           } on FirebaseAuthException catch (error) {
                             switch (error.code) {
                               default:

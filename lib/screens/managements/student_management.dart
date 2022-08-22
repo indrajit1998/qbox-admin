@@ -106,7 +106,7 @@ class _StudentManagementState extends State<StudentManagement> {
               //     data['profileImageName']),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  print('Something went wrong!+ ${snapshot.error}');
+                  debugPrint('Something went wrong!+ ${snapshot.error}');
                   return const Icon(
                     Icons.person,
                   );

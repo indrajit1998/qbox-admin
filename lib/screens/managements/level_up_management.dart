@@ -79,15 +79,14 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                       child: CircularProgressIndicator());
                                 }
                                 return Wrap(
-                                  crossAxisAlignment:
-                                      WrapCrossAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
                                   runSpacing: 10,
                                   spacing: 10,
                                   children: snapshot.data!.docs
                                       .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document
-                                        .data()! as Map<String, dynamic>;
+                                    Map<String, dynamic> data = document.data()!
+                                        as Map<String, dynamic>;
                                     DateTime endTime =
                                         DateTime.parse(data['examTime']);
                                     DateTime now = DateTime.now();
@@ -144,15 +143,14 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                       child: CircularProgressIndicator());
                                 }
                                 return Wrap(
-                                  crossAxisAlignment:
-                                      WrapCrossAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
                                   runSpacing: 10,
                                   spacing: 10,
                                   children: snapshot.data!.docs
                                       .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document
-                                        .data()! as Map<String, dynamic>;
+                                    Map<String, dynamic> data = document.data()!
+                                        as Map<String, dynamic>;
                                     DateTime endTime =
                                         DateTime.parse(data['examTime']);
                                     DateTime now = DateTime.now();
@@ -324,18 +322,17 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  LevelUpQuestionAddingScreen(
+                              builder: (context) => LevelUpQuestionAddingScreen(
                                 category: _categoryController.text.trim(),
                                 course: _courseController.text.trim(),
-                                cid:_cidController.text.trim(),
+                                cid: _cidController.text.trim(),
                                 chapter: _chapterController.text.trim(),
                                 subject: _subjectController.text.trim(),
                                 testName: _testNameController.text.trim(),
-                                duration: int.parse(
-                                    _durationController.text.trim()),
-                                paperSet: int.parse(
-                                    _paperSetController.text.trim()),
+                                duration:
+                                    int.parse(_durationController.text.trim()),
+                                paperSet:
+                                    int.parse(_paperSetController.text.trim()),
                                 examTime: _examTimeController.text.trim(),
                               ),
                             ),
@@ -343,7 +340,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                         }
                       },
                       padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8),
+                          MediaQuery.of(context).size.width / 76.8,),
                       child: Text(
                         'Next',
                         style: TextStyle(

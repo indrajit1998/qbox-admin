@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class BioData extends StatefulWidget {
-  BioData({Key? key}) : super(key: key);
+  const BioData({Key? key}) : super(key: key);
 
   @override
   State<BioData> createState() => _BioDataState();
@@ -36,7 +36,7 @@ class _BioDataState extends State<BioData> {
   }
 
   Future<void> getData() async {
-    print('inide getData');
+    debugPrint('inide getData');
     _userEmail = FirebaseAuth.instance.currentUser!.email;
     setState(() {
       _isLoading=true;
@@ -48,7 +48,7 @@ class _BioDataState extends State<BioData> {
     if (docUser.exists &&docUser.data()!.isNotEmpty) {
 
       biodataMap = docUser.data()!;
-      print('inside exists con ${biodataMap}');
+      debugPrint('inside exists con $biodataMap');
       _teacherName = biodataMap['name'];
       _courseCategory = biodataMap['courseCategory'];
       _subjectBased = biodataMap['subjectBased'];
@@ -63,7 +63,7 @@ class _BioDataState extends State<BioData> {
       _phoneOtp = biodataMap['phoneOtp'];
       _phoneNumber = biodataMap['phoneNumber'];
 
-      print('phone no.$_phoneNumber');
+      debugPrint('phone no.$_phoneNumber');
 
     }
     setState(() {
@@ -78,7 +78,7 @@ class _BioDataState extends State<BioData> {
     //   setState(() {
     //
     //     biodataMap = value.data()!;
-    //     print(biodataMap);
+    //     debugPrint(biodataMap);
     //   });
     // });
   }
@@ -86,7 +86,7 @@ class _BioDataState extends State<BioData> {
   Future<void> _saveForm() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
-      print('not valid');
+      debugPrint('not valid');
       return;
     }
 
@@ -95,11 +95,11 @@ class _BioDataState extends State<BioData> {
     setState(() {
       _isLoading = true;
     });
-    final _setdocUser = await FirebaseFirestore.instance
+    final setdocUser = await FirebaseFirestore.instance
         .collection('teachers')
         .doc(_userEmail).collection('biodata').doc(_userEmail).get();
-    if (!_setdocUser.exists) {
-      final _docUser = FirebaseFirestore.instance
+    if (!setdocUser.exists) {
+      final docUser = FirebaseFirestore.instance
           .collection('teachers')
           .doc(_userEmail)
           .collection('biodata')
@@ -120,7 +120,7 @@ class _BioDataState extends State<BioData> {
         'ifscCode': _ifscCode
       };
 
-      await _docUser.set(json);
+      await docUser.set(json);
     } else {
       final setdocUser = FirebaseFirestore.instance
           .collection('teachers')

@@ -14,7 +14,6 @@ class TeacherManagement extends StatefulWidget {
 
 class _TeacherManagementState extends State<TeacherManagement> {
   final _teacherFormKey = GlobalKey<FormState>();
-  final _teacherController = TextEditingController();
   bool _signUpFetching = false;
   // final _formKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
@@ -524,8 +523,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
               courses: [_courseController.text.trim()],
               subjects: [_subjectController.text.trim()],
             ).toJson())
-            .then((value) => print("User Added"))
-            .catchError((error) => print("Failed to add user: $error"));
+            .then((value) => debugPrint("User Added"))
+            .catchError((error) => debugPrint("Failed to add user: $error"));
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "too-many-requests":
