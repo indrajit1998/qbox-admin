@@ -83,11 +83,11 @@ class _BioDataState extends State<BioData> {
         _phoneOtp = biodataMap['phoneOtp'];
         _phoneNumber = biodataMap['phoneNumber'];
 
-        List<dynamic> educationQualificationlst =
-        biodataMap['educationQualification'];
+        List<dynamic> educationQualificationlst =biodataMap['educationQualification'];
         List<dynamic> extraQualificationlst = biodataMap['extraQualification'];
         curEducationRow = educationQualificationlst.length;
         curExtraQualRow = extraQualificationlst.length;
+
         for (int i = 0; i < curEducationRow; i++) {
           GroupEducationControllers group = GroupEducationControllers();
           group.percentageController.text =
@@ -101,7 +101,7 @@ class _BioDataState extends State<BioData> {
           group.examController.text = educationQualificationlst[i]['exam'];
           _lstGroupContollers.add(group);
         }
-
+        print('lst length is ${_lstGroupContollers.length}');
         for (int i = 0; i < curExtraQualRow; i++) {
           GroupExtraQualControllers extraGroup = GroupExtraQualControllers();
           extraGroup.designationController.text =
@@ -244,33 +244,7 @@ class _BioDataState extends State<BioData> {
       controller: textController,
     );
   }
-
-  List<Widget> getListOfEducationTextField(int index) {
-    GroupEducationControllers group;
-
-    if (_lstGroupContollers.length != _exams.length) {
-      group = _lstGroupContollers[index];
-    } else {
-      group = GroupEducationControllers();
-    }
-    final examField = _generateTextField(group.examController);
-    final institutionField = _generateTextField(group.institutionController);
-    final boardField = _generateTextField(group.boardController);
-    final percentageField = _generateTextField(group.percentageController);
-    final gradeField = _generateTextField(group.gradeController);
-    final passingYearField = _generateTextField(group.passignYearController);
-    setState(() {
-      if (_lstGroupContollers.length == _exams.length) {
-        _lstGroupContollers.add(group);
-      }
-
-      _exams.add(examField);
-      _boards.add(boardField);
-      _grades.add(gradeField);
-      _institutes.add(institutionField);
-      _passingYears.add(passingYearField);
-      _percentage.add(percentageField);
-    });
+  List<Widget> getEduList(int index){
     return [
       Padding(
         padding: EdgeInsets.only(left: 2.5),
@@ -298,29 +272,36 @@ class _BioDataState extends State<BioData> {
       ),
     ];
   }
+  List<Widget> getListOfEducationTextField(int index) {
 
-  List<Widget> getListOfExtraQualTextField(int index) {
-    GroupExtraQualControllers group;
-    if (_lstExtraQualControllers.length != _nameOfCompany.length) {
-      group = _lstExtraQualControllers[index];
-    } else {
-      group = GroupExtraQualControllers();
+
+    if(index<_lstGroupContollers.length&& index<_exams.length)return getEduList(index);
+    print(' lstGroupControllerLenght=${_lstGroupContollers.length} and examsLength=${_exams.length}');
+    if (_lstGroupContollers.length == index) {
+
+      GroupEducationControllers group = GroupEducationControllers();
+      _lstGroupContollers.add(group);
     }
 
-    final nameOfCompanyField = _generateTextField(group.companyNameController);
-    final fromDateField = _generateTextField(group.fromDateController);
-    final expMonthField = _generateTextField(group.expMonthController);
-    final designationField = _generateTextField(group.designationController);
-    setState(() {
-      if (_lstGroupContollers.length != _nameOfCompany.length) {
-        _lstExtraQualControllers.add(group);
-      }
+    final examField = _generateTextField(_lstGroupContollers[index].examController);
+    final institutionField = _generateTextField(_lstGroupContollers[index].institutionController);
+    final boardField = _generateTextField(_lstGroupContollers[index].boardController);
+    final percentageField = _generateTextField(_lstGroupContollers[index].percentageController);
+    final gradeField = _generateTextField(_lstGroupContollers[index].gradeController);
+    final passingYearField = _generateTextField(_lstGroupContollers[index].passignYearController);
 
-      _nameOfCompany.add(nameOfCompanyField);
-      _expMonth.add(expMonthField);
-      _designation.add(designationField);
-      _fromDate.add(fromDateField);
-    });
+
+         _exams.add(examField);
+         _boards.add(boardField);
+         _grades.add(gradeField);
+         _institutes.add(institutionField);
+         _passingYears.add(passingYearField);
+         _percentage.add(percentageField);
+      return getEduList(index);
+
+  }
+
+  List<Widget> getExtraQualList(int index){
     return [
       Padding(
         padding: EdgeInsets.only(left: 2.5),
@@ -334,8 +315,32 @@ class _BioDataState extends State<BioData> {
         padding: EdgeInsets.only(left: 2.5),
         child: _expMonth[index],
       ),
-      Padding(padding: EdgeInsets.only(left: 2.5), child: _designation[index]),
+      Padding(padding: EdgeInsets.only(left: 2.5), child: _designation[index],),
     ];
+  }
+
+  List<Widget> getListOfExtraQualTextField(int index) {
+
+
+    if(index<_lstExtraQualControllers.length && index<_nameOfCompany.length)return getExtraQualList(index);
+
+    print(' extraQualLenght=${_lstExtraQualControllers.length} and designationLEngth=${_designation.length}');
+    if(_lstExtraQualControllers.length==index){
+      GroupExtraQualControllers group=GroupExtraQualControllers();
+      _lstExtraQualControllers.add(group);
+    }
+    final nameOfCompanyField = _generateTextField(_lstExtraQualControllers[index].companyNameController);
+    final fromDateField = _generateTextField(_lstExtraQualControllers[index].fromDateController);
+    final expMonthField = _generateTextField(_lstExtraQualControllers[index].expMonthController);
+    final designationField = _generateTextField(_lstExtraQualControllers[index].designationController);
+
+
+      _nameOfCompany.add(nameOfCompanyField);
+      _expMonth.add(expMonthField);
+      _designation.add(designationField);
+      _fromDate.add(fromDateField);
+
+   return getExtraQualList(index);
   }
 
   TableRow _buildEducationRows(int i) {
