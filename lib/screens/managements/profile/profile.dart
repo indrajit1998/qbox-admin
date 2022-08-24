@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'bio_data.dart';
+import 'package:qbox_admin/screens/auth/sign_in.dart';
+
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -66,18 +68,13 @@ class ProfileState extends State<Profile> {
         infoToShowStudentMap = value.docs[0].data();
       });
     });
-    // FirebaseFirestore.instance
-    //     .collection('teachers')
-    //     .doc(userEmail)
-    //     .collection("biodata")
-    //     .get()
-    //     .then((value) {
-    //   setState(() {
-    //     biodataMap = value.docs[0].data();
-    //   });
-    // });
   }
 
+  void _logout(BuildContext context)async{
+    Navigator.of(context).pushReplacementNamed(SignIn.routeName);
+    await FirebaseAuth.instance.signOut();
+
+  }
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = [
@@ -89,6 +86,10 @@ class ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Teacher Profile'),
+        actions: [ ElevatedButton(
+          onPressed: ()=>_logout(context),
+          child: const Text('Log Out'),
+        ),]
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -138,123 +139,6 @@ class ProfileState extends State<Profile> {
     );
   }
 }
-
-// Widget biodata(BuildContext context, Map<String, dynamic> data) {
-//
-//   return SingleChildScrollView(
-//     child: Form(
-//       child: Column(
-//         children: [
-//           Text(
-//             "BIODATA",
-//             style: TextStyle(
-//               fontSize: MediaQuery.of(context).size.width / 80,
-//             ),
-//           ),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Teacher Name'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Course Catogary'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Teacher Name'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Subject Based'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Password'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Email Address'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Email OTP'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Phone Number'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Phone OTP'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Address'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Voter Card Number'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Aadhar Card Number'),
-//             ),
-//           )),
-//           const ListTile(
-//               title: TextField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('Bank Account Number'),
-//             ),
-//           )),
-//            ListTile(
-//               title: TextFormField(
-//             decoration: InputDecoration(
-//               border: OutlineInputBorder(),
-//               label: Text('IFSC Code'),
-//             ),
-//           )),
-//           ElevatedButton(onPressed: () {}, child: const Text("Edit")),
-//         ],
-//       ),
-//     ),
-//   );
-// }
 
 Widget infoToShowStudent(BuildContext context, Map<String, dynamic> data) {
   return Column(
