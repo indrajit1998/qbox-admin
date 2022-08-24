@@ -1,0 +1,157 @@
+[33mcommit 861ddbc00550683f301c2d3f3bb714cc049ca70a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Abhishek Singh <abhish95827@gmail.com>
+Date:   Thu Aug 18 03:04:06 2022 +0530
+
+    teacher biodata backend added and admin logout
+
+[33mcommit 8281d34abb67bdb800a82813e3fde456f14c7b57[m
+Author: Abhishek Singh <abhish95827@gmail.com>
+Date:   Thu Aug 18 02:49:29 2022 +0530
+
+    teacher biodata backend added and admin logout
+
+[33mcommit 49683ccd76ac7a5f8400e019759519dc9fb6eb48[m
+Author: Abhishek Singh <abhish95827@gmail.com>
+Date:   Thu Aug 18 02:47:33 2022 +0530
+
+    teacher biodata backend added and admin logout
+
+[33mcommit c25302e52cd5d861ded76f2e5663cb3209424f8a[m
+Author: Abhishek Singh <abhish95827@gmail.com>
+Date:   Wed Aug 17 03:09:54 2022 +0530
+
+    student_management detail complete
+
+[33mcommit 3d64c9c3b722d4d2553fab773ee01c0d940308b4[m
+Author: Abhishek Singh <abhish95827@gmail.com>
+Date:   Tue Aug 16 17:54:48 2022 +0530
+
+    Admin PTM option added
+
+[33mcommit 33ac83b374d66d34fb2ac9e736271ad2b5ce5e3d[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Tue Aug 9 10:20:42 2022 +0530
+
+    Removed sign up option
+
+[33mcommit b55b1f7665ea440662469bc326b90eed2b1a2ae9[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Tue Aug 9 10:14:04 2022 +0530
+
+    Fixed bug in batches screen
+
+[33mcommit e6e0a4aae10920308c1ebee7d30104000792f3a2[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Tue Aug 9 09:51:49 2022 +0530
+
+    added did you know to the admin and teacher side
+
+[33mcommit 9d43ad6e4710303e8ba1012ca1b5fef5325949c5[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Tue Aug 9 09:39:00 2022 +0530
+
+    Fixes
+
+[33mcommit 614907b102911ab7f50cbd16f7e689c25fb9039f[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Tue Aug 9 09:36:30 2022 +0530
+
+    Added field for subject and course to the teacher add
+
+[33mcommit 681fe30f3c20f09d86849850963155808a5b6b39[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Aug 8 20:27:28 2022 +0530
+
+    Added filter page
+
+[33mcommit 97301c821aedb0a6c47787ef981a0120f9656215[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Aug 8 20:01:31 2022 +0530
+
+    PTM Completed on teacher side
+
+[33mcommit dea01ae2ce7ec0dbb3eebb6f361d106836b8e017[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Aug 8 17:11:08 2022 +0530
+
+    Added Start and end time in batches mamagenent
+
+[33mcommit 4447d801178002574f75e6119d7de1e561f2b8f6[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Aug 8 15:34:36 2022 +0530
+
+    changed CID to ID
+
+[33mcommit a39f87ed05498647b15dc2d5d32e2100a8ffac71[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Aug 8 14:12:45 2022 +0530
+
+    removed mendatory 4 fields from the payments course page
+
+[33mcommit 1de6f35b6463710ddfefed2b6087bb31421543e7[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Sat Aug 6 20:10:22 2022 +0530
+
+    added pages to the teacher portal, tested live class, added logic to show and upload only assigned content
+
+[33mcommit 499047845893a99f71a11ff673d07df7dd632be7[m
+Merge: 8e9bbe9 7507a33
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Sat Aug 6 13:28:25 2022 +0530
+
+    Fetched the merged pull request
+
+[33mcommit 8e9bbe9d4e0ae12f1645ef77fdd6b75db6323987[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Sat Aug 6 13:26:22 2022 +0530
+
+    commit
+
+[33mcommit 7507a336ef637b8b43eaecfc903b87fd688757d0[m
+Merge: c27155e 7a14733
+Author: Gajjar Mohit <80083117+Mohit-Gajjar@users.noreply.github.com>
+Date:   Sat Aug 6 13:13:18 2022 +0530
+
+    Merge pull request #2 from krish-dev-7/main
+    
+    Teacher Side
+
+[33mcommit 7a14733c893ba18dd62bf44c99d45566707a2dc5[m
+Merge: f3f2ffd c27155e
+Author: krishna sundar <67998732+krish-dev-7@users.noreply.github.com>
+Date:   Fri Aug 5 20:30:26 2022 +0530
+
+    Merge branch 'Mohit-Gajjar:main' into main
+
+[33mcommit f3f2ffd655012a7889dee7e5bac0431e7d75dc5c[m
+Author: krishna <krish0cyber@gail.com>
+Date:   Fri Aug 5 20:29:13 2022 +0530
+
+    Teacher portal
+
+[33mcommit c27155e0353e94ab5dd6cd619e25cc8b7e08842e[m
+Merge: 9a04721 2623fe9
+Author: Gajjar Mohit <80083117+Mohit-Gajjar@users.noreply.github.com>
+Date:   Fri Aug 5 17:37:54 2022 +0530
+
+    Merge pull request #1 from krish-dev-7/main
+    
+    Reformation by FB
+
+[33mcommit 2623fe9e4d5b50bd18a97f3de79c5078b68fe970[m
+Author: krishna <krish0cyber@gail.com>
+Date:   Fri Aug 5 13:46:08 2022 +0530
+
+    Reformation by FB
+
+[33mcommit 9a047214435e793ea492d53ba9073efae3daaa1d[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Thu Aug 4 14:50:23 2022 +0530
+
+    Live Class implimentation completed
+
+[33mcommit 82ded1b9408fed74296d446fd155c0d8fa7b925f[m
+Author: Mohit-Gajjar <mohitgajjar501@outlook.com>
+Date:   Mon Jul 25 11:04:35 2022 +0530
+
+    Admin Project Pushed
