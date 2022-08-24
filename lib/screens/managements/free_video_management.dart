@@ -145,11 +145,12 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                 DateTime.parse(data['uploadDate']),
                                 DateTime.now());
                             return HomeDisplayScreen(
-                              videoLink: data['videoLink'],
+                              // videoLink: data['videoLink'],
                               imageUrl: data['imageUrl'],
                               uploadDate: timeDifferenceValue,
                               title: data['title'],
-                              likes: data['likes'],
+                              likes: data['likes'], 
+                              // category: ,
                               //  category: data['category'],
                             );
                           }).toList(),

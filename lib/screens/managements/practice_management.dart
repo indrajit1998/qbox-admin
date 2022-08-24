@@ -84,7 +84,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
                             PracticeModel model = PracticeModel.fromJson(data);
                             practiceModelList.add(model);
                             return Container(
-                              height: MediaQuery.of(context).size.height,
+                              // height: MediaQuery.of(context).size.height,
                               width: MediaQuery.of(context).size.width,
                               child: Theme(
                       data: Theme.of(context).copyWith(dividerColor: Colors.white),
