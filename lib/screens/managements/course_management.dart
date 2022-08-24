@@ -95,8 +95,9 @@ class _CourseManagementState extends State<CourseManagement> {
                                         .doc(title)
                                         .delete()
                                         .then(
-                                          (doc) => print("Category deleted"),
-                                          onError: (e) => print(
+                                          (doc) =>
+                                              debugPrint("Category deleted"),
+                                          onError: (e) => debugPrint(
                                               "Error updating document $e"),
                                         );
                                   },
@@ -292,12 +293,11 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                   }
                                                                 })
                                                                 .then((value) =>
-                                                                    print(
+                                                                    debugPrint(
                                                                         "Course Added"))
-                                                                .catchError(
-                                                                    (error) =>
-                                                                        print(
-                                                                            "Failed to add Course: $error"));
+                                                                .catchError((error) =>
+                                                                    debugPrint(
+                                                                        "Failed to add Course: $error"));
                                                           } on FirebaseAuthException catch (error) {
                                                             switch (
                                                                 error.code) {
@@ -369,7 +369,7 @@ class _CourseManagementState extends State<CourseManagement> {
                                         Text(course.courseName!),
                                         Text(
                                           "CID : ${course.cid}",
-                                          style: TextStyle(fontSize: 12),
+                                          style: const TextStyle(fontSize: 12),
                                         )
                                       ],
                                     ),
@@ -542,12 +542,11 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                             .delete()
                                                                   })
                                                                   .then((value) =>
-                                                                      print(
+                                                                      debugPrint(
                                                                           "Course Deleted"))
-                                                                  .catchError(
-                                                                      (error) =>
-                                                                          print(
-                                                                              "Failed to delete Course: $error"));
+                                                                  .catchError((error) =>
+                                                                      debugPrint(
+                                                                          "Failed to delete Course: $error"));
                                                             } on FirebaseAuthException catch (error) {
                                                               switch (
                                                                   error.code) {
@@ -647,11 +646,11 @@ class _CourseManagementState extends State<CourseManagement> {
                                                                       }
                                                                     })
                                                                     .then((value) =>
-                                                                        print(
+                                                                        debugPrint(
                                                                             "Course updated"))
                                                                     .catchError(
                                                                         (error) =>
-                                                                            print("Failed to update Course: $error"));
+                                                                            debugPrint("Failed to update Course: $error"));
                                                               } on FirebaseAuthException catch (error) {
                                                                 switch (error
                                                                     .code) {
@@ -770,8 +769,9 @@ class _CourseManagementState extends State<CourseManagement> {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                              }).catchError((error) =>
-                                      print("Failed to add category: $error"));
+                              }).catchError((error) {
+                                debugPrint("Failed to add category: $error");
+                              });
                             } on FirebaseAuthException catch (error) {
                               switch (error.code) {
                                 default:

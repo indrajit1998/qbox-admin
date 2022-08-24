@@ -493,8 +493,8 @@ class _SignUpState extends State<SignUp> {
               email: email,
               role: _roleController.text.trim(),
             ).toJson())
-            .then((value) => print("User Added"))
-            .catchError((error) => print("Failed to add user: $error"));
+            .then((value) => debugPrint("User Added"))
+            .catchError((error) => debugPrint("Failed to add user: $error"));
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "too-many-requests":

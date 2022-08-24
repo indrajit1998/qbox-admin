@@ -16,14 +16,14 @@ class LevelUpManagement extends StatefulWidget {
 
 class _LevelUpManagementState extends State<LevelUpManagement> {
 
-  String? selectedValue = null;
+  String? selectedValue;
   final _dropdownFormKey = GlobalKey<FormState>();
   List<DropdownMenuItem<String>> get dropdownItems{
   List<DropdownMenuItem<String>> menuItems = [
-    DropdownMenuItem(child: Text("20 minute"),value: "20 minutes"),
-    DropdownMenuItem(child: Text("50 minutes"),value: "50 minutes"),
-    DropdownMenuItem(child: Text("120 minutes"),value: "120 minutes"),
-    DropdownMenuItem(child: Text("2 hours"),value: "2 hour"),
+    const DropdownMenuItem(value: "20 minutes", child: Text("20 minute")),
+    const DropdownMenuItem(value: "50 minutes", child: Text("50 minutes")),
+    const DropdownMenuItem(value: "120 minutes", child: Text("120 minutes")),
+    const DropdownMenuItem(value: "2 hour", child: Text("2 hours")),
   ];
   return menuItems;
 }
@@ -107,15 +107,14 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                       child: CircularProgressIndicator());
                                 }
                                 return Wrap(
-                                  crossAxisAlignment:
-                                      WrapCrossAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
                                   runSpacing: 10,
                                   spacing: 10,
                                   children: snapshot.data!.docs
                                       .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document
-                                        .data()! as Map<String, dynamic>;
+                                    Map<String, dynamic> data = document.data()!
+                                        as Map<String, dynamic>;
                                     DateTime endTime =
                                         DateTime.parse(data['examTime']);
                                     DateTime now = DateTime.now();
@@ -172,15 +171,14 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                       child: CircularProgressIndicator());
                                 }
                                 return Wrap(
-                                  crossAxisAlignment:
-                                      WrapCrossAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
                                   runSpacing: 10,
                                   spacing: 10,
                                   children: snapshot.data!.docs
                                       .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document
-                                        .data()! as Map<String, dynamic>;
+                                    Map<String, dynamic> data = document.data()!
+                                        as Map<String, dynamic>;
                                     DateTime endTime =
                                         DateTime.parse(data['examTime']);
                                     DateTime now = DateTime.now();
@@ -357,18 +355,17 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  LevelUpQuestionAddingScreen(
+                              builder: (context) => LevelUpQuestionAddingScreen(
                                 category: _categoryController.text.trim(),
                                 course: _courseController.text.trim(),
-                                cid:_cidController.text.trim(),
+                                cid: _cidController.text.trim(),
                                 chapter: _chapterController.text.trim(),
                                 subject: _subjectController.text.trim(),
                                 testName: _testNameController.text.trim(),
-                                duration: int.parse(
-                                    _durationController.text.trim()),
-                                paperSet: int.parse(
-                                    _paperSetController.text.trim()),
+                                duration:
+                                    int.parse(_durationController.text.trim()),
+                                paperSet:
+                                    int.parse(_paperSetController.text.trim()),
                                 examTime: _examTimeController.text.trim(),
                               ),
                             ),
@@ -376,7 +373,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                         }
                       },
                       padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8),
+                          MediaQuery.of(context).size.width / 76.8,),
                       child: Text(
                         'Next',
                         style: TextStyle(
@@ -401,7 +398,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             DropdownButtonFormField(
-              hint: Text('Duration'),
+              hint: const Text('Duration'),
                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                    borderSide: const BorderSide(

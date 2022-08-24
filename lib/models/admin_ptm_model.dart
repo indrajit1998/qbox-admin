@@ -18,7 +18,7 @@ class PTMmodel{
   }
 
    Map<String,dynamic> toJson(){
-     Map<String ,dynamic> data=Map<String,dynamic>();
+     Map<String ,dynamic> data= <String,dynamic>{};
      data['course']=course;
      data['category']=category;
      data['batch']=batch;

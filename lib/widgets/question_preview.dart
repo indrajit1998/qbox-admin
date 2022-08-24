@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 import 'package:qbox_admin/models/practice_model.dart';
 import 'package:qbox_admin/widgets/question_paper_options_card.dart';
 
@@ -20,6 +21,20 @@ class QuestionPreview extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          if (question.equation != null && question.equation!.isNotEmpty)
+            SizedBox(
+              height: 50,
+              child: TeXView(
+                renderingEngine: const TeXViewRenderingEngine.katex(),
+                child: TeXViewDocument(
+                  id: question.id.toString(),
+                  question.equation!,
+                  style: const TeXViewStyle(
+                    textAlign: TeXViewTextAlign.Center,
+                  ),
+                ),
+              ),
+            ),
           const SizedBox(
             height: 20,
           ),

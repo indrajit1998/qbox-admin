@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:qbox_admin/models/level_up_series_model.dart';
 import 'package:qbox_admin/screens/level_up_question_adding_screen.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
@@ -18,14 +17,14 @@ class FullLengthTestManagement extends StatefulWidget {
 
 class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   
-  String? selectedValue = null;
+  String? selectedValue;
   final _dropdownFormKey = GlobalKey<FormState>();
   List<DropdownMenuItem<String>> get dropdownItems{
   List<DropdownMenuItem<String>> menuItems = [
-    DropdownMenuItem(child: Text("20 minute"),value: "20 minutes"),
-    DropdownMenuItem(child: Text("50 minutes"),value: "50 minutes"),
-    DropdownMenuItem(child: Text("120 minutes"),value: "120 minutes"),
-    DropdownMenuItem(child: Text("2 hours"),value: "2 hour"),
+    const DropdownMenuItem(value: "20 minutes", child: Text("20 minute")),
+    const DropdownMenuItem(value: "50 minutes", child: Text("50 minutes")),
+    const DropdownMenuItem(value: "120 minutes", child: Text("120 minutes")),
+    const DropdownMenuItem(value: "2 hour", child: Text("2 hours")),
   ];
   return menuItems;
 }
@@ -399,7 +398,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             DropdownButtonFormField(
-              hint: Text('Duration'),
+              hint: const Text('Duration'),
                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                    borderSide: const BorderSide(

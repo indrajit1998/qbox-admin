@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qbox_admin/screens/managements/batch_management.dart';
 import 'package:qbox_admin/screens/managements/chapter_management.dart';
+import 'package:qbox_admin/screens/managements/complete_class_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
 import 'package:qbox_admin/screens/managements/filters.dart';
@@ -11,6 +12,7 @@ import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/parent_teacher_meeting.dart';
 import 'package:qbox_admin/screens/managements/practice_management.dart';
 import 'package:qbox_admin/screens/managements/profile/profile.dart';
+import 'package:qbox_admin/screens/managements/result_management.dart';
 import 'package:qbox_admin/screens/managements/student_management.dart';
 import 'package:qbox_admin/screens/managements/teacher/assigned_courses.dart';
 import 'package:qbox_admin/screens/managements/teacher/batches.dart';
@@ -35,8 +37,10 @@ enum Management {
   couponManagement,
   videoManagement,
   freeVideosManagement,
+  completedClassManagement,
   levelUpSeriesManagement,
   practiceQuestionManagement,
+  resultManagement,
   patentsTeacherMeeting,
   contentFilter,
   teacherMeeting,
@@ -124,7 +128,7 @@ class _HomePageState extends State<HomePage> {
     'Courses',
     'Students',
     'Chapters'
-    'Level up Tests',
+        'Level up Tests',
     'Live Classes',
     'Parents Teacher Meeting',
     'Did You Know',
@@ -134,15 +138,16 @@ class _HomePageState extends State<HomePage> {
     'Courses ',
     'Parents Teacher Meeting',
     'Batch',
-
     'DPB',
     'Students',
     'Teachers',
     'Chapters',
     'Coupons',
     'Full Length Tests',
+    'Result',
     'Level Up Tests',
     'Live Videos',
+    'Completed Class',
     'Free Videos',
     "Content Filter",
     'Did You Know',
@@ -158,7 +163,6 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.patentsTeacherMeeting,
-    
     Management.didYouKnow,
   ];
 
@@ -172,8 +176,10 @@ class _HomePageState extends State<HomePage> {
     Management.chapterManagement,
     Management.couponManagement,
     Management.fullLengthTestManagement,
+    Management.resultManagement,
     Management.levelUpSeriesManagement,
     Management.videoManagement,
+    Management.completedClassManagement,
     Management.freeVideosManagement,
     Management.contentFilter,
     Management.didYouKnow
@@ -201,8 +207,10 @@ class _HomePageState extends State<HomePage> {
     const ChapterManagement(),
     const CouponManagement(),
     const FullLengthTestManagement(),
+    const ResultManagement(),
     const LevelUpManagement(),
     const VideoManagement(),
+    const CompleteClassManagement(),
     const FreeVideoManagement(),
     const ContentFilterPage(),
     const DidYouKnow(),
@@ -230,7 +238,7 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
-                  primary:false,
+                  primary: false,
                   child: Column(
                     children: [
                       Container(
@@ -251,11 +259,12 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                       builder: (context) => const Profile()));
                             }
-                            if(_role=='Admin'){
+                            if (_role == 'Admin') {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const AdminProfile()));
+                                      builder: (context) =>
+                                          const AdminProfile()));
                             }
                           },
                           child: Row(
@@ -276,12 +285,12 @@ class _HomePageState extends State<HomePage> {
                                         MediaQuery.of(context).size.width / 70,
                                     fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(width: 5,),
+                              const SizedBox(width: 5,),
                               if(_role=='Admin')
                                 IconButton(
                                  // style: ElevatedButton.styleFrom(primary: Colors.green[300]),
                                   onPressed: ()=>_logout(context),
-                                  icon: Icon(Icons.logout),
+                                  icon: const Icon(Icons.logout),
 
                                   //child: Text('Log Out'),
                                 ),
@@ -299,9 +308,7 @@ class _HomePageState extends State<HomePage> {
                                   child: CircularProgressIndicator());
                             }
 
-                  
                             return ListView(
-                              
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               padding: EdgeInsets.all(

@@ -11,18 +11,19 @@ class LevelUpTestModel {
   int? paperSet;
   List<QuestionsList>? questionsList;
 
-  LevelUpTestModel(
-      {this.uploadedTeacher,
-      this.testName,
-      this.examTime,
-      this.duration,
-      this.category,
-      this.course,
-      this.chapter,
-      this.paperSet,
-      this.subject,
-        this.cid,
-      this.questionsList});
+  LevelUpTestModel({
+    this.uploadedTeacher,
+    this.testName,
+    this.examTime,
+    this.duration,
+    this.category,
+    this.course,
+    this.chapter,
+    this.paperSet,
+    this.subject,
+    this.cid,
+    this.questionsList,
+  });
 
   LevelUpTestModel.fromJson(Map<String, dynamic> json) {
     uploadedTeacher = json['uploadedTeacher'];
@@ -65,8 +66,9 @@ class LevelUpTestModel {
 class QuestionsList {
   int? id;
   String? question;
+  String? equation;
   String? description;
-  Answers? answers;
+  Options? options;
   bool? multipleCorrectAnswers;
   CorrectAnswers? correctAnswers;
   String? explanation;
@@ -74,24 +76,27 @@ class QuestionsList {
   List<String>? tags;
   String? difficulty;
 
-  QuestionsList(
-      {this.id,
-      this.question,
-      this.description,
-      this.answers,
-      this.multipleCorrectAnswers,
-      this.correctAnswers,
-      this.explanation,
-      this.tip,
-      this.tags,
-      this.difficulty});
+  QuestionsList({
+    this.id,
+    this.question,
+    this.equation,
+    this.description,
+    this.options,
+    this.multipleCorrectAnswers,
+    this.correctAnswers,
+    this.explanation,
+    this.tip,
+    this.tags,
+    this.difficulty,
+  });
 
   QuestionsList.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     question = json['question'];
+    equation = json['equation'];
     description = json['description'];
-    answers =
-        json['answers'] != null ? Answers.fromJson(json['answers']) : null;
+    options =
+        json['options'] != null ? Options.fromJson(json['options']) : null;
     multipleCorrectAnswers = json['multiple_correct_answers'];
     correctAnswers = json['correct_answers'] != null
         ? CorrectAnswers.fromJson(json['correct_answers'])
@@ -106,9 +111,10 @@ class QuestionsList {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['question'] = question;
+    data['equation'] = equation;
     data['description'] = description;
-    if (answers != null) {
-      data['answers'] = answers!.toJson();
+    if (options != null) {
+      data['options'] = options!.toJson();
     }
     data['multiple_correct_answers'] = multipleCorrectAnswers;
     if (correctAnswers != null) {
@@ -122,27 +128,27 @@ class QuestionsList {
   }
 }
 
-class Answers {
-  String? answerA;
-  String? answerB;
-  String? answerC;
-  String? answerD;
+class Options {
+  String? optionA;
+  String? optionB;
+  String? optionC;
+  String? optionD;
 
-  Answers({this.answerA, this.answerB, this.answerC, this.answerD});
+  Options({this.optionA, this.optionB, this.optionC, this.optionD});
 
-  Answers.fromJson(Map<String, dynamic> json) {
-    answerA = json['answer_a'];
-    answerB = json['answer_b'];
-    answerC = json['answer_c'];
-    answerD = json['answer_d'];
+  Options.fromJson(Map<String, dynamic> json) {
+    optionA = json['optionA'];
+    optionB = json['optionB'];
+    optionC = json['optionC'];
+    optionD = json['optionD'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['answer_a'] = answerA;
-    data['answer_b'] = answerB;
-    data['answer_c'] = answerC;
-    data['answer_d'] = answerD;
+    data['optionA'] = optionA;
+    data['optionB'] = optionB;
+    data['optionC'] = optionC;
+    data['optionD'] = optionD;
     return data;
   }
 }

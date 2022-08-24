@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:math_keyboard/math_keyboard.dart';
 import 'package:qbox_admin/models/practice_model.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
@@ -55,6 +56,10 @@ class _LevelUpQuestionAddingScreenState
   final _tipController = TextEditingController();
   final _difficultyController = TextEditingController();
 
+  final MathFieldEditingController _equationController =
+      MathFieldEditingController();
+  String equationString = "";
+
   final GlobalKey<FormState> _questionAddScreenFormKey = GlobalKey<FormState>();
 
   List<Questions> questionsList = [];
@@ -75,6 +80,7 @@ class _LevelUpQuestionAddingScreenState
       value['id${mappingQuestion.id}'] = {
         "id": mappingQuestion.id,
         "question": mappingQuestion.question,
+        "equation": mappingQuestion.equation,
         "description": mappingQuestion.description,
         "options": {
           "optionA": mappingQuestion.options!.optionA,
@@ -157,8 +163,10 @@ class _LevelUpQuestionAddingScreenState
                         itemCount: questionsLength(),
                         itemBuilder: (BuildContext context, int index) {
                           return QuestionPreview(
-                              question: questionsList[index]);
-                        }),
+                            question: questionsList[index],
+                          );
+                        },
+                      ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -177,6 +185,32 @@ class _LevelUpQuestionAddingScreenState
                             hint: 'API means',
                             label: 'Question',
                             widthRatio: 2,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return ("Field cannot be empty");
+                              }
+                              return null;
+                            },
+                          ),
+                          MathFormField(
+                            variables: const ['a', 'b', 'c', 'd', 'x', 'y'],
+                            controller: _equationController,
+                            decoration: InputDecoration(
+                              hintText: "Equation (if any)",
+                              suffix: MouseRegion(
+                                cursor: MaterialStateMouseCursor.clickable,
+                                child: GestureDetector(
+                                  onTap: _questionController.clear,
+                                  child: const Icon(
+                                    Icons.highlight_remove_rounded,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onChanged: (String val) {
+                              equationString = val;
+                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return ("Field cannot be empty");
@@ -334,48 +368,54 @@ class _LevelUpQuestionAddingScreenState
                           onPressed: () {
                             if (_questionAddScreenFormKey.currentState!
                                 .validate()) {
-                              questionsList.add(Questions(
-                                id: questionsList.length + 1,
-                                question: _questionController.text.trim(),
-                                options: Options(
-                                  optionA: _optionAController.text.trim(),
-                                  optionB: _optionBController.text.trim(),
-                                  optionC: _optionDController.text.trim(),
-                                  optionD: _optionDController.text.trim(),
+                              questionsList.add(
+                                Questions(
+                                  id: questionsList.length + 1,
+                                  question: _questionController.text.trim(),
+                                  equation: '\\( $equationString \\)',
+                                  options: Options(
+                                    optionA: _optionAController.text.trim(),
+                                    optionB: _optionBController.text.trim(),
+                                    optionC: _optionDController.text.trim(),
+                                    optionD: _optionDController.text.trim(),
+                                  ),
+                                  multipleCorrectAnswers:
+                                      _multiCorrectAnswerController.text
+                                                  .trim() ==
+                                              'true'
+                                          ? true
+                                          : false,
+                                  correctAnswers: CorrectAnswers(
+                                    answerACorrect:
+                                        _correctOptionAController.text.trim() ==
+                                                'true'
+                                            ? true
+                                            : false,
+                                    answerBCorrect:
+                                        _correctOptionBController.text.trim() ==
+                                                'true'
+                                            ? true
+                                            : false,
+                                    answerCCorrect:
+                                        _correctOptionCController.text.trim() ==
+                                                'true'
+                                            ? true
+                                            : false,
+                                    answerDCorrect:
+                                        _correctOptionDController.text.trim() ==
+                                                'true'
+                                            ? true
+                                            : false,
+                                  ),
+                                  explanation:
+                                      _explanationController.text.trim(),
+                                  description:
+                                      _descriptionController.text.trim(),
+                                  tip: _tipController.text.trim(),
+                                  tags: [],
+                                  difficulty: _difficultyController.text.trim(),
                                 ),
-                                multipleCorrectAnswers:
-                                    _multiCorrectAnswerController.text.trim() ==
-                                            'true'
-                                        ? true
-                                        : false,
-                                correctAnswers: CorrectAnswers(
-                                  answerACorrect:
-                                      _correctOptionAController.text.trim() ==
-                                              'true'
-                                          ? true
-                                          : false,
-                                  answerBCorrect:
-                                      _correctOptionBController.text.trim() ==
-                                              'true'
-                                          ? true
-                                          : false,
-                                  answerCCorrect:
-                                      _correctOptionCController.text.trim() ==
-                                              'true'
-                                          ? true
-                                          : false,
-                                  answerDCorrect:
-                                      _correctOptionDController.text.trim() ==
-                                              'true'
-                                          ? true
-                                          : false,
-                                ),
-                                explanation: _explanationController.text.trim(),
-                                description: _descriptionController.text.trim(),
-                                tip: _tipController.text.trim(),
-                                tags: [],
-                                difficulty: _difficultyController.text.trim(),
-                              ));
+                              );
                               questionsLength();
                               if (!mounted) {
                                 return;
@@ -423,9 +463,9 @@ class _LevelUpQuestionAddingScreenState
                                 "questionsList":
                                     questionsListToMap(questionsList),
                               })
-                              .then((value) => print("Practice Set Added"))
+                              .then((value) => debugPrint("Practice Set Added"))
                               .catchError((error) =>
-                                  print("Failed to add Practice Set: $error"));
+                                  debugPrint("Failed to add Practice Set: $error"));
                         } on FirebaseAuthException catch (error) {
                           switch (error.code) {
                             default:

@@ -77,7 +77,7 @@ class _BatchManagementState extends State<BatchManagement> {
 
       if (pickedTime != null) {
         String newDate = f.format(picked);
-        print(newDate);
+        debugPrint(newDate);
         setState(() {
           enddateController.text =
               "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
@@ -103,7 +103,7 @@ class _BatchManagementState extends State<BatchManagement> {
 
       if (pickedTime != null) {
         String newDate = f.format(picked);
-        print(newDate);
+        debugPrint(newDate);
         setState(() {
           startdateController.text =
               "$newDate ${pickedTime.hour}:${pickedTime.minute}:00";
@@ -161,7 +161,7 @@ class _BatchManagementState extends State<BatchManagement> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
                           CategoryModel model = CategoryModel.fromJson(data);
-                          // print(data);
+                          // debugPrint(data);
                           categoryModelsList.add(model);
                           List<Courses>? courses = model.courses;
                           return ExpansionTile(
@@ -452,7 +452,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             .toJson())
                                                                         .then(
                                                                             (value) {
-                                                                      print(
+                                                                      debugPrint(
                                                                           "Batch Added");
                                                                       setState(
                                                                           () {
@@ -461,7 +461,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                       });
                                                                     }).catchError(
                                                                             (error) {
-                                                                      print(
+                                                                      debugPrint(
                                                                           "Failed to add Batch: $error");
                                                                       // ignore: invalid_return_type_for_catch_error
                                                                       return Fluttertoast
@@ -500,10 +500,10 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                           }
                                                                         })
                                                                         .then((value) =>
-                                                                            print(
+                                                                            debugPrint(
                                                                                 "Batch Added"))
                                                                         .catchError((error) =>
-                                                                            print("Failed to add batch: $error"));
+                                                                            debugPrint("Failed to add batch: $error"));
                                                                   } on FirebaseAuthException catch (error) {
                                                                     switch (error
                                                                         .code) {
@@ -555,7 +555,8 @@ class _BatchManagementState extends State<BatchManagement> {
                                                             ),
                                                           ),
                                                           Material(
-                                                            color: Colors.amberAccent,
+                                                              color: Colors
+                                                                  .amberAccent,
                                                               type: MaterialType
                                                                   .button,
                                                               child:
@@ -570,7 +571,8 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                 ),
                                                               )),
                                                           Material(
-                                                            color: Colors.amberAccent,
+                                                              color: Colors
+                                                                  .amberAccent,
                                                               type: MaterialType
                                                                   .button,
                                                               child:
@@ -591,7 +593,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                 );
                                               });
                                         } catch (e) {
-                                          print(e);
+                                          debugPrint(e.toString());
                                         }
                                       },
                                       icon:
@@ -845,8 +847,8 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                               }
                                                                             })
                                                                             .then((value) =>
-                                                                                print("Batch Added"))
-                                                                            .catchError((error) => print("Failed to add batch: $error"));
+                                                                                debugPrint("Batch Added"))
+                                                                            .catchError((error) => debugPrint("Failed to add batch: $error"));
                                                                       } on FirebaseAuthException catch (error) {
                                                                         switch (
                                                                             error.code) {
@@ -874,9 +876,9 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList.toList())
                                                                                 .toJson())
                                                                             .then((value) =>
-                                                                                print("Batch Added"))
+                                                                                debugPrint("Batch Added"))
                                                                             .catchError((error) {
-                                                                          print(
+                                                                          debugPrint(
                                                                               "Failed to add Batch: $error");
                                                                           // ignore: invalid_return_type_for_catch_error
                                                                           return Fluttertoast.showToast(
@@ -961,10 +963,11 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                 [batch])
                                                       }
                                                     })
-                                                    .then((value) =>
-                                                        print("Batch Added"))
-                                                    .catchError((error) => print(
-                                                        "Failed to add batch: $error"));
+                                                    .then((value) => debugPrint(
+                                                        "Batch Added"))
+                                                    .catchError((error) =>
+                                                        debugPrint(
+                                                            "Failed to add batch: $error"));
                                               } on FirebaseAuthException catch (error) {
                                                 switch (error.code) {
                                                   default:
@@ -993,13 +996,15 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                 teachersList
                                                                     .toList())
                                                         .toJson())
-                                                    .then((value) =>
-                                                        print("Batch Added"))
+                                                    .then((value) => debugPrint(
+                                                        "Batch Added"))
                                                     .catchError((error) {
-                                                  print(
-                                                      "Failed to add Batch: $error");
-                                                  return Fluttertoast.showToast(
-                                                      msg: error!);
+                                                  debugPrint(
+                                                    "Failed to add Batch: $error",
+                                                  );
+                                                  Fluttertoast.showToast(
+                                                    msg: error!,
+                                                  );
                                                 });
                                               } on FirebaseAuthException catch (error) {
                                                 switch (error.code) {

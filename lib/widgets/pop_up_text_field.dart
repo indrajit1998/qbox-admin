@@ -5,7 +5,7 @@ class PopUpTextField extends StatelessWidget {
   final String label;
   final int widthRatio;
   final TextEditingController? controller;
-  final validator;
+  final String? Function(String?)? validator;
   final int? maximumLines;
   const PopUpTextField(
       {Key? key,

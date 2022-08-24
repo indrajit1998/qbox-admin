@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class BioData extends StatefulWidget {
-  BioData({Key? key}) : super(key: key);
+  const BioData({Key? key}) : super(key: key);
 
   @override
   State<BioData> createState() => _BioDataState();
@@ -30,18 +29,18 @@ class _BioDataState extends State<BioData> {
   bool _isLoading = false;
   var _userEmail;
 
-  List<GroupEducationControllers> _lstGroupContollers = [];
-  List<GroupExtraQualControllers> _lstExtraQualControllers = [];
-  List<TextField> _exams = [];
-  List<TextField> _institutes = [];
-  List<TextField> _boards = [];
-  List<TextField> _passingYears = [];
-  List<TextField> _grades = [];
-  List<TextField> _percentage = [];
-  List<TextField> _nameOfCompany = [];
-  List<TextField> _fromDate = [];
-  List<TextField> _expMonth = [];
-  List<TextField> _designation = [];
+  final List<GroupEducationControllers> _lstGroupContollers = [];
+  final List<GroupExtraQualControllers> _lstExtraQualControllers = [];
+  final List<TextField> _exams = [];
+  final List<TextField> _institutes = [];
+  final List<TextField> _boards = [];
+  final List<TextField> _passingYears = [];
+  final List<TextField> _grades = [];
+  final List<TextField> _nameOfCompany = [];
+  final List<TextField> _percentage = [];
+  final List<TextField> _fromDate = [];
+  final List<TextField> _expMonth = [];
+  final List<TextField> _designation = [];
 
   int curEducationRow = 1;
   int curExtraQualRow = 1;
@@ -53,13 +52,12 @@ class _BioDataState extends State<BioData> {
   }
 
   Future<void> getData() async {
-    // print('inide getData');
-
+    debugPrint('inide getData');
     _userEmail = FirebaseAuth.instance.currentUser!.email;
     setState(() {
       _isLoading = true;
     });
-    try{
+    try {
       final docUser = await FirebaseFirestore.instance
           .collection('teachers')
           .doc(_userEmail)
@@ -84,20 +82,20 @@ class _BioDataState extends State<BioData> {
         _phoneNumber = biodataMap['phoneNumber'];
 
         List<dynamic> educationQualificationlst =
-        biodataMap['educationQualification'];
+            biodataMap['educationQualification'];
         List<dynamic> extraQualificationlst = biodataMap['extraQualification'];
         curEducationRow = educationQualificationlst.length;
         curExtraQualRow = extraQualificationlst.length;
         for (int i = 0; i < curEducationRow; i++) {
           GroupEducationControllers group = GroupEducationControllers();
           group.percentageController.text =
-          educationQualificationlst[i]['percentage'];
+              educationQualificationlst[i]['percentage'];
           group.gradeController.text = educationQualificationlst[i]['grade'];
           group.passignYearController.text =
-          educationQualificationlst[i]['yearOfPassing'];
+              educationQualificationlst[i]['yearOfPassing'];
           group.boardController.text = educationQualificationlst[i]['board'];
           group.institutionController.text =
-          educationQualificationlst[i]['instituteName'];
+              educationQualificationlst[i]['instituteName'];
           group.examController.text = educationQualificationlst[i]['exam'];
           _lstGroupContollers.add(group);
         }
@@ -105,21 +103,20 @@ class _BioDataState extends State<BioData> {
         for (int i = 0; i < curExtraQualRow; i++) {
           GroupExtraQualControllers extraGroup = GroupExtraQualControllers();
           extraGroup.designationController.text =
-          extraQualificationlst[i]['designation'];
+              extraQualificationlst[i]['designation'];
           extraGroup.expMonthController.text =
-          extraQualificationlst[i]['expMonth'];
+              extraQualificationlst[i]['expMonth'];
           extraGroup.fromDateController.text =
-          extraQualificationlst[i]['fromDate'];
+              extraQualificationlst[i]['fromDate'];
           extraGroup.companyNameController.text =
-          extraQualificationlst[i]['companyName'];
+              extraQualificationlst[i]['companyName'];
           _lstExtraQualControllers.add(extraGroup);
         }
       }
-    }on FirebaseAuthException catch(error){
+    } on FirebaseAuthException catch (error) {
       Fluttertoast.showToast(msg: '$error');
-      print('error at getData method');
+      debugPrint('error at getData method');
     }
-
 
     setState(() {
       _isLoading = false;
@@ -129,7 +126,7 @@ class _BioDataState extends State<BioData> {
   Future<void> _saveForm() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
-      print('not valid');
+      debugPrint('not valid');
       return;
     }
 
@@ -142,9 +139,10 @@ class _BioDataState extends State<BioData> {
           _lstGroupContollers[i].percentageController.text.isEmpty ||
           _lstGroupContollers[i].boardController.text.isEmpty ||
           _lstGroupContollers[i].institutionController.text.isEmpty ||
-          _lstGroupContollers[i].examController.text.isEmpty){
-        Fluttertoast.showToast(msg:'Education Qualification is Required');
-        return;}
+          _lstGroupContollers[i].examController.text.isEmpty) {
+        Fluttertoast.showToast(msg: 'Education Qualification is Required');
+        return;
+      }
     }
     //validation check
     for (int i = 0; i < curExtraQualRow; i++) {
@@ -153,7 +151,7 @@ class _BioDataState extends State<BioData> {
         if (tmpController.designationController.text.isEmpty ||
             tmpController.expMonthController.text.isEmpty ||
             tmpController.fromDateController.text.isEmpty ||
-            tmpController.companyNameController.text.isEmpty){
+            tmpController.companyNameController.text.isEmpty) {
           Fluttertoast.showToast(msg: 'Extra Qualification is required');
           return;
         }
@@ -167,12 +165,12 @@ class _BioDataState extends State<BioData> {
     for (int i = 0; i < curEducationRow; i++) {
       GroupEducationControllers tmpEduController = _lstGroupContollers[i];
       tmpEduList.add({
-        'exam': '${tmpEduController.examController.text}',
-        'instituteName': '${tmpEduController.institutionController.text}',
-        'board': '${tmpEduController.boardController.text}',
-        'yearOfPassing': '${tmpEduController.passignYearController.text}',
-        'grade': '${tmpEduController.gradeController.text}',
-        'percentage': '${tmpEduController.percentageController.text}'
+        'exam': tmpEduController.examController.text,
+        'instituteName': tmpEduController.institutionController.text,
+        'board': tmpEduController.boardController.text,
+        'yearOfPassing': tmpEduController.passignYearController.text,
+        'grade': tmpEduController.gradeController.text,
+        'percentage': tmpEduController.percentageController.text
       });
     }
 
@@ -181,10 +179,10 @@ class _BioDataState extends State<BioData> {
       GroupExtraQualControllers tmpExtraQualController =
           _lstExtraQualControllers[i];
       tmpExtraQualList.add({
-        'companyName': '${tmpExtraQualController.companyNameController.text}',
-        'fromDate': '${tmpExtraQualController.fromDateController.text}',
-        'expMonth': '${tmpExtraQualController.expMonthController.text}',
-        'designation': '${tmpExtraQualController.designationController.text}'
+        'companyName': tmpExtraQualController.companyNameController.text,
+        'fromDate': tmpExtraQualController.fromDateController.text,
+        'expMonth': tmpExtraQualController.expMonthController.text,
+        'designation': tmpExtraQualController.designationController.text
       });
     }
     final json = {
@@ -206,23 +204,23 @@ class _BioDataState extends State<BioData> {
     };
 
     try {
-      final _setdocUser = await FirebaseFirestore.instance
+      final setdocUser = await FirebaseFirestore.instance
           .collection('teachers')
           .doc(_userEmail)
           .collection('biodata')
           .doc(_userEmail)
           .get();
 
-      if (!_setdocUser.exists) {
-        final _docUser = await FirebaseFirestore.instance
+      if (!setdocUser.exists) {
+        final docUser = FirebaseFirestore.instance
             .collection('teachers')
             .doc(_userEmail)
             .collection('biodata')
             .doc(_userEmail);
 
-        await _docUser.set(json);
+        await docUser.set(json);
       } else {
-        final setdocUser = await FirebaseFirestore.instance
+        final setdocUser = FirebaseFirestore.instance
             .collection('teachers')
             .doc(_userEmail)
             .collection('biodata')
@@ -230,8 +228,8 @@ class _BioDataState extends State<BioData> {
         await setdocUser.update(json);
       }
     } on FirebaseAuthException catch (error) {
-      Fluttertoast.showToast(msg:' ${error}');
-      print('error at save Form method');
+      Fluttertoast.showToast(msg: ' $error');
+      debugPrint('error at save Form method');
     }
 
     setState(() {
@@ -273,27 +271,27 @@ class _BioDataState extends State<BioData> {
     });
     return [
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _exams[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _institutes[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _grades[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _passingYears[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _percentage[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _boards[index],
       ),
     ];
@@ -323,52 +321,55 @@ class _BioDataState extends State<BioData> {
     });
     return [
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _nameOfCompany[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _fromDate[index],
       ),
       Padding(
-        padding: EdgeInsets.only(left: 2.5),
+        padding: const EdgeInsets.only(left: 2.5),
         child: _expMonth[index],
       ),
-      Padding(padding: EdgeInsets.only(left: 2.5), child: _designation[index]),
+      Padding(
+          padding: const EdgeInsets.only(left: 2.5),
+          child: _designation[index]),
     ];
   }
 
   TableRow _buildEducationRows(int i) {
-    return TableRow(children: [
-      ...getListOfEducationTextField(i),
-      Container(
-        child: Row(
+    return TableRow(
+      children: [
+        ...getListOfEducationTextField(i),
+        Row(
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.upload)),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.upload),
+            ),
           ],
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   TableRow _buildExtraQualRows(int i) {
-    return TableRow(children: [
-      ...getListOfExtraQualTextField(i),
-      Container(
-        child: Row(
+    return TableRow(
+      children: [
+        ...getListOfExtraQualTextField(i),
+        Row(
           children: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.upload)),
           ],
         ),
-      ),
-      Container(
-        child: Row(
+        Row(
           children: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.upload)),
           ],
         ),
-      )
-    ]);
+      ],
+    );
   }
 
   _buildHeaderRow(List<String> headerList) {
@@ -677,7 +678,7 @@ class _BioDataState extends State<BioData> {
                                         curEducationRow += 1;
                                       });
                                     },
-                                    child: Text('Add Qualication'),
+                                    child: const Text('Add Qualication'),
                                   ),
                                 ),
                                 Padding(
@@ -790,8 +791,8 @@ class _BioDataState extends State<BioData> {
                   ),
                   ElevatedButton(
                     onPressed: _saveForm,
-                    child: const Text("                 Save                "),
                     style: ElevatedButton.styleFrom(primary: Colors.green[400]),
+                    child: const Text("                 Save                "),
                   ),
                   const SizedBox(
                     height: 13,

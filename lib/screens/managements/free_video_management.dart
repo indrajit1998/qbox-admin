@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -25,43 +24,49 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
   final _courseController = TextEditingController();
   final GlobalKey<FormState> _freeVideoFormKey = GlobalKey<FormState>();
   final freeVideoRef = FirebaseStorage.instance.ref();
-  late String imageFileName;
-  late String videoFileName;
+  String imageFileName = "";
+  String videoFileName = "";
   double progress = 0.0;
+  bool isUploading = false;
   String? errorMessage;
 
-  Future uploadFile(String type) async {
+  Future uploadFile(
+    String type,
+    Function(void Function()) dialogSetState,
+  ) async {
     String metaDataString = "image";
     if (type == "videos") {
-      metaDataString = "video";
+      metaDataString = "video/mp4";
     }
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
+      dialogSetState(() {
+        isUploading = true;
+      });
       Uint8List? file = result.files.first.bytes;
       String fileName = result.files.first.name;
-      UploadTask task = FirebaseStorage.instance
-          .ref()
-          .child("freeVideos/$type/$fileName")
-          .putData(
-              file!,
-              SettableMetadata(
-                contentType: metaDataString,
-              ));
+      Reference reference =
+          FirebaseStorage.instance.ref().child("freeVideos/$type/$fileName");
+      UploadTask task = reference.putData(
+          file!,
+          SettableMetadata(
+            contentType: metaDataString,
+          ));
       task.snapshotEvents.listen((event) {
-        setState(() {
+        dialogSetState(() {
           progress = ((event.bytesTransferred.toDouble() /
                       event.totalBytes.toDouble()) *
                   100)
               .roundToDouble();
           if (progress == 100) {
-            event.ref.getDownloadURL().then((downloadUrl) {
+            task.snapshot.ref.getDownloadURL().then((downloadUrl) {
               if (type == 'images') {
                 imageFileName = downloadUrl.toString();
               } else if (type == 'videos') {
                 videoFileName = downloadUrl.toString();
-              //  log('message');
+                //  log('message');
               }
-            
+              isUploading = false;
               return Fluttertoast.showToast(msg: "$type Added Successfully");
             });
           }
@@ -133,9 +138,9 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return  const Center(
+                          return const Center(
                               child: CircularProgressIndicator());
-                        }                      
+                        }
                         return Wrap(
                           spacing: 20,
                           runSpacing: 15,
@@ -165,157 +170,176 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
               alignment: Alignment.bottomRight,
               child: BottomMaterialButton(
                 text: 'Add Video',
-                popUpChild: Form(
-                  key: _freeVideoFormKey,
-                  child: Wrap(
-                    children: [
-                      const Divider(
-                        color: Colors.amber,
-                      ),
-                      PopUpTextField(
-                        controller: _titleController,
-                        hint: 'WEB DEVELOPMENT | PART-1 ',
-                        label: 'Title',
-                        widthRatio: 2,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                          controller: _categoryController,
-                          hint: 'Web',
-                          label: 'Category',
-                          widthRatio: 1),
-                      PopUpTextField(
-                          controller: _courseController,
-                          hint: 'HTML',
-                          label: 'Course Name',
-                          widthRatio: 1),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.height * (20 / 792)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Material(
-                              type: MaterialType.button,
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(50),
-                              child: MaterialButton(
-                                padding: const EdgeInsets.all(20),
-                                onPressed: () async {
-                                  await uploadFile('images');
-                                },
-                                child: const Text('Pick Image'),
+                popUpChild: StatefulBuilder(
+                  builder: ((context, setState) {
+                    return Form(
+                      key: _freeVideoFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Wrap(
+                            children: [
+                              const Divider(
+                                color: Colors.amber,
                               ),
-                            ),
-                            Material(
-                              type: MaterialType.button,
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(50),
-                              child: MaterialButton(
-                                padding: const EdgeInsets.all(20),
-                                onPressed: () async {
-                                  
-                                  await uploadFile('videos');
+                              PopUpTextField(
+                                controller: _titleController,
+                                hint: 'WEB DEVELOPMENT | PART-1 ',
+                                label: 'Title',
+                                widthRatio: 2,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("Field cannot be empty");
+                                  }
+                                  return null;
                                 },
-                                child: const Text('Pick Video'),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      LinearProgressIndicator(
-                        value: progress / 100,
-                      ),
-                    ],
-                  ),
-                ),
-                popUpactions: [
-                  isUploaded == true ? const CircularProgressIndicator() :
-                  Material(
-
-                    color: Colors.amberAccent,
-                    elevation: 4,
-                    type: MaterialType.button,
-                    child: MaterialButton(
-                      onPressed: () async {
-                        setState(() {
-                        Center(child: CircularProgressIndicator());            
-                        });
-                        
-                       if (_freeVideoFormKey.currentState!.validate() &&
-                            imageFileName.isNotEmpty &&
-                            videoFileName.isNotEmpty) {
-
-                          try {
-                            DateTime currentTime = DateTime.now();
-                            await FirebaseFirestore.instance
-                                .collection('videos')
-                                .doc()
-                                .set(FreeVideoModel(
-                                  title: _titleController.text.trim(),
-                                  category: _categoryController.text.trim(),
-                                  course: _courseController.text.trim(),
-                                  likes: 0,
-                                  imageUrl: imageFileName,
-                                  videoLink: videoFileName,
-                                  uploadDate: currentTime.toString(),
-                                  uploadedTeacherEmail: FirebaseAuth
-                                      .instance.currentUser!.email
-                                      .toString(),
-                                ).toJson())
-                                .then((value) {
-                                  setState(() {
-                                    isUploaded = false;
-                                  });
-                                }
-                                )
-                                .catchError((error) =>
-                                Center(child: CircularProgressIndicator()),
-                                    // print("Failed to add Video: $error")
-                                    );
-                          } on FirebaseAuthException catch (error) {
-                            setState(() {
-                              isUploaded==false;
-                            });
-                            switch (error.code) {                             
-                              default:
-                                errorMessage =
-                                    "An undefined Error happened.+$error";
-                            }
-                            
-                          const Center(child: CircularProgressIndicator());
-                            Fluttertoast.showToast(msg: errorMessage!);
-                          }
-                          Fluttertoast.showToast(
-                              msg: "Free Video Added Successfully");
-                          if (!mounted) {
-                            return;
-                          }
-                          Navigator.of(context, rootNavigator: true).pop();
-                        }
-                        else{
-                         Center(child: CircularProgressIndicator());
-                        }
-                      },
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8
+                              PopUpTextField(
+                                  controller: _categoryController,
+                                  hint: 'Web',
+                                  label: 'Category',
+                                  widthRatio: 1),
+                              PopUpTextField(
+                                  controller: _courseController,
+                                  hint: 'HTML',
+                                  label: 'Course Name',
+                                  widthRatio: 1),
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    vertical:
+                                        MediaQuery.of(context).size.height *
+                                            (20 / 792)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Material(
+                                          type: MaterialType.button,
+                                          color: Colors.amber,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: MaterialButton(
+                                            padding: const EdgeInsets.all(20),
+                                            onPressed: () async {
+                                              await uploadFile(
+                                                  'images', setState);
+                                            },
+                                            child: const Text('Pick Image'),
+                                          ),
+                                        ),
+                                        if (imageFileName.isNotEmpty) ...[
+                                          const SizedBox(width: 10),
+                                          const Icon(
+                                            Icons.done_rounded,
+                                            color: Colors.blue,
+                                          )
+                                        ]
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Material(
+                                          type: MaterialType.button,
+                                          color: Colors.amber,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: MaterialButton(
+                                            padding: const EdgeInsets.all(20),
+                                            onPressed: () async {
+                                              await uploadFile(
+                                                  'videos', setState);
+                                            },
+                                            child: const Text('Pick Video'),
+                                          ),
+                                        ),
+                                        if (videoFileName.isNotEmpty) ...[
+                                          const SizedBox(width: 10),
+                                          const Icon(
+                                            Icons.done_rounded,
+                                            color: Colors.blue,
+                                          )
+                                        ]
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              LinearProgressIndicator(
+                                value: progress / 100,
+                              ),
+                            ],
                           ),
-                      child: Text('Add Video',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 86,
-                          color: Colors.black,
-                        ),
-                        )
-                    ),
-                    )
-                ],
-            
+                          const SizedBox(height: 10),
+                          Material(
+                            color: Colors.amberAccent,
+                            elevation: 4,
+                            type: MaterialType.button,
+                            child: MaterialButton(
+                              onPressed: () async {
+                                if (!isUploading &&
+                                    _freeVideoFormKey.currentState!
+                                        .validate() &&
+                                    imageFileName.isNotEmpty &&
+                                    videoFileName.isNotEmpty) {
+                                  try {
+                                    DateTime currentTime = DateTime.now();
+                                    await FirebaseFirestore.instance
+                                        .collection('videos')
+                                        .doc()
+                                        .set(FreeVideoModel(
+                                          title: _titleController.text.trim(),
+                                          category:
+                                              _categoryController.text.trim(),
+                                          course: _courseController.text.trim(),
+                                          likes: 0,
+                                          imageUrl: imageFileName,
+                                          videoLink: videoFileName,
+                                          uploadDate: currentTime.toString(),
+                                          uploadedTeacherEmail: FirebaseAuth
+                                              .instance.currentUser!.email
+                                              .toString(),
+                                        ).toJson())
+                                        .then((value) =>
+                                            debugPrint("Video Added"))
+                                        .catchError((error) => debugPrint(
+                                            "Failed to add Video: $error"));
+                                  } on FirebaseAuthException catch (error) {
+                                    switch (error.code) {
+                                      default:
+                                        errorMessage =
+                                            "An undefined Error happened.+$error";
+                                    }
+                                    Fluttertoast.showToast(msg: errorMessage!);
+                                  }
+                                  Fluttertoast.showToast(
+                                      msg: "Free Video Added Successfully");
+                                  if (!mounted) {
+                                    return;
+                                  }
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                }
+                              },
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width / 76.8),
+                              child: Text(
+                                isUploading ? 'Uploading' : 'Add Video',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width / 86,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+                ),
               ),
             ),
           ],

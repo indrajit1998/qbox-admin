@@ -21,25 +21,25 @@ class LevelUpQuestionPaperPreview extends StatelessWidget {
               children: [
                 Text(
                   'Category = ${questionPaper.category!}',
-                  style:const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
                 Text(
                   'Course = ${questionPaper.course!}',
-                  style:const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
                 Text(
                   'Chapter = ${questionPaper.chapter!}',
-                  style:const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
                 questionPaper.questionsList!.isEmpty
                     ? const Center(
-                        child:  Text('NO Question Added'),
+                        child: Text('NO Question Added'),
                       )
                     : const Text(''),
                 for (var question in questionPaper.questionsList!)

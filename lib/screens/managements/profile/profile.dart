@@ -80,7 +80,7 @@ class ProfileState extends State<Profile> {
     List<Widget> pages = [
       profile(context, data),
       accountDetails(context, accountDetailsMap),
-      BioData(),
+      const BioData(),
       infoToShowStudent(context, infoToShowStudentMap),
     ];
     return Scaffold(
@@ -88,7 +88,7 @@ class ProfileState extends State<Profile> {
         title: const Text('Teacher Profile'),
         actions: [ ElevatedButton(
           onPressed: ()=>_logout(context),
-          child: Text('Log Out'),
+          child: const Text('Log Out'),
         ),]
       ),
       body: isLoading

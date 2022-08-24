@@ -8,14 +8,14 @@ class HomeDisplayScreen extends StatelessWidget {
   final String videoLink;
   final int likes;
   final Map uploadDate;
-  const HomeDisplayScreen(
-      {Key? key,
-      required this.title,
-      required this.imageUrl,
-      required this.likes,
-      required this.videoLink,
-      required this.uploadDate})
-      : super(key: key);
+  const HomeDisplayScreen({
+    Key? key,
+    required this.title,
+    required this.imageUrl,
+    required this.likes,
+    required this.videoLink,
+    required this.uploadDate,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,14 @@ class HomeDisplayScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VideoScreen(
-                            title: title,
-                            videoLink: videoLink,
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VideoScreen(
+                    title: title,
+                    videoLink: videoLink,
+                  ),
+                ),
+              );
             },
             child: Image(
               image: NetworkImage(imageUrl),
