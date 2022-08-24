@@ -7,6 +7,8 @@ import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/horizontal_card.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
+import '../question_paper_preview.dart';
+
 class PracticeManagement extends StatefulWidget {
   const PracticeManagement({Key? key}) : super(key: key);
 
@@ -36,7 +38,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
         child: Column(
           children: [
             Text(
-              'Practice Questions',
+              'DPB',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width / 32,
               ),
@@ -72,18 +74,68 @@ class _PracticeManagementState extends State<PracticeManagement> {
                         }
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
-                          alignment: WrapAlignment.center,
-                          runSpacing: 10,
-                          spacing: 10,
+                          // alignment: WrapAlignment.center,
+                          // runSpacing: 10,
+                          // spacing: 10,
                           children: snapshot.data!.docs
                               .map((DocumentSnapshot document) {
                             Map<String, dynamic> data =
                                 document.data()! as Map<String, dynamic>;
                             PracticeModel model = PracticeModel.fromJson(data);
                             practiceModelList.add(model);
-                            return HorizontalCard(
-                              model: model,
+                            return Container(
+                              // height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: Theme(
+                      data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                      child: DataTable(
+
+                          //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+                          columns:  [
+                              DataColumn(label: Text('Category')),
+                              DataColumn(label: Text('Course Name')),
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Publish Date')),
+                              DataColumn(label: Text('Update Date')),
+                              DataColumn(label: Text('Chapter Name')),
+                              DataColumn(label: Text('Subject')),
+                          ],
+                           rows: [
+                                  DataRow(
+                                    color: MaterialStateColor.resolveWith((states) => Colors.black12),
+                                    cells: <DataCell>[
+                                      DataCell(Text(model.category.toString())),
+                                      DataCell(Text(model.course.toString())),
+                                      DataCell(Text('2133443')),
+                                      DataCell(Text('22-08-2022')),
+                                      DataCell(Text('20-08-2022')),
+                                      DataCell(Text(model.chapter.toString())),
+                                      DataCell(
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(model.subject.toString()),
+                                            Spacer(),
+                                            IconButton(onPressed: (){
+                                               Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => QuestionPaperPreview(questionPaper: model)),
+        );
+                                            }, icon: Icon(Icons.arrow_right_alt, color: Colors.blue,))
+                                          ],
+                                        )),
+                                      // DataCell(Text('icon'))
+                                    ]
+
+                                  )
+                          ],
+                                    )
+                    ),
                             );
+                            // return HorizontalCard(
+                            //   model: model,
+                            // );
                           }).toList(),
                         );
                       }),
