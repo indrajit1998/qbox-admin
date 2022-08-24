@@ -17,6 +17,19 @@ class FullLengthTestManagement extends StatefulWidget {
 }
 
 class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
+  
+  String? selectedValue = null;
+  final _dropdownFormKey = GlobalKey<FormState>();
+  List<DropdownMenuItem<String>> get dropdownItems{
+  List<DropdownMenuItem<String>> menuItems = [
+    DropdownMenuItem(child: Text("20 minute"),value: "20 minutes"),
+    DropdownMenuItem(child: Text("50 minutes"),value: "50 minutes"),
+    DropdownMenuItem(child: Text("120 minutes"),value: "120 minutes"),
+    DropdownMenuItem(child: Text("2 hours"),value: "2 hour"),
+  ];
+  return menuItems;
+}
+
   final GlobalKey<FormState> _fullLengthTestFormKey = GlobalKey<FormState>();
   final _testNameController = TextEditingController();
   final _courseController = TextEditingController();
@@ -26,7 +39,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   final _durationController = TextEditingController();
   final _examTimeController = TextEditingController();
   bool download = false;
-
+  
   List<LevelUpTestModel> fullLengthModelList = [];
   setDate() async {
     DateTime? picked = await showDatePicker(
@@ -43,7 +56,6 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
       Fluttertoast.showToast(msg: "Date not selected is not selected");
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,7 +281,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                         controller: _paperSetController,
                         hint: 'Set 1',
                         label: 'Paper Set',
-                        widthRatio: 1,
+                        widthRatio: 2,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return ("Field cannot be empty");
@@ -277,29 +289,40 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                           return null;
                         },
                       ),
-                      PopUpTextField(
-                        controller: _durationController,
-                        hint: '90 minutes',
-                        label: 'Duration',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _examTimeController,
-                        hint: '2022-07-08 19:30:00',
-                        label: 'Exam Date',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
+                  durationDropDown(),
+                      // InkWell(
+                      //   onTap: () => setState(() {
+                      //     durationDropDown();
+                      //   }),
+                      //   child: PopUpTextField(
+                      //     controller: _durationController,
+                      //     hint: '90 minutes',
+                      //     label: 'Duration',
+                      //     widthRatio: 1,
+                      //     validator: (value) {
+                      //       if (value!.isEmpty) {
+                      //         return ("Field cannot be empty");
+                      //       }
+                      //       return null;
+                      //     },
+                      //   ),
+                      // ),
+                               
+                                
+                      InkWell(
+                        onTap: setDate,
+                        child: PopUpTextField(
+                          controller: _examTimeController,
+                          hint: '2022-07-08 19:30:00',
+                          label: 'Exam Date',
+                          widthRatio: 2,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -368,5 +391,41 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
         ),
       ),
     );
+  }
+   durationDropDown(){
+    return  Form(
+        key: _dropdownFormKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DropdownButtonFormField(
+              hint: Text('Duration'),
+               decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                   borderSide: const BorderSide(
+              color: Colors.white,),
+                  borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).primaryColor,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          fillColor: Colors.grey[100],
+          filled: true,
+        ),
+                validator: (value) => value == null ? "Duration" : null,
+                value: selectedValue,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedValue = newValue!;
+                  });
+                },
+                items: dropdownItems),
+           
+          ],
+        )
+        );
   }
 }
