@@ -47,9 +47,6 @@ class _QuestionPaperPreviewState extends State<QuestionPaperPreview> {
     return length;
   }
    bool multAnsCorrect = false;
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -10,7 +10,6 @@ import 'package:qbox_admin/widgets/question_paper_options_card.dart';
 class QuestionPreview extends StatefulWidget {
   final Questions question;
   const QuestionPreview({Key? key, required this.question}) : super(key: key);
-
   @override
   State<QuestionPreview> createState() => _QuestionPreviewState();
 }
@@ -20,8 +19,6 @@ class _QuestionPreviewState extends State<QuestionPreview> {
   bool valueB = false;
   bool valueC = false;
   bool valueD = false;
-
-  
   @override
   Widget build(BuildContext context) {
     
@@ -147,20 +144,6 @@ class _QuestionPreviewState extends State<QuestionPreview> {
             // Text('Explanation = ${question.explanation}'),
             for (String tag in widget.question.tags!) Text(tag),
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
           ],
         ),
       ),

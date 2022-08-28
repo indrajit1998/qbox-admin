@@ -13,7 +13,6 @@ import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
 class VideoManagement extends StatefulWidget {
   const VideoManagement({Key? key}) : super(key: key);
-
   @override
   State<VideoManagement> createState() => _VideoManagementState();
 }

@@ -168,7 +168,6 @@ class _HomeDisplayScreenState extends State<HomeDisplayScreen> {
     );
   }
 }
-
 class VideoScreen extends StatefulWidget {
   static const String routeName = '/videoScreen';
   final String title;
@@ -179,7 +178,6 @@ class VideoScreen extends StatefulWidget {
   @override
   State<VideoScreen> createState() => _VideoScreenState();
 }
-
 class _VideoScreenState extends State<VideoScreen> {
   late VideoPlayerController videoPlayerController;
   ChewieController? chewieController;

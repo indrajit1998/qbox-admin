@@ -15,6 +15,7 @@ class VideoDetails extends StatefulWidget {
   final String imageUrl;
   // final String videoLink;
   // final String category;
+  
   final int likes;
   final Map uploadDate;
   const VideoDetails(

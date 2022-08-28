@@ -164,6 +164,7 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                               return null;
                             },
                           ),
+
                           PopUpTextField(
                             controller: _optionAController,
                             hint: '',
@@ -173,9 +174,11 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                               if (value!.isEmpty) {
                                 return ("Field cannot be empty");
                               }
+
                               return null;
                             },
                           ),
+
                           PopUpTextField(
                             controller: _optionBController,
                             hint: '',
@@ -192,6 +195,7 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                             controller: _optionCController,
                             hint: '',
                             label: 'Option 3',
+                            
                             widthRatio: 1,
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -240,7 +244,7 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                                       });
                                     }
                                   },
-                                  child:  Text(multAnsCorrect.toString())),
+                                  child: Text(multAnsCorrect.toString())),
                             ],
                           ),
                           PopUpTextField(
