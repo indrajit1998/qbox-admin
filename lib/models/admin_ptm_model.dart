@@ -5,8 +5,9 @@ class PTMmodel{
   String? meetingLink;
   String? date;
   String? time;
+  String? id;
 
-  PTMmodel({this.batch,this.category,this.course,this.date,this.meetingLink,this.time});
+  PTMmodel({this.batch,this.category,this.course,this.date,this.meetingLink,this.time,this.id});
 
   PTMmodel.fromJson(Map<String,dynamic> json){
     course=json['course'];
@@ -15,6 +16,7 @@ class PTMmodel{
     meetingLink=json['meetingLink'];
     date=json['date'];
     time=json['time'];
+    id=json['id'];
   }
 
    Map<String,dynamic> toJson(){
@@ -25,6 +27,7 @@ class PTMmodel{
      data['meetingLink']=meetingLink;
      data['date']=date;
      data['time']=time;
+     data['id']=id;
      return data;
 }
 }
