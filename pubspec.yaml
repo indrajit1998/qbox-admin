@@ -33,6 +33,8 @@ dependencies:
   open_file: ^3.2.1
   universal_html: ^2.0.8
   url_launcher: ^6.1.5
+  image_picker: ^0.8.5+3
+
   
   
 
@@ -43,9 +45,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # assets:
-  #   - assets/images/
+  assets:
+    - assets/
+    - assets/fonts/
+    - assets/images/
+    # - assets/images/user.jpg
+    # - assets/images/img.png
+    # - assets/images/profile.png
+    # - assets/video/
 
   # fonts:
   #   - family: Schyler

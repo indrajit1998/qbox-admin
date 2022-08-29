@@ -149,11 +149,13 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                 DateTime.parse(data['uploadDate']),
                                 DateTime.now());
                             return HomeDisplayScreen(
-                              videoLink: data['videoLink'],
+                              // videoLink: data['videoLink'],
                               imageUrl: data['imageUrl'],
                               uploadDate: timeDifferenceValue,
                               title: data['title'],
                               likes: data['likes'],
+                              // category: ,
+                              //  category: data['category'],
                             );
                           }).toList(),
                         );
@@ -164,7 +166,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
             Align(
               alignment: Alignment.bottomRight,
               child: BottomMaterialButton(
-                text: 'Add Video',
+                text: 'Add New Video',
                 popUpChild: Form(
                   key: _freeVideoFormKey,
                   child: Wrap(
