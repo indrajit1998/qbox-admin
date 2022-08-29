@@ -6,7 +6,6 @@ class QuestionPaperOptionsCard extends StatelessWidget {
   const QuestionPaperOptionsCard(
       {Key? key, required this.option, required this.correctAnswer})
       : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Card(

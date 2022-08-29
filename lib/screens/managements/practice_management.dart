@@ -74,9 +74,9 @@ class _PracticeManagementState extends State<PracticeManagement> {
                         }
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
-                          // alignment: WrapAlignment.center,
-                          // runSpacing: 10,
-                          // spacing: 10,
+                          alignment: WrapAlignment.center,
+                          runSpacing: 10,
+                          spacing: 10,
                           children: snapshot.data!.docs
                               .map((DocumentSnapshot document) {
                             Map<String, dynamic> data =
@@ -87,51 +87,60 @@ class _PracticeManagementState extends State<PracticeManagement> {
                               // height: MediaQuery.of(context).size.height,
                               width: MediaQuery.of(context).size.width,
                               child: Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.white),
-                      child: DataTable(
-
-                          //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
-                          columns:  [
-                              DataColumn(label: Text('Category')),
-                              DataColumn(label: Text('Course Name')),
-                              DataColumn(label: Text('ID')),
-                              DataColumn(label: Text('Publish Date')),
-                              DataColumn(label: Text('Update Date')),
-                              DataColumn(label: Text('Chapter Name')),
-                              DataColumn(label: Text('Subject')),
-                          ],
-                           rows: [
-                                  DataRow(
-                                    color: MaterialStateColor.resolveWith((states) => Colors.black12),
-                                    cells: <DataCell>[
-                                      DataCell(Text(model.category.toString())),
-                                      DataCell(Text(model.course.toString())),
-                                      DataCell(Text('2133443')),
-                                      DataCell(Text('22-08-2022')),
-                                      DataCell(Text('20-08-2022')),
-                                      DataCell(Text(model.chapter.toString())),
-                                      DataCell(
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Text(model.subject.toString()),
-                                            Spacer(),
-                                            IconButton(onPressed: (){
-                                               Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => QuestionPaperPreview(questionPaper: model)),
-        );
-                                            }, icon: Icon(Icons.arrow_right_alt, color: Colors.blue,))
-                                          ],
-                                        )),
-                                      // DataCell(Text('icon'))
-                                    ]
-
-                                  )
-                          ],
-                                    )
-                    ),
+                                  data: Theme.of(context)
+                                      .copyWith(dividerColor: Colors.white),
+                                  child: DataTable(
+                                    //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+                                    columns: [
+                                      DataColumn(label: Text('Category')),
+                                      DataColumn(label: Text('Course Name')),
+                                      DataColumn(label: Text('ID')),
+                                      DataColumn(label: Text('Publish Date')),
+                                      DataColumn(label: Text('Update Date')),
+                                      DataColumn(label: Text('Chapter Name')),
+                                      DataColumn(label: Text('Subject')),
+                                    ],
+                                    rows: [
+                                      DataRow(
+                                          color: MaterialStateColor.resolveWith(
+                                              (states) => Colors.black12),
+                                          cells: <DataCell>[
+                                            DataCell(Text(
+                                                model.category.toString())),
+                                            DataCell(
+                                                Text(model.course.toString())),
+                                            DataCell(Text('2133443')),
+                                            DataCell(Text('22-08-2022')),
+                                            DataCell(Text('20-08-2022')),
+                                            DataCell(
+                                                Text(model.chapter.toString())),
+                                            DataCell(Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(model.subject.toString()),
+                                                Spacer(),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                QuestionPaperPreview(
+                                                                    questionPaper:
+                                                                        model)),
+                                                      );
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.arrow_right_alt,
+                                                      color: Colors.blue,
+                                                    ))
+                                              ],
+                                            )),
+                                            // DataCell(Text('icon'))
+                                          ])
+                                    ],
+                                  )),
                             );
                             // return HorizontalCard(
                             //   model: model,
@@ -227,7 +236,6 @@ class _PracticeManagementState extends State<PracticeManagement> {
                         onPressed: () {
                           if (_questionPaperDetailsFormKey.currentState!
                               .validate()) {
-                                
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -236,7 +244,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
                                             _categoryController.text.trim(),
                                         course: _courseController.text.trim(),
                                         chapter: _chapterController.text.trim(),
-                                        cid:_cidController.text.trim(),
+                                        cid: _cidController.text.trim(),
                                         subject: _subjectController.text.trim(),
                                       )),
                             );

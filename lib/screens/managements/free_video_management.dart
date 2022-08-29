@@ -153,7 +153,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                               imageUrl: data['imageUrl'],
                               uploadDate: timeDifferenceValue,
                               title: data['title'],
-                              likes: data['likes'], 
+                              likes: data['likes'],
                               // category: ,
                               //  category: data['category'],
                             );
@@ -326,5 +326,3 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
     );
   }
 }
-
-
