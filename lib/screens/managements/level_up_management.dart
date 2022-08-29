@@ -26,7 +26,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
         child: Column(
           children: [
             Text(
-              'Batches',
+              'Level Up Test',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width / 32,
               ),

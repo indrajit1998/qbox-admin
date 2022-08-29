@@ -1,10 +1,10 @@
 import 'dart:core';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:qbox_admin/models/admin_ptm_model.dart';
 import 'package:qbox_admin/models/category_model.dart';
 
@@ -21,12 +21,17 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
   bool _isDateValidate = false;
   bool _isTimeValidate = false;
   bool _isLoading = false;
+  bool _isDeleteLoading=false;
+  bool _isEdit = false;
   String? errorMessage;
   List<String?> allCourse = [];
-  List<String?> batchList=[];
-  List<String?> _category=[];
-  String? _selectCourse ;
-  String? _selectCategory ;
+  List<String?> batchList = [];
+  List<String?> _category = [];
+  Map<String, dynamic>? _editData;
+  String? _selectCourse;
+
+  String? _selectCategory;
+
   String? _selectBatch;
 
   @override
@@ -37,7 +42,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
 
   Future<void> getData() async {
     final querysnapshot =
-    await FirebaseFirestore.instance.collection('cat').get();
+        await FirebaseFirestore.instance.collection('cat').get();
 
     for (var docSnap in querysnapshot.docs) {
       CategoryModel model = CategoryModel.fromJson(docSnap.data());
@@ -50,28 +55,24 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
       });
     }
     querysnapshot.docs.forEach((document) {
-     _category.add(document.id);
+      _category.add(document.id);
     });
-    _selectCategory=_category.elementAt(0);
-    _selectCourse=allCourse.elementAt(0);
-    _selectBatch=batchList.elementAt(0);
+    // _selectCategory = _category.elementAt(0);
+    // _selectCourse = allCourse.elementAt(0);
+    // _selectBatch = batchList.elementAt(0);
 
-    print(_category);
-    print(batchList);
-    print(allCourse);
-    print(_selectBatch);
-    print(_selectCourse);
-    print(_selectCategory);
-    setState(() {
-    });
+    setState(() {});
   }
-
-
-
 
   TextEditingController _meetingLinkController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
+
+  Future<void> _launchUrl(Uri _url) async {
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
+    }
+  }
 
   Widget getTextField(String title, TextEditingController controller,
       String hintText, bool valid) {
@@ -83,7 +84,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
             child: Text(title)),
         Container(
           width: MediaQuery.of(context).size.width * (1 / 4),
-          height:  MediaQuery.of(context).size.height *(1/15),
+          height: MediaQuery.of(context).size.height * (1 / 15),
           margin: const EdgeInsets.symmetric(horizontal: 31),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
           decoration:
@@ -109,7 +110,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
             child: Text(title)),
         Container(
           width: MediaQuery.of(context).size.width * (1 / 4),
-          height: MediaQuery.of(context).size.height *(1/15),
+          height: MediaQuery.of(context).size.height * (1 / 15),
           margin: const EdgeInsets.symmetric(horizontal: 31),
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
           decoration:
@@ -146,8 +147,61 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
     return DropdownMenuItem(
       alignment: AlignmentDirectional.topCenter,
       value: item,
-      child: Align(alignment: Alignment.centerLeft,child: Text(item, style: const TextStyle(fontSize: 20))),
+      child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(item, style: const TextStyle(fontSize: 20))),
     );
+  }
+
+  Future<void> edit_ptm(QueryDocumentSnapshot rowData) async {
+    if (_isCreateMeeting == false) {
+      _editData = rowData.data() as Map<String, dynamic>;
+      if (_editData == null) return;
+      setState(() {
+        _isEdit = true;
+        _selectCategory = _editData!['category'];
+        _selectCourse = _editData!['course'];
+        _selectBatch = _editData!['batch'];
+        _timeController.text = _editData!['time'];
+        _dateController.text = _editData!['date'];
+        _meetingLinkController.text = _editData!['meetingLink'];
+        _isCreateMeeting = true;
+      });
+    }
+  }
+
+  void delete_ptm(QueryDocumentSnapshot rowData)  {
+    Map<String, dynamic> data = rowData.data() as Map<String, dynamic>;
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Delete'),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                      icon: const Icon(Icons.close_rounded)),
+                ],
+              ),
+              titlePadding: const EdgeInsets.symmetric(horizontal: 14,vertical: 5),
+              content: Text('Are You Sure you want to delete'),
+              actions: [
+                ElevatedButton(onPressed: ()async {
+                  setState(() {
+                    _isDeleteLoading=true;
+                  });
+                  await FirebaseFirestore.instance.collection('PTM').doc(rowData['id']).delete();
+                  setState(() {
+                    _isDeleteLoading=false;
+                    Navigator.of(context).pop();
+                  });
+                }, child: _isDeleteLoading?Center(child:CircularProgressIndicator()):Text('Delete'))
+              ],
+            ));
   }
 
   Widget switchContent() {
@@ -193,7 +247,8 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                 if (snapshot.hasData) {
                   return SingleChildScrollView(
                     child: Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
                       child: DataTable(
 
                           //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
@@ -204,17 +259,37 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                             DataColumn(label: Text('Date')),
                             DataColumn(label: Text('Time')),
                             DataColumn(label: Text('Meet Link')),
+                            DataColumn(label: Text('Edit')),
+                            DataColumn(label: Text('Delete')),
                           ],
                           rows: snapshot.data!.docs
                               .map((rowData) => DataRow(
-                                     color: MaterialStateColor.resolveWith((states) => Colors.black12),
+                                    color: MaterialStateColor.resolveWith(
+                                        (states) => Colors.black12),
                                     cells: <DataCell>[
                                       DataCell(Text(rowData['category'])),
                                       DataCell(Text(rowData['course'])),
                                       DataCell(Text(rowData['batch'])),
                                       DataCell(Text(rowData['date'])),
                                       DataCell(Text(rowData['time'])),
-                                      DataCell(Text(rowData['meetingLink'])),
+                                      DataCell(
+                                        TextButton(
+                                          onPressed: () => _launchUrl(Uri.parse(
+                                              rowData['meetingLink'])),
+                                          child: Text(rowData['meetingLink']),
+                                          style: TextButton.styleFrom(
+                                              primary: Colors.blue),
+                                        ),
+                                      ),
+                                      DataCell(IconButton(
+                                          onPressed: () => edit_ptm(rowData),
+                                          icon: Icon(Icons.edit))),
+                                      DataCell(IconButton(
+                                          onPressed: () => delete_ptm(rowData),
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Theme.of(context).errorColor,
+                                          )))
                                     ],
                                   ))
                               .toList()),
@@ -260,19 +335,27 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text(
               _isCreateMeeting
-                  ? 'Create New Meeting'
+                  ? _isEdit
+                      ? 'Edit'
+                      : 'Create New Meeting'
                   : 'Parent Teacher Meeting',
               style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.width / 32),
+                  TextStyle(fontSize: MediaQuery.of(context).size.width / 34),
             ),
             if (_isCreateMeeting == true)
               IconButton(
                 onPressed: () {
                   setState(() {
+                    if (_isEdit) {
+                      _meetingLinkController.clear();
+                      _timeController.clear();
+                      _dateController.clear();
+                      _isEdit = false;
+                    }
                     _isCreateMeeting = false;
                   });
                 },
-                icon:const Icon(
+                icon: const Icon(
                   Icons.close,
                   color: Colors.amber,
                 ),
@@ -318,69 +401,99 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
           if (_isCreateMeeting == false) switchContent(),
           Container(
             child: Expanded(
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_isCreateMeeting == true) {
-                          _checkValidation();
-                          if (!_isLinkValidate &&
-                              !_isTimeValidate &&
-                              !_isDateValidate) {
-                            setState(() {
-                              _isLoading = true;
-                            });
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_isEdit) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await FirebaseFirestore.instance
+                          .collection('PTM')
+                          .doc(_editData!['id'])
+                          .update(PTMmodel(
+                                  id: _editData!['id'],
+                                  category: _selectCategory,
+                                  course: _selectCourse,
+                                  date: _dateController.text.trim(),
+                                  batch: _selectBatch,
+                                  meetingLink:
+                                      _meetingLinkController.text.trim(),
+                                  time: _timeController.text.trim())
+                              .toJson());
 
-                            try {
-                              await FirebaseFirestore.instance
-                                  .collection('PTM')
-                                  .doc(
-                                      '${_dateController.text} ${_timeController.text}')
-                                  .set(PTMmodel(
-                                          category: _selectCategory,
-                                          course: _selectCourse,
-                                          date: _dateController.text.trim(),
-                                          batch: _selectBatch,
-                                          meetingLink: _meetingLinkController
-                                              .text
-                                              .trim(),
-                                          time: _timeController.text.trim())
-                                      .toJson())
-                                  .then((value) => print('Meeting Added'))
-                                  .catchError((error) {
-                                Fluttertoast.showToast(msg: error);
-                              });
-                            } on FirebaseAuthException catch (error) {
-                              switch (error.code) {
-                                default:
-                                  errorMessage =
-                                      "An undefined Error happened.+$error";
-                              }
-                              Fluttertoast.showToast(msg: errorMessage!);
-                            }
-                            setState(() {
-                              _meetingLinkController.clear();
-                              _timeController.clear();
-                              _dateController.clear();
-                              _isCreateMeeting = false;
-                              _isLoading = false;
-                            });
+                      setState(() {
+                        _isLoading = false;
+                        _isEdit = false;
+                        _isCreateMeeting = false;
+                      });
+                    } else if (_isCreateMeeting == true) {
+                      _checkValidation();
+                      if (!_isLinkValidate &&
+                          !_isTimeValidate &&
+                          !_isDateValidate) {
+                        setState(() {
+                          _isLoading = true;
+                        });
 
-                            //Add logic to create admin_ptm_model
-                          }
-                        } else {
-                          setState(() {
-                            _isCreateMeeting = true;
+                        try {
+                          final document = FirebaseFirestore.instance
+                              .collection('PTM')
+                              .doc();
+
+                          await document
+                              .set(PTMmodel(
+                                      id: document.id,
+                                      category: _selectCategory,
+                                      course: _selectCourse,
+                                      date: _dateController.text.trim(),
+                                      batch: _selectBatch,
+                                      meetingLink:
+                                          _meetingLinkController.text.trim(),
+                                      time: _timeController.text.trim())
+                                  .toJson())
+                              .then((value) => print('Meeting Added'))
+                              .catchError((error) {
+                            Fluttertoast.showToast(msg: error);
                           });
+                        } on FirebaseAuthException catch (error) {
+                          switch (error.code) {
+                            default:
+                              errorMessage =
+                                  "An undefined Error happened.+$error";
+                          }
+                          Fluttertoast.showToast(msg: errorMessage!);
                         }
-                      },
-                      style: ElevatedButton.styleFrom(primary: Colors.amber),
-                      child: _isLoading
-                          ? CircularProgressIndicator(color: Colors.black,)
-                          : Text(_isCreateMeeting
-                              ? 'Create New Meeting'
-                              : 'Add Meeting'),
-                    ),),),
+                        setState(() {
+                          _meetingLinkController.clear();
+                          _timeController.clear();
+                          _dateController.clear();
+                          _isCreateMeeting = false;
+                          _isLoading = false;
+                        });
+
+                        //Add logic to create admin_ptm_model
+                      }
+                    } else {
+                      setState(() {
+                        _isCreateMeeting = true;
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(primary: Colors.amber),
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                          color: Colors.black,
+                        )
+                      : Text(_isCreateMeeting
+                          ? _isEdit
+                              ? 'Edit'
+                              : 'Create New Meeting'
+                          : 'Add Meeting'),
+                ),
+              ),
+            ),
           ),
         ],
       ),
