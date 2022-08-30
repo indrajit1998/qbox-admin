@@ -106,6 +106,9 @@ class _HomePageState extends State<HomePage> {
       displayList = <Widget>[] + teachersList;
       sideDisplayList = <String>[] + sideTeachersList;
       sideManagementList = [] + sideTeachersManagementList;
+      final user=FirebaseAuth.instance.currentUser;
+
+      FirebaseFirestore.instance.collection('teachers').doc(user!.email).update({'loginTime':DateTime.now()});
 
       return [teachersList, sideTeachersList, sideTeachersManagementList];
     } else if (role == 'Admin') {

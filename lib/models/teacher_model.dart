@@ -6,6 +6,7 @@ class TeacherModel {
   Country? country;
   int? phoneNumber;
   String? role;
+  String? experience;
   List<String>? courses;
   List<String>? batches;
   List<String>? freeVideos;
@@ -21,6 +22,7 @@ class TeacherModel {
       this.country,
       this.phoneNumber,
       this.role,
+        this.experience,
       this.courses,
       this.batches,
       this.freeVideos,
@@ -37,6 +39,7 @@ class TeacherModel {
         json['country'] != null ? Country.fromJson(json['country']) : null;
     phoneNumber = json['phoneNumber'];
     role = json['role'];
+    experience=json['experience'];
     courses = json['courses'].cast<String>();
     batches = json['batches'].cast<String>();
     freeVideos = json['freeVideos'].cast<String>();
@@ -56,6 +59,7 @@ class TeacherModel {
     }
     data['phoneNumber'] = phoneNumber;
     data['role'] = role;
+    data['experience']=experience;
     data['courses'] = courses;
     data['batches'] = batches;
     data['freeVideos'] = freeVideos;

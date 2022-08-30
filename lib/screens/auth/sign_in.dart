@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,7 @@ import 'package:qbox_admin/utilities/dimensions.dart';
 
 class SignIn extends StatefulWidget {
   static String routeName = 'signIn';
+
   const SignIn({Key? key}) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class _SignInState extends State<SignIn> {
   double? padding;
   double? titleSize = 60;
   double? smallTextSize = 15;
+
   @override
   void dispose() {
     super.dispose();
@@ -220,7 +223,6 @@ class _SignInState extends State<SignIn> {
                           ),
                         ],
                       ),
-                      
                     ],
                   ),
                 ),
