@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qbox_admin/models/coupon_model.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
+import 'package:qbox_admin/models/category_model.dart';
 
 class CouponManagement extends StatefulWidget {
   const CouponManagement({Key? key}) : super(key: key);
@@ -21,8 +22,38 @@ class _CouponManagementState extends State<CouponManagement> {
   final _couponCategoryController = TextEditingController();
   final _couponExpiryDateController = TextEditingController();
   final _couponDescriptionController = TextEditingController();
+  final _courseDurationController = TextEditingController();
+  String? selectedCourse;
+  String? selectedCategory;
+  List<String?> _category = [];
+  List<String?> _allCourse = [];
   int index = 1;
   String? errorMessage;
+
+  @override
+  void initState() {
+    getcategoryData();
+    super.initState();
+  }
+
+  Future<void> getcategoryData() async {
+    final querysnapshot =
+        await FirebaseFirestore.instance.collection('cat').get();
+
+    for (var docSnap in querysnapshot.docs) {
+      Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+      CategoryModel model = CategoryModel.fromJson(data);
+      model.courses?.forEach((element) {
+        _allCourse.add(element.courseName);
+      });
+      _category.add(data['title']);
+    }
+    // _selectCategory = _category.elementAt(0);
+    // _selectCourse = allCourse.elementAt(0);
+    // _selectBatch = batchList.elementAt(0);
+
+    setState(() {});
+  }
 
   Future<List> getData() async {
     CollectionReference collectionRef =
@@ -35,8 +66,56 @@ class _CouponManagementState extends State<CouponManagement> {
   }
 
   bool isLoading = false;
+
+  Widget getDropDownOptions(String title, List item, String? selection,Function setState) {
+    return Container(
+      width: MediaQuery.of(context).size.width * (700 / (1563*2))-30,//MediaQuery.of(context).size.width * (1 / 4),
+      // height: MediaQuery.of(context).size.height * (1 / 15),
+      margin: const EdgeInsets.symmetric(horizontal: 12,vertical: 3),
+      //padding: const EdgeInsets.symmetric( horizontal: 5),
+      decoration:
+          BoxDecoration(border: Border.all(color: Colors.grey, width: 0.5),borderRadius: BorderRadius.all(Radius.circular(8))),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+            value: selection,
+            isExpanded: true,
+            iconSize: 35,
+            icon: const Icon(
+              Icons.arrow_drop_down,
+              color: Colors.black,
+            ),
+            hint: Text('Select $title'),
+            onChanged: (value) {
+              setState(() {
+                //selection=value;
+                if (title == 'Category') {
+                  selectedCategory = value;
+                } else {
+                  selectedCourse = value;
+                }
+              });
+            },
+            items: item.map((item) => _buildDropMenuItem(item)).toList()),
+      ),
+    );
+  }
+
+  DropdownMenuItem<String> _buildDropMenuItem(String item) {
+    return DropdownMenuItem(
+      alignment: AlignmentDirectional.topCenter,
+      value: item,
+      child: Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left:8.0,right: 10),
+            child: Text(item),
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    //print(MediaQuery.of(context).size.width); 1366
     return Scaffold(
       body: Container(
         padding:
@@ -75,6 +154,8 @@ class _CouponManagementState extends State<CouponManagement> {
                                   return Colors.amber;
                                 },
                               ),
+                              columnSpacing:
+                                  MediaQuery.of(context).size.width / 16.4,
                               columns: const [
                                 DataColumn(
                                   label: Text('Serial No'),
@@ -95,6 +176,9 @@ class _CouponManagementState extends State<CouponManagement> {
                                   'Category',
                                 )),
                                 DataColumn(
+                                  label:Text('Course')
+                                ),
+                                DataColumn(
                                     label: Text(
                                   'Expiry Date',
                                 )),
@@ -112,7 +196,8 @@ class _CouponManagementState extends State<CouponManagement> {
                                             ),
                                             DataCell(
                                               Text(rowData['title']),
-                                            ), //Extracting from Map element the value
+                                            ),
+                                            //Extracting from Map element the value
                                             DataCell(
                                               Text(rowData['discount']),
                                             ),
@@ -121,6 +206,9 @@ class _CouponManagementState extends State<CouponManagement> {
                                             ),
                                             DataCell(
                                               Text(rowData['category']),
+                                            ),
+                                            DataCell(
+                                              Text(rowData['course'])
                                             ),
                                             DataCell(
                                               Text(rowData['expiryDate']),
@@ -147,81 +235,76 @@ class _CouponManagementState extends State<CouponManagement> {
               alignment: Alignment.bottomRight,
               child: BottomMaterialButton(
                 text: 'Add Coupon',
-                popUpChild: Form(
-                  key: _couponFormKey,
-                  child: Wrap(
-                    children: [
-                      const Divider(
-                        color: Colors.amber,
-                      ),
-                      PopUpTextField(
-                        controller: _couponNameController,
-                        hint: 'Title',
-                        label: 'Title',
-                        widthRatio: 2,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _couponDiscountController,
-                        hint: '12%',
-                        label: 'Discount',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _couponCodeController,
-                        hint: 'ZSCVFGV',
-                        label: 'Coupon Code',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _couponCategoryController,
-                        hint: 'Medical',
-                        label: 'Category',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _couponExpiryDateController,
-                        hint: 'DD-MM-YYYY',
-                        label: 'Expiry Date',
-                        widthRatio: 1,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return ("Field cannot be empty");
-                          }
-                          return null;
-                        },
-                      ),
-                      PopUpTextField(
-                        controller: _couponDescriptionController,
-                        hint: '',
-                        label: 'Description',
-                        widthRatio: 2,
-                        maximumLines: 5,
-                      ),
-                    ],
+                popUpChild: StatefulBuilder(
+                  builder:(context,setSate)=> Form(
+                    key: _couponFormKey,
+                    child: Wrap(
+                      children: [
+                        const Divider(
+                          color: Colors.amber,
+                        ),
+                        PopUpTextField(
+                          controller: _couponNameController,
+                          hint: 'Title',
+                          label: 'Title',
+                          widthRatio: 2,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        PopUpTextField(
+                          controller: _couponDiscountController,
+                          hint: '12%',
+                          label: 'Discount',
+                          widthRatio: 1,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        PopUpTextField(
+                          controller: _courseDurationController,
+                          hint: 'DD-MM-YYYY',
+                          label: 'Course Duration',
+                          widthRatio: 1,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        getDropDownOptions(
+                            'Category', _category, selectedCategory,setSate),
+
+                        getDropDownOptions('Course', _allCourse, selectedCourse,setSate),
+                     
+                        PopUpTextField(
+                          controller: _couponExpiryDateController,
+                          hint: 'DD-MM-YYYY',
+                          label: 'Expiry Date',
+                          widthRatio: 1,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        PopUpTextField(
+                          controller: _couponDescriptionController,
+                          hint: '',
+                          label: 'Description',
+                          widthRatio: 2,
+                          maximumLines: 5,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 popUpactions: [
@@ -244,8 +327,8 @@ class _CouponManagementState extends State<CouponManagement> {
                                             _couponNameController.text.trim(),
                                         discount: _couponDiscountController.text
                                             .trim(),
-                                        category: _couponCategoryController.text
-                                            .trim(),
+                                        category:selectedCategory,
+                                        course:selectedCourse,
                                         couponCode:
                                             _couponCodeController.text.trim(),
                                         description:

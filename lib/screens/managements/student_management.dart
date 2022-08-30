@@ -138,7 +138,12 @@ class _StudentManagementState extends State<StudentManagement> {
                     children: [
                       ...rowData['selectedCourse']
                           .map(
-                              (e) => Text('${e['courseName']}'))
+                              (e) => Row(
+                                children: [
+                                  Icon(Icons.circle,size: 8,),
+                                  Text('   ${e['courseName']}'),
+                                ],
+                              ))
                           .toList(),
                     ]),
               ),
@@ -198,6 +203,7 @@ class _StudentManagementState extends State<StudentManagement> {
                 child: Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.white),
                   child: DataTable(
+                    columnSpacing: MediaQuery.of(context).size.width/22.7,
                     columns: const [
                       DataColumn(label: Text('Image')),
                       DataColumn(

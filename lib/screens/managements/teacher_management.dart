@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:qbox_admin/models/teacher_model.dart';
 import 'package:qbox_admin/models/category_model.dart';
@@ -34,8 +35,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _roleController = TextEditingController();
   final _subjectController = TextEditingController();
+  final _experienceController = TextEditingController();
 
   @override
   void initState() {
@@ -57,8 +58,144 @@ class _TeacherManagementState extends State<TeacherManagement> {
         }
         batchList.add(tmpBatchlst);
       });
-      print(allCourse);
     }
+  }
+
+  List<DataRow> _getRowList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    final lst = snapshot.data!.docs;
+
+    return lst.map((data) {
+      Map<String,dynamic> rowData=data.data() as Map<String,dynamic>;
+      return DataRow(
+          color: MaterialStateColor.resolveWith((states) => Colors.black12),
+          cells: <DataCell>[
+            DataCell(Text('${rowData['firstName']} ${rowData['lastName']}')),
+            DataCell(
+              SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...rowData['batches']
+                          .map((e) => Row(
+                        children: [
+                          Icon(
+                            Icons.circle,
+                            size: 8,
+                          ),
+                          Text(' Batch-${e}'),
+                        ],
+                      ))
+                          .toList(),
+                    ]),
+              ),
+              placeholder: true,
+            ),
+            DataCell(
+              SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...rowData['courses']
+                          .map((e) => Row(
+                        children: [
+                          Icon(
+                            Icons.circle,
+                            size: 8,
+                          ),
+                          Text('   ${e}'),
+                        ],
+                      ))
+                          .toList(),
+                    ]),
+              ),
+              placeholder: true,
+            ),
+            DataCell(
+              SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...rowData['subjects']
+                          .map((e) => Row(
+                        children: [
+                          Icon(
+                            Icons.circle,
+                            size: 8,
+                          ),
+                          Text('   ${e}'),
+                        ],
+                      ))
+                          .toList(),
+                    ]),
+              ),
+              placeholder: true,
+            ),
+            DataCell(SingleChildScrollView(child: Text(rowData['experience']))),
+            DataCell(Text(rowData['phoneNumber'].toString())),
+            DataCell(Text(rowData['email'])),
+            DataCell(Text(rowData.containsKey('loginTime')==false?'Not Login Yet':'${DateFormat.yMMMd().add_jm().format(rowData['loginTime'].toDate())}')),
+
+          ]);
+    }).toList();
+  }
+
+  Widget getTableList() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('teachers')
+              .where("role", isEqualTo: "teacher")
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong!');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasData) {
+              return SingleChildScrollView(
+                primary: false,
+                child: Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                  child: DataTable(
+                    columnSpacing: MediaQuery.of(context).size.width / 22.7,
+                    dataRowHeight: 70,
+                    columns: const [
+                      DataColumn(label: Text('Teacher Name')),
+                      DataColumn(
+                        label: Text('Batch'),
+                      ),
+                      DataColumn(
+                        label: Text('Course'),
+                      ),
+                      DataColumn(
+                        label: Text('Subject'),
+                      ),
+                      DataColumn(
+                        label: Text('Experienced'),
+                      ),
+                      DataColumn(
+                        label: Text('Phone Number'),
+                      ),
+                      DataColumn(
+                        label: Text('Email'),
+                      ),
+                      DataColumn(
+                        label: Text('Login Date-time'),
+                      ),
+                    ],
+                    rows: _getRowList(snapshot),
+                  ),
+                ),
+              );
+            }
+
+            return const Text('No Student data');
+          }),
+    );
   }
 
   @override
@@ -96,6 +233,19 @@ class _TeacherManagementState extends State<TeacherManagement> {
                             const Text('Add Teacher'),
                             IconButton(
                                 onPressed: () {
+                                  _teacherController.clear();
+                                  _subjectController.clear();
+                                  _confirmedPasswordController.clear();
+                                  _emailController.clear();
+                                  _firstNameController.clear();
+                                  _lastNameController.clear();
+                                  _passwordController.clear();
+                                  _phoneNumberController.clear();
+                                  _experienceController.clear();
+
+                                  for (int i = 0; i < allCourse.length; i++) {
+                                    optionSelected.insert(i, false);
+                                  }
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
                                 },
@@ -263,6 +413,35 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                 Padding(
                                   padding: EdgeInsets.all(padding20 / 2),
                                   child: TextFormField(
+                                    controller: _experienceController,
+                                    onSaved: (value) {
+                                      _experienceController.text = value!;
+                                    },
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            Dimensions.borderRadius12),
+                                      ),
+                                      hintText: "Experience",
+                                      fillColor: Colors.grey[100],
+                                      filled: true,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(padding20 / 2),
+                                  child: TextFormField(
                                     controller: _subjectController,
                                     onSaved: (value) {
                                       _subjectController.text = value!;
@@ -300,7 +479,8 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                         Column(
                                           children: [
                                             CheckboxListTile(
-                                              title: Text('(${i+1})  '+ '${allCourse[i]!}'),
+                                              title: Text('(${i + 1})  ' +
+                                                  '${allCourse[i]!}'),
                                               value: optionSelected[i],
                                               onChanged: (value) {
                                                 setState(() {
@@ -327,23 +507,35 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                                               .toList()[j],
                                                           onChanged: (val) {
                                                             setState(() {
-                                                              batchList[i][batchList[i].keys.toList()[j]] = val!;
+                                                              batchList[
+                                                                  i][batchList[
+                                                                          i]
+                                                                      .keys
+                                                                      .toList()[
+                                                                  j]] = val!;
                                                             });
                                                           },
                                                           title: Text(
                                                               'Batch ${batchList[i].keys.toList()[j]}'),
                                                           shape: RoundedRectangleBorder(
-                                                            side:BorderSide(
-                                                              width: 1.5,color: Colors.amber
-                                                            ) ,
+                                                              side: BorderSide(
+                                                                  width: 1.5,
+                                                                  color: Colors
+                                                                      .amber),
                                                               borderRadius: BorderRadius.only(
-                                                                  topLeft: Radius.circular(25),
-                                                                  topRight: Radius.circular(25),
-                                                                  bottomRight: Radius.circular(25),
-                                                                  bottomLeft: Radius.circular(25))),//Border.all(),
-
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          25),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          25),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          25),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          25))), //Border.all(),
                                                         ),
-
                                                       )
                                                     ]
                                                   ],
@@ -505,45 +697,13 @@ class _TeacherManagementState extends State<TeacherManagement> {
             ),
             Expanded(
               child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.width * (1 / 153.6),
-                ),
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('teachers')
-                        .where("role", isEqualTo: "teacher")
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text('Something went wrong!');
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      // var data = snapshot.data!.docs[0].data();
-
-                      return ListView(
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        children: snapshot.data!.docs
-                            .map((DocumentSnapshot documentSnapshot) {
-                          Map<String, dynamic> data =
-                              documentSnapshot.data()! as Map<String, dynamic>;
-                          return ListTile(
-                            title: Text(
-                                data['firstName'] + " " + data['lastName']),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.delete),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }),
-              ),
+                  width: double.infinity,
+                  height: double.infinity,
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.width * (1 / 153.6),
+                  ),
+                  child:getTableList(),
+                  ),
             ),
           ],
         ),
@@ -564,38 +724,53 @@ class _TeacherManagementState extends State<TeacherManagement> {
                   }),
                   Fluttertoast.showToast(msg: 'Sign Up Successful'),
                   // Navigator.popAndPushNamed(context, HomePage.routeName),
-                  Navigator.pop(context)
+                 // Navigator.pop(context),
                 });
         List<String> selectedCourses = [];
-        List<String> tmpBatchList=[];
+        List<String> tmpBatchList = [];
         for (int i = 0; i < optionSelected.length; i++) {
           if (optionSelected[i]!) {
             selectedCourses.add(allCourse[i]!);
             batchList[i].forEach((key, value) {
-              if(value==true){
-              tmpBatchList.add(key!);
-              }});
+              if (value == true) {
+                tmpBatchList.add(key!);
+              }
+            });
           }
         }
         await FirebaseFirestore.instance
             .collection('teachers')
             .doc(email)
             .set(TeacherModel(
-              firstName: _firstNameController.text.trim(),
-              lastName: _lastNameController.text.trim(),
-              phoneNumber: int.parse(_phoneNumberController.text.trim()),
-              email: email,
-              role: "teacher",
-              courses: selectedCourses,
-              subjects: [_subjectController.text.trim()],
-              batches: tmpBatchList
-            ).toJson())
+                    firstName: _firstNameController.text.trim(),
+                    lastName: _lastNameController.text.trim(),
+                    phoneNumber: int.parse(_phoneNumberController.text.trim()),
+                    email: email,
+                    role: "teacher",
+                    experience: _experienceController.text.trim(),
+                    courses: selectedCourses,
+                    subjects: [_subjectController.text.trim()],
+                    batches: tmpBatchList)
+                .toJson(),SetOptions(merge: true))
             .then((value) {
           print("User Added");
           setState(() {
             _signUpFetching = false;
+            _teacherController.clear();
+            _subjectController.clear();
+            _confirmedPasswordController.clear();
+            _emailController.clear();
+            _firstNameController.clear();
+            _lastNameController.clear();
+            _passwordController.clear();
+            _phoneNumberController.clear();
+            _experienceController.clear();
+            for (int i = 0; i < allCourse.length; i++) {
+              optionSelected.insert(i, false);
+            }
+            Navigator.of(context).pop();
           });
-          Navigator.of(context).pop();
+
         }).catchError((error) => print("Failed to add user: $error"));
       } on FirebaseAuthException catch (error) {
         print('error is $error');
@@ -609,7 +784,11 @@ class _TeacherManagementState extends State<TeacherManagement> {
           default:
             errorMessage = "An undefined Error happened.";
         }
+        setState(() {
+          _signUpFetching = false;
+        });
         Fluttertoast.showToast(msg: errorMessage!);
+        Navigator.of(context).pop();
       }
     }
   }
