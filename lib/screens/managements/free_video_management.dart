@@ -290,6 +290,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                       LinearProgressIndicator(
                         value: progress / 100,
                       ),
+                      
                     ],
                   ),
                 ),

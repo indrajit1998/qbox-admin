@@ -155,7 +155,6 @@ class _HomeDisplayScreenState extends State<HomeDisplayScreen> {
                                                     builder: (context) =>
                                                         VideoDetails(
                                                           imageUrl: widget.imageUrl.toString(), 
-                                                          
                                                           category: widget.category,
                                                           likes: widget.likes.toInt(),
                                                           title: widget.title.toString(),

@@ -132,6 +132,7 @@ class _DidYouKnowState extends State<DidYouKnow> {
                           return const Center(
                               child: CircularProgressIndicator());
                         }
+                        
                         return Wrap(
                           spacing: 20,
                           runSpacing: 15,

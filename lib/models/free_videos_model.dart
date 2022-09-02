@@ -27,7 +27,6 @@ class FreeVideoModel {
       this.subject,
       this.description,
       this.uploadedTeacherEmail});
-
   FreeVideoModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     imageUrl = json['imageUrl'];
