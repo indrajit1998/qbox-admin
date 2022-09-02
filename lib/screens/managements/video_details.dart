@@ -2,8 +2,10 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 // import 'package:qbox_admin/screens/managements/free_video_management.dart';
 // import 'package:video_player/video_player.dart';
 
@@ -13,9 +15,11 @@ class VideoDetails extends StatefulWidget {
   static String routeName = 'videoDetails';
   final String title;
   final String imageUrl;
-  // final String videoLink;
-  // final String category;
-  
+  final String videoLink;
+  final String category;
+  final String subject;
+  final String chapter;
+  final String description;
   final int likes;
   final Map uploadDate;
   const VideoDetails(
@@ -23,7 +27,12 @@ class VideoDetails extends StatefulWidget {
       required this.imageUrl,
       required this.title,
       required this.likes,
-      required this.uploadDate})
+      required this.uploadDate,
+      required this.videoLink,
+      required this.category,
+      required this.subject,
+      required this.chapter,
+      required this.description})
       : super(key: key);
 
   @override
@@ -69,9 +78,6 @@ class _VideoDetailsState extends State<VideoDetails> {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                // margin: EdgeInsets.only(
-                //   bottom: MediaQuery.of(context).size.width * (1 / 153.6),
-                // ),
                 child: SingleChildScrollView(
                     child: Container(
                   child: Column(
@@ -80,26 +86,30 @@ class _VideoDetailsState extends State<VideoDetails> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image(
-                            image: NetworkImage(widget.imageUrl),
-                            height: 180,
-                            width: 310,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              return loadingProgress == null
-                                  ? child
-                                  : const LinearProgressIndicator();
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => VideoScreen(
+                                            title: widget.title,
+                                            videoLink: widget.videoLink,
+                                            description: widget.description,
+                                          )));
                             },
+                            child: Image(
+                              image: Image.network(widget.imageUrl).image,
+                              height: 180,
+                              width: 310,
+                              // fit: BoxFit.,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                return loadingProgress == null
+                                    ? child
+                                    : const LinearProgressIndicator();
+                              },
+                            ),
                           ),
-                          // Table(
-                          //   children: const <TableRow>[
-                          //     TableRow(children: [
-                          //       Text('data'),
-                          //       Text('data1'),
-                          //     ])
-                          //   ],
-                          // )
-
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +145,7 @@ class _VideoDetailsState extends State<VideoDetails> {
                                   const SizedBox(
                                     width: 50,
                                   ),
-                                  const Text('fdukgh n djhjdhfe'),
+                                  Text(widget.description),
                                 ],
                               ),
                               const SizedBox(
@@ -153,7 +163,7 @@ class _VideoDetailsState extends State<VideoDetails> {
                                   const SizedBox(
                                     width: 50,
                                   ),
-                                  const Text('Physics'),
+                                  Text(widget.chapter),
                                 ],
                               )
                             ],
@@ -179,7 +189,7 @@ class _VideoDetailsState extends State<VideoDetails> {
                                   const SizedBox(
                                     width: 50,
                                   ),
-                                  const Text('physics'),
+                                  Text(widget.subject),
                                   // Spacer(),
                                 ],
                               ),
@@ -198,7 +208,7 @@ class _VideoDetailsState extends State<VideoDetails> {
                                   const SizedBox(
                                     width: 50,
                                   ),
-                                  const Text('physics'),
+                                  Text(widget.category),
                                 ],
                               ),
                               const SizedBox(
@@ -309,8 +319,8 @@ class _VideoDetailsState extends State<VideoDetails> {
                                     Image.asset('assets/images/user.jpg').image,
                               ), //Image.asset('assets/images/user.jpg'),
                               title: const Text('Riya Patel'),
-                              subtitle:
-                                  const Text('I want to know today weather report'),
+                              subtitle: const Text(
+                                  'I want to know today weather report'),
                             ),
                             ListTile(
                               leading: CircleAvatar(
@@ -319,16 +329,17 @@ class _VideoDetailsState extends State<VideoDetails> {
                                     Image.asset('assets/images/user.jpg').image,
                               ), //Image.asset('assets/images/user.jpg'),
                               title: const Text('Praveen Kumar'),
-                              subtitle:
-                                  const Text('I want to know today weather report'),
-                            ), 
+                              subtitle: const Text(
+                                  'I want to know today weather report'),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 60),
                               child: ListTile(
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.blue,
                                   backgroundImage:
-                                      Image.asset('assets/images/user.jpg').image,
+                                      Image.asset('assets/images/user.jpg')
+                                          .image,
                                 ), //Image.asset('assets/images/user.jpg'),
                                 title: const Text('sneha Verma'),
                                 subtitle:
@@ -342,8 +353,8 @@ class _VideoDetailsState extends State<VideoDetails> {
                                     Image.asset('assets/images/user.jpg').image,
                               ), //Image.asset('assets/images/user.jpg'),
                               title: const Text('Chandan Verma'),
-                              subtitle:
-                                  const Text('I want to know today weather report'),
+                              subtitle: const Text(
+                                  'I want to know today weather report'),
                             ),
                             ListTile(
                               leading: CircleAvatar(
@@ -352,8 +363,8 @@ class _VideoDetailsState extends State<VideoDetails> {
                                     Image.asset('assets/images/user.jpg').image,
                               ), //Image.asset('assets/images/user.jpg'),
                               title: const Text('Mayank Nigam'),
-                              subtitle:
-                                  const Text('I want to know today weather report'),
+                              subtitle: const Text(
+                                  'I want to know today weather report'),
                             ),
                           ],
                         ),
@@ -363,45 +374,53 @@ class _VideoDetailsState extends State<VideoDetails> {
                 )),
               ),
             ),
-           
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      
-                      label: const Text('You can reply any comment from here'),
-                      suffix: Wrap(
-                        children: [
-IconButton(onPressed: (){
-                          setState(() {
-                            
-                          });
-                          _getFromGallery();
 
-                        }, icon: Icon(Icons.image_outlined, color: Colors.blue,),),
-                          
-                          const SizedBox(width: 15,),
-                         IconButton(onPressed: (){}, icon: Icon(Icons.send_sharp, color: Colors.blue,),),
-                        ],
-                      )
-                    ),
-                  ),
-                ),
-                // IconButton(onPressed: (){
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: TextField(
+                decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    label: const Text('You can reply any comment from here'),
+                    suffix: Wrap(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {});
+                            _getFromGallery();
+                          },
+                          icon: Icon(
+                            Icons.image_outlined,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.send_sharp,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+            // IconButton(onPressed: (){
 
-                // }, icon: Icon(Icons.send_sharp, color: Colors.blue,))
+            // }, icon: Icon(Icons.send_sharp, color: Colors.blue,))
             //  Row(
             //             mainAxisAlignment: MainAxisAlignment.end,
             //             crossAxisAlignment: CrossAxisAlignment.end,
             //             children:  [ IconButton(onPressed: (){
             //               setState(() {
-                            
+
             //               });
             //               _getFromGallery();
 
             //             }, icon: Icon(Icons.image_outlined, color: Colors.blue,),),
-                          
+
             //               const SizedBox(width: 15,),
             //              IconButton(onPressed: (){}, icon: Icon(Icons.send_sharp, color: Colors.blue,),),
             //             ],
@@ -411,7 +430,8 @@ IconButton(onPressed: (){
       ),
     );
   }
-   _getFromGallery() async {
+
+  _getFromGallery() async {
     PickedFile? pickedFile = await ImagePicker().getImage(
       source: ImageSource.gallery,
       maxWidth: 1800,
@@ -422,5 +442,159 @@ IconButton(onPressed: (){
         imageFile = File(pickedFile.path);
       });
     }
+  }
+}
+
+class VideoScreen extends StatefulWidget {
+  static const String routeName = '/videoScreen';
+  final String title;
+  final String videoLink;
+  final String description;
+  const VideoScreen(
+      {Key? key,
+      required this.title,
+      required this.videoLink,
+      required this.description})
+      : super(key: key);
+
+  @override
+  State<VideoScreen> createState() => _VideoScreenState();
+}
+
+class _VideoScreenState extends State<VideoScreen> {
+  // Initial Selected Value
+  String dropdownvalue = '144p';
+
+  // List of items in our dropdown menu
+  var items = ['144p', '240p', '360p', '480p', '720p', '1080p'];
+  late VideoPlayerController videoPlayerController;
+  ChewieController? chewieController;
+  Future<void> setVolume(double volume) async {
+    await videoPlayerController.setVolume(volume);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    videoPlayerController = VideoPlayerController.network(widget.videoLink);
+    chewieController = ChewieController(
+        videoPlayerController: videoPlayerController,
+        allowMuting: true,
+        showOptions: true,
+        zoomAndPan: true,
+        maxScale: 400,
+        // aspectRatio: 16/9,
+        autoPlay: true,
+        allowFullScreen: true,
+        looping: true,
+        autoInitialize: true,
+        errorBuilder: (context, errorMessage) {
+          return Center(
+            child: Text(
+              errorMessage,
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        },
+        subtitle: Subtitles([
+          Subtitle(
+            index: 0,
+            start: Duration.zero,
+            end: const Duration(seconds: 10),
+            text: 'Hello from subtitles',
+          ),
+          Subtitle(
+            index: 1,
+            start: const Duration(seconds: 10),
+            end: const Duration(seconds: 20),
+            text: 'Whats up? :)',
+          ),
+        ]),
+        subtitleBuilder: (context, subtitle) => Container(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                subtitle,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+        additionalOptions: (context) {
+          return <OptionItem>[
+            OptionItem(
+                onTap: () => debugPrint('Press 1'),
+                iconData: Icons.settings,
+                title: 'Quality'),
+            OptionItem(
+                onTap: () => debugPrint('Press 2'),
+                iconData: Icons.loop,
+                title: 'Loop Video'),
+          ];
+        });
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    chewieController!.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(top: 20),
+        alignment: Alignment.topRight,
+        child: FloatingActionButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Icon(Icons.close)),
+      ),
+      body: Column(
+        children: [
+          Text(widget.title, 
+            style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),),
+          Container(
+              height: 550,
+              width: double.infinity,
+              child: Chewie(controller: chewieController!)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                'video full details  descriptions ${widget.description}',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
+              DropdownButton(
+                dropdownColor: Colors.white,
+                icon: Text('Quality (${dropdownvalue})'),
+                // icon: Icon(
+                //   Icons.more_vert,
+                //   color: Theme.of(context).primaryIconTheme.color,
+                // ),
+                // value: dropdownvalue,
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
