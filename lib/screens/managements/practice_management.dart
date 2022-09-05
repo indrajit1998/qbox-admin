@@ -11,7 +11,9 @@ import 'package:universal_html/html.dart';
 import '../question_paper_preview.dart';
 
 class PracticeManagement extends StatefulWidget {
-  const PracticeManagement({Key? key, }) : super(key: key);
+  const PracticeManagement({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PracticeManagement> createState() => _PracticeManagementState();
@@ -24,7 +26,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
   final _cidController = TextEditingController();
   final _categoryController = TextEditingController();
   final _subjectController = TextEditingController();
-   final updateDate = '';
+  final updateDate = '';
   final GlobalKey<FormState> _questionPaperDetailsFormKey =
       GlobalKey<FormState>();
 
@@ -57,7 +59,6 @@ class _PracticeManagementState extends State<PracticeManagement> {
                 ),
                 child: SingleChildScrollView(
                   child: _dataList(),
-                  
                 ),
               ),
             ),
@@ -145,7 +146,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
                       child: MaterialButton(
                         onPressed: () {
                           DateTime currentTime = DateTime.now();
-                        
+
                           if (_questionPaperDetailsFormKey.currentState!
                               .validate()) {
                             Navigator.push(
@@ -158,10 +159,9 @@ class _PracticeManagementState extends State<PracticeManagement> {
                                         chapter: _chapterController.text.trim(),
                                         cid: _cidController.text.trim(),
                                         subject: _subjectController.text.trim(),
-                                         publishDate: currentTime.toString(), 
-                                         updateDate: currentTime.toString(),
-                                          // updateDate: updateDate,
-                                        
+                                        publishDate: currentTime.toString(),
+                                        updateDate: currentTime.toString(),
+                                        // updateDate: updateDate,
                                       )),
                             );
                           }
@@ -206,67 +206,92 @@ class _PracticeManagementState extends State<PracticeManagement> {
             return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  // width: MediaQuery.of(context).size.width,
-                  width: 1200,
+                    // width: MediaQuery.of(context).size.width,
+                    width: 1200,
                     child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.white),
-                  child: DataTable(
-                      columns: [
-                         DataColumn(label: Text('Sl no.')),
-                        DataColumn(label: Text('Category')),
-                        DataColumn(label: Text('Course Name')),
-                        DataColumn(label: Text('ID')),
-                        DataColumn(label: Text('Publish Date')),
-                        DataColumn(label: Text('Update Date')),
-                        DataColumn(label: Text('Chapter Name')),
-                        DataColumn(label: Text('Subject')),
-                      ],
-                      rows:
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-                        PracticeModel model = PracticeModel.fromJson(data);
-                        practiceModelList.add(model);
-                        sl_no = sl_no+1;
-                        return DataRow(
-                            color: MaterialStateColor.resolveWith(
-                                (states) => Colors.black12),
-                            cells: <DataCell>[
-                               DataCell(Text('${sl_no}')),
-                              DataCell(Text(model.category.toString())),
-                              DataCell(Text(model.course.toString())),
-                              DataCell(Text(model.cid.toString())),
-                              DataCell(Text(model.publishDate.toString().split(' ').first)),
-                              DataCell(Text(model.updateDate.toString().split(' ').first)),
-                              DataCell(Text(model.chapter.toString())),
-                              DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(model.subject.toString()),
-                                  Spacer(),
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  QuestionPaperPreview(
-                                                      questionPaper: model)),
-                                        );
-                                      },
-                                      icon: Icon(
-                                        Icons.arrow_right_alt,
-                                        color: Colors.blue,
-                                      ))
-                                ],
-                              )),
-                    
-                            ]);
-                      }).toList()),
-                )));
-                
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
+                      child: DataTable(
+                          columns: [
+                            DataColumn(label: Text('Sl no.')),
+                            DataColumn(label: Text('Category')),
+                            DataColumn(label: Text('Course Name')),
+                            DataColumn(label: Text('ID')),
+                            DataColumn(label: Text('Publish Date')),
+                            DataColumn(label: Text('Update Date')),
+                            DataColumn(label: Text('Chapter Name')),
+                            DataColumn(label: Text('Subject')),
+                          ],
+                          rows: snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data()! as Map<String, dynamic>;
+                            PracticeModel model = PracticeModel.fromJson(data);
+                            practiceModelList.add(model);
+                            sl_no = sl_no + 1;
+                            return DataRow(
+                                color: MaterialStateColor.resolveWith(
+                                    (states) => Colors.black12),
+                                cells: <DataCell>[
+                                  DataCell(Text('${sl_no}')),
+                                  DataCell(Text(model.category.toString())),
+                                  DataCell(Text(model.course.toString())),
+                                  DataCell(Text(model.cid.toString())),
+                                  DataCell(Text(model.publishDate
+                                      .toString()
+                                      .split(' ')
+                                      .first)),
+                                  DataCell(Text(model.updateDate
+                                      .toString()
+                                      .split(' ')
+                                      .first)),
+                                  DataCell(Text(model.chapter.toString())),
+                                  DataCell(Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(model.subject.toString()),
+                                      Spacer(),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      QuestionPaperPreview(
+                                                        questionPaper: model,
+                                                        category: model.category
+                                                            .toString(),
+                                                        chapter: model.chapter
+                                                            .toString(),
+                                                        cid: model.cid
+                                                            .toString(),
+                                                        course: model.course
+                                                            .toString(),
+                                                        publishDate: model
+                                                            .publishDate
+                                                            .toString(),
+                                                        subject: model.subject
+                                                            .toString(),
+                                                        updateDate: model
+                                                            .updateDate
+                                                            .toString(),
+                                                      )),
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.arrow_right_alt,
+                                            color: Colors.blue,
+                                          ))
+                                    ],
+                                  )),
+                                ]);
+                          }).toList()),
+                    )));
           }
           sl_no = 0;
+          setState(() {
+            
+          });
           return Text('Loading....');
         });
   }
