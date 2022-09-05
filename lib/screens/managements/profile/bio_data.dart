@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -29,6 +33,7 @@ class _BioDataState extends State<BioData> {
   String _ifscCode = '';
   bool _isLoading = false;
   var _userEmail;
+  String? _authId;
 
   List<GroupEducationControllers> _lstGroupContollers = [];
   List<GroupExtraQualControllers> _lstExtraQualControllers = [];
@@ -42,6 +47,7 @@ class _BioDataState extends State<BioData> {
   List<TextField> _fromDate = [];
   List<TextField> _expMonth = [];
   List<TextField> _designation = [];
+  Map<String, String> docUrl = {};
 
   int curEducationRow = 1;
   int curExtraQualRow = 1;
@@ -49,6 +55,7 @@ class _BioDataState extends State<BioData> {
   @override
   void initState() {
     getData();
+    _authId = FirebaseAuth.instance.currentUser!.uid;
     super.initState();
   }
 
@@ -59,7 +66,7 @@ class _BioDataState extends State<BioData> {
     setState(() {
       _isLoading = true;
     });
-    try{
+    try {
       final docUser = await FirebaseFirestore.instance
           .collection('teachers')
           .doc(_userEmail)
@@ -82,8 +89,11 @@ class _BioDataState extends State<BioData> {
         _emailOtp = biodataMap['emailOtp'];
         _phoneOtp = biodataMap['phoneOtp'];
         _phoneNumber = biodataMap['phoneNumber'];
-
-        List<dynamic> educationQualificationlst =biodataMap['educationQualification'];
+        docUrl['voterId'] = biodataMap['voterIdUrl'];
+        docUrl['aadharCard'] = biodataMap['aadharCardUrl'];
+        docUrl['bankpassbook'] = biodataMap['passbookUrl'];
+        List<dynamic> educationQualificationlst =
+            biodataMap['educationQualification'];
         List<dynamic> extraQualificationlst = biodataMap['extraQualification'];
         curEducationRow = educationQualificationlst.length;
         curExtraQualRow = extraQualificationlst.length;
@@ -91,35 +101,40 @@ class _BioDataState extends State<BioData> {
         for (int i = 0; i < curEducationRow; i++) {
           GroupEducationControllers group = GroupEducationControllers();
           group.percentageController.text =
-          educationQualificationlst[i]['percentage'];
+              educationQualificationlst[i]['percentage'];
           group.gradeController.text = educationQualificationlst[i]['grade'];
           group.passignYearController.text =
-          educationQualificationlst[i]['yearOfPassing'];
+              educationQualificationlst[i]['yearOfPassing'];
           group.boardController.text = educationQualificationlst[i]['board'];
           group.institutionController.text =
-          educationQualificationlst[i]['instituteName'];
+              educationQualificationlst[i]['instituteName'];
           group.examController.text = educationQualificationlst[i]['exam'];
           _lstGroupContollers.add(group);
+          docUrl['${educationQualificationlst[i]['exam']}'] =
+              educationQualificationlst[i]['document'];
         }
-        print('lst length is ${_lstGroupContollers.length}');
+        // print('lst length is ${_lstGroupContollers.length}');
         for (int i = 0; i < curExtraQualRow; i++) {
           GroupExtraQualControllers extraGroup = GroupExtraQualControllers();
           extraGroup.designationController.text =
-          extraQualificationlst[i]['designation'];
+              extraQualificationlst[i]['designation'];
           extraGroup.expMonthController.text =
-          extraQualificationlst[i]['expMonth'];
+              extraQualificationlst[i]['expMonth'];
           extraGroup.fromDateController.text =
-          extraQualificationlst[i]['fromDate'];
+              extraQualificationlst[i]['fromDate'];
           extraGroup.companyNameController.text =
-          extraQualificationlst[i]['companyName'];
+              extraQualificationlst[i]['companyName'];
           _lstExtraQualControllers.add(extraGroup);
+          docUrl['${extraQualificationlst[i]['companyName']}slip'] =
+              extraQualificationlst[i]['slip'];
+          docUrl['${extraQualificationlst[i]['companyName']}exp'] =
+              extraQualificationlst[i]['expCertificate'];
         }
       }
-    }on FirebaseAuthException catch(error){
+    } on FirebaseAuthException catch (error) {
       Fluttertoast.showToast(msg: '$error');
       print('error at getData method');
     }
-
 
     setState(() {
       _isLoading = false;
@@ -142,21 +157,20 @@ class _BioDataState extends State<BioData> {
           _lstGroupContollers[i].percentageController.text.isEmpty ||
           _lstGroupContollers[i].boardController.text.isEmpty ||
           _lstGroupContollers[i].institutionController.text.isEmpty ||
-          _lstGroupContollers[i].examController.text.isEmpty){
-        Fluttertoast.showToast(msg:'Education Qualification is Required');
-        return;}
+          _lstGroupContollers[i].examController.text.isEmpty) {
+        Fluttertoast.showToast(msg: 'Education Qualification is Required');
+        return;
+      }
     }
     //validation check
     for (int i = 0; i < curExtraQualRow; i++) {
       GroupExtraQualControllers tmpController = _lstExtraQualControllers[i];
-      for (int i = 0; i < curExtraQualRow; i++) {
-        if (tmpController.designationController.text.isEmpty ||
-            tmpController.expMonthController.text.isEmpty ||
-            tmpController.fromDateController.text.isEmpty ||
-            tmpController.companyNameController.text.isEmpty){
-          Fluttertoast.showToast(msg: 'Extra Qualification is required');
-          return;
-        }
+      if (tmpController.designationController.text.isEmpty ||
+          tmpController.expMonthController.text.isEmpty ||
+          tmpController.fromDateController.text.isEmpty ||
+          tmpController.companyNameController.text.isEmpty) {
+        Fluttertoast.showToast(msg: 'Extra Qualification is required');
+        return;
       }
     }
     setState(() {
@@ -172,7 +186,8 @@ class _BioDataState extends State<BioData> {
         'board': '${tmpEduController.boardController.text}',
         'yearOfPassing': '${tmpEduController.passignYearController.text}',
         'grade': '${tmpEduController.gradeController.text}',
-        'percentage': '${tmpEduController.percentageController.text}'
+        'percentage': '${tmpEduController.percentageController.text}',
+        'document': '${docUrl['${tmpEduController.examController.text}']}'
       });
     }
 
@@ -184,7 +199,11 @@ class _BioDataState extends State<BioData> {
         'companyName': '${tmpExtraQualController.companyNameController.text}',
         'fromDate': '${tmpExtraQualController.fromDateController.text}',
         'expMonth': '${tmpExtraQualController.expMonthController.text}',
-        'designation': '${tmpExtraQualController.designationController.text}'
+        'designation': '${tmpExtraQualController.designationController.text}',
+        'slip':
+            '${docUrl['${tmpExtraQualController.companyNameController.text}slip']}',
+        'expCertificate':
+            '${docUrl['${tmpExtraQualController.companyNameController.text}exp']}'
       });
     }
     final json = {
@@ -198,6 +217,9 @@ class _BioDataState extends State<BioData> {
       'phoneOtp': _phoneOtp,
       'address': _address,
       'voterCardNumber': _voterCardNo,
+      'voterIdUrl': docUrl['voterId'],
+      'aadharCardUrl': docUrl['aadharCard'],
+      'passbookUrl': docUrl['bankpassbook'],
       'aadharCardNumber': _adharCardNo,
       'bankAccountNumber': _bankAccountNo,
       'ifscCode': _ifscCode,
@@ -230,7 +252,7 @@ class _BioDataState extends State<BioData> {
         await setdocUser.update(json);
       }
     } on FirebaseAuthException catch (error) {
-      Fluttertoast.showToast(msg:' ${error}');
+      Fluttertoast.showToast(msg: ' ${error}');
       print('error at save Form method');
     }
 
@@ -242,9 +264,11 @@ class _BioDataState extends State<BioData> {
   TextField _generateTextField(TextEditingController textController) {
     return TextField(
       controller: textController,
+      decoration: InputDecoration(border: InputBorder.none),
     );
   }
-  List<Widget> getEduList(int index){
+
+  List<Widget> getEduList(int index) {
     return [
       Padding(
         padding: EdgeInsets.only(left: 2.5),
@@ -272,36 +296,40 @@ class _BioDataState extends State<BioData> {
       ),
     ];
   }
+
   List<Widget> getListOfEducationTextField(int index) {
-
-
-    if(index<_lstGroupContollers.length&& index<_exams.length)return getEduList(index);
-    print(' lstGroupControllerLenght=${_lstGroupContollers.length} and examsLength=${_exams.length}');
+    if (index < _lstGroupContollers.length && index < _exams.length)
+      return getEduList(index);
+    // print(
+    //     ' lstGroupControllerLenght=${_lstGroupContollers.length} and examsLength=${_exams.length}');
     if (_lstGroupContollers.length == index) {
-
       GroupEducationControllers group = GroupEducationControllers();
       _lstGroupContollers.add(group);
     }
 
-    final examField = _generateTextField(_lstGroupContollers[index].examController);
-    final institutionField = _generateTextField(_lstGroupContollers[index].institutionController);
-    final boardField = _generateTextField(_lstGroupContollers[index].boardController);
-    final percentageField = _generateTextField(_lstGroupContollers[index].percentageController);
-    final gradeField = _generateTextField(_lstGroupContollers[index].gradeController);
-    final passingYearField = _generateTextField(_lstGroupContollers[index].passignYearController);
+    final examField =
+        _generateTextField(_lstGroupContollers[index].examController);
+    final institutionField =
+        _generateTextField(_lstGroupContollers[index].institutionController);
+    final boardField =
+        _generateTextField(_lstGroupContollers[index].boardController);
+    final percentageField =
+        _generateTextField(_lstGroupContollers[index].percentageController);
+    final gradeField =
+        _generateTextField(_lstGroupContollers[index].gradeController);
+    final passingYearField =
+        _generateTextField(_lstGroupContollers[index].passignYearController);
 
-
-         _exams.add(examField);
-         _boards.add(boardField);
-         _grades.add(gradeField);
-         _institutes.add(institutionField);
-         _passingYears.add(passingYearField);
-         _percentage.add(percentageField);
-      return getEduList(index);
-
+    _exams.add(examField);
+    _boards.add(boardField);
+    _grades.add(gradeField);
+    _institutes.add(institutionField);
+    _passingYears.add(passingYearField);
+    _percentage.add(percentageField);
+    return getEduList(index);
   }
 
-  List<Widget> getExtraQualList(int index){
+  List<Widget> getExtraQualList(int index) {
     return [
       Padding(
         padding: EdgeInsets.only(left: 2.5),
@@ -315,63 +343,65 @@ class _BioDataState extends State<BioData> {
         padding: EdgeInsets.only(left: 2.5),
         child: _expMonth[index],
       ),
-      Padding(padding: EdgeInsets.only(left: 2.5), child: _designation[index],),
+      Padding(
+        padding: EdgeInsets.only(left: 2.5),
+        child: _designation[index],
+      ),
     ];
   }
 
   List<Widget> getListOfExtraQualTextField(int index) {
+    if (index < _lstExtraQualControllers.length &&
+        index < _nameOfCompany.length) return getExtraQualList(index);
 
-
-    if(index<_lstExtraQualControllers.length && index<_nameOfCompany.length)return getExtraQualList(index);
-
-    print(' extraQualLenght=${_lstExtraQualControllers.length} and designationLEngth=${_designation.length}');
-    if(_lstExtraQualControllers.length==index){
-      GroupExtraQualControllers group=GroupExtraQualControllers();
+    // print(
+    //     ' extraQualLenght=${_lstExtraQualControllers.length} and designationLEngth=${_designation.length}');
+    if (_lstExtraQualControllers.length == index) {
+      GroupExtraQualControllers group = GroupExtraQualControllers();
       _lstExtraQualControllers.add(group);
     }
-    final nameOfCompanyField = _generateTextField(_lstExtraQualControllers[index].companyNameController);
-    final fromDateField = _generateTextField(_lstExtraQualControllers[index].fromDateController);
-    final expMonthField = _generateTextField(_lstExtraQualControllers[index].expMonthController);
-    final designationField = _generateTextField(_lstExtraQualControllers[index].designationController);
+    final nameOfCompanyField = _generateTextField(
+        _lstExtraQualControllers[index].companyNameController);
+    final fromDateField =
+        _generateTextField(_lstExtraQualControllers[index].fromDateController);
+    final expMonthField =
+        _generateTextField(_lstExtraQualControllers[index].expMonthController);
+    final designationField = _generateTextField(
+        _lstExtraQualControllers[index].designationController);
 
+    _nameOfCompany.add(nameOfCompanyField);
+    _expMonth.add(expMonthField);
+    _designation.add(designationField);
+    _fromDate.add(fromDateField);
 
-      _nameOfCompany.add(nameOfCompanyField);
-      _expMonth.add(expMonthField);
-      _designation.add(designationField);
-      _fromDate.add(fromDateField);
-
-   return getExtraQualList(index);
+    return getExtraQualList(index);
   }
 
   TableRow _buildEducationRows(int i) {
     return TableRow(children: [
       ...getListOfEducationTextField(i),
       Container(
-        child: Row(
-          children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.upload)),
-          ],
-        ),
+        child: UploadDocument(
+            '${_lstGroupContollers[i].examController.text}', _authId, docUrl),
       ),
     ]);
   }
 
   TableRow _buildExtraQualRows(int i) {
+    print('url map is $docUrl');
     return TableRow(children: [
       ...getListOfExtraQualTextField(i),
       Container(
-        child: Row(
-          children: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.upload)),
-          ],
-        ),
+        child: UploadDocument(
+            '${_lstExtraQualControllers[i].companyNameController.text}slip',
+            _authId,
+            docUrl),
       ),
       Container(
-        child: Row(
-          children: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.upload)),
-          ],
-        ),
+        child: UploadDocument(
+            '${_lstExtraQualControllers[i].companyNameController.text}exp',
+            _authId,
+            docUrl),
       )
     ]);
   }
@@ -409,227 +439,296 @@ class _BioDataState extends State<BioData> {
                       ),
                     ),
                   ),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _teacherName,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Teacher Name'),
-                    ),
-                    onSaved: (value) {
-                      _teacherName = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Name ';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _courseCategory,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Course Catogary'),
-                    ),
-                    onSaved: (value) {
-                      _courseCategory = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Course Category';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _subjectBased,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Subject Based'),
-                    ),
-                    onSaved: (value) {
-                      _subjectBased = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Subject Based';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _password,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Password'),
-                    ),
-                    onSaved: (value) {
-                      _password = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Password ';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _emailaddress,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Email Address'),
-                    ),
-                    onSaved: (value) {
-                      _emailaddress = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Email Address';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _emailOtp,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Email OTP'),
-                    ),
-                    onSaved: (value) {
-                      _emailOtp = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Email Otp ';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _phoneNumber,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Phone Number'),
-                    ),
-                    onSaved: (value) {
-                      _phoneNumber = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Phone ';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _phoneOtp,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Phone OTP'),
-                    ),
-                    onSaved: (value) {
-                      _phoneOtp = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Phone OTP';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _address,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Address'),
-                    ),
-                    onSaved: (value) {
-                      _address = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Address';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _voterCardNo,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Voter Card Number'),
-                    ),
-                    onSaved: (value) {
-                      _voterCardNo = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Voter Card Number';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _adharCardNo,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Aadhar Card Number'),
-                    ),
-                    onSaved: (value) {
-                      _adharCardNo = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Aadhaar Card Number';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _bankAccountNo,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Bank Account Number'),
-                    ),
-                    onSaved: (value) {
-                      _bankAccountNo = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Bank Account Number';
-                      }
-                      return null;
-                    },
-                  )),
-                  ListTile(
-                      title: TextFormField(
-                    initialValue: _ifscCode,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('IFSC Code'),
-                    ),
-                    onSaved: (value) {
-                      _ifscCode = value!;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter Ifsc Code';
-                      }
-                      return null;
-                    },
-                  )),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _teacherName,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Teacher Name'),
+                          ),
+                          onSaved: (value) {
+                            _teacherName = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Name ';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _courseCategory,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Course Catogary'),
+                          ),
+                          onSaved: (value) {
+                            _courseCategory = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Course Category';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _subjectBased,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Subject Based'),
+                          ),
+                          onSaved: (value) {
+                            _subjectBased = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Subject Based';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _password,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Password'),
+                          ),
+                          onSaved: (value) {
+                            _password = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Password ';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _emailaddress,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Email Address'),
+                          ),
+                          onSaved: (value) {
+                            _emailaddress = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Email Address';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _emailOtp,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Email OTP'),
+                          ),
+                          onSaved: (value) {
+                            _emailOtp = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Email Otp ';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _phoneNumber,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Phone Number'),
+                          ),
+                          onSaved: (value) {
+                            _phoneNumber = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Phone ';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _phoneOtp,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Phone OTP'),
+                          ),
+                          onSaved: (value) {
+                            _phoneOtp = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Phone OTP';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _voterCardNo,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Voter Card Number'),
+                          ),
+                          onSaved: (value) {
+                            _voterCardNo = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Voter Card Number';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                          child: UploadDocument('voterId', _authId, docUrl)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _adharCardNo,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Aadhar Card Number'),
+                          ),
+                          onSaved: (value) {
+                            _adharCardNo = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Aadhaar Card Number';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: UploadDocument('aadharCard', _authId, docUrl),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _bankAccountNo,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Bank Account Number'),
+                          ),
+                          onSaved: (value) {
+                            _bankAccountNo = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Bank Account Number';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _ifscCode,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('IFSC Code'),
+                          ),
+                          onSaved: (value) {
+                            _ifscCode = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Ifsc Code';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                            title: TextFormField(
+                          initialValue: _address,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Address'),
+                          ),
+                          onSaved: (value) {
+                            _address = value!;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter Address';
+                            }
+                            return null;
+                          },
+                        )),
+                      ),
+                      Expanded(
+                        child: Container(
+                          child:
+                              UploadDocument('bankpassbook', _authId, docUrl),
+                        ),
+                      ),
+                    ],
+                  ),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -646,16 +745,16 @@ class _BioDataState extends State<BioData> {
                             ),
                           ),
                           Table(
+                            columnWidths: {
+                              0: FractionColumnWidth(0.09),
+                              1: FractionColumnWidth(0.16),
+                              2: FractionColumnWidth(0.13),
+                              3: FractionColumnWidth(0.08),
+                              4: FractionColumnWidth(0.08),
+                              5: FractionColumnWidth(0.08),
+                              6: FractionColumnWidth(0.38)
+                            },
                             border: TableBorder.all(),
-                            // columnWidths: {
-                            //   0:FractionColumnWidth(0.08),
-                            //   1:FractionColumnWidth(0.20),
-                            //   2:FractionColumnWidth(0.20),
-                            //   3:FractionColumnWidth(0.15),
-                            //   4:FractionColumnWidth(0.08),
-                            //   5:FractionColumnWidth(0.08),
-                            //   6:FractionColumnWidth(0.21)
-                            // },
                             children: [
                               _buildHeaderRow([
                                 'Exam',
@@ -724,15 +823,14 @@ class _BioDataState extends State<BioData> {
                           ),
                           Table(
                             border: TableBorder.all(),
-                            // columnWidths: {
-                            //   0:FractionColumnWidth(0.08),
-                            //   1:FractionColumnWidth(0.20),
-                            //   2:FractionColumnWidth(0.20),
-                            //   3:FractionColumnWidth(0.15),
-                            //   4:FractionColumnWidth(0.08),
-                            //   5:FractionColumnWidth(0.08),
-                            //   6:FractionColumnWidth(0.21)
-                            // },
+                            columnWidths: {
+                              0: FractionColumnWidth(0.10),
+                              1: FractionColumnWidth(0.08),
+                              2: FractionColumnWidth(0.08),
+                              3: FractionColumnWidth(0.08),
+                              4: FractionColumnWidth(0.33),
+                              5: FractionColumnWidth(0.33),
+                            },
                             children: [
                               _buildHeaderRow([
                                 'Name Of Company',
@@ -837,5 +935,166 @@ class GroupExtraQualControllers {
     fromDateController.dispose();
     expMonthController.dispose();
     designationController.dispose();
+  }
+}
+
+class UploadDocument extends StatefulWidget {
+  final String? titlePath;
+
+  final String? authId;
+  Map docUrl;
+
+  UploadDocument(this.titlePath, this.authId, this.docUrl, {Key? key})
+      : super(key: key);
+
+  @override
+  State<UploadDocument> createState() => _UploadDocumentState();
+}
+
+class _UploadDocumentState extends State<UploadDocument> {
+  UploadTask? task;
+  String? fileName;
+  FilePickerResult? pickedFile;
+
+  @override
+  initState() {
+    if (widget.docUrl.isNotEmpty) {
+      fileName = FirebaseStorage.instance
+          .refFromURL(widget.docUrl[widget.titlePath])
+          .name
+          .removeAllWhitespace;
+      setState(() {});
+    }
+    super.initState();
+  }
+
+  Future _selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    if (result == null) return;
+
+    setState(() {
+      fileName = result.files.first.name;
+      pickedFile = result;
+    });
+  }
+
+  Future uploadFile(String destination, FilePickerResult result) async {
+    String metaDataString = "image";
+    try {
+      if (result != null) {
+        Uint8List? file = result.files.first.bytes;
+        task = FirebaseStorage.instance.ref().child(destination).putData(
+            file!,
+            SettableMetadata(
+              contentType: metaDataString,
+            ));
+        setState(() {});
+      }
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: 'Upload error');
+      return null;
+    }
+  }
+
+  Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
+        stream: task.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final snap = snapshot.data!;
+            final progress = snap.bytesTransferred / snap.totalBytes;
+            final percentage = (progress * 100).toStringAsFixed(1);
+
+            return Text(
+              '$percentage%',
+              style: TextStyle(fontSize: 13),
+            );
+          } else {
+            return Text('Done');
+          }
+        },
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      height: 49.5,
+      width: MediaQuery.of(context).size.width / 4.102,
+      alignment: Alignment.centerLeft,
+      margin:
+          EdgeInsets.symmetric(vertical: 2.5, horizontal: screenWidth / 118),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black45)),
+      child: Expanded(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 341.5,
+                ),
+                TextButton.icon(
+                    onPressed: () => _selectFile(),
+                    label: Text((widget.titlePath != 'voterId' &&
+                            widget.titlePath != 'bankpassbook' &&
+                            widget.titlePath != 'aadharCard')
+                        ? 'Select File'
+                        : ' ${widget.titlePath}'),
+                    icon: Icon(
+                      Icons.attach_file,
+                    ),
+                    style: TextButton.styleFrom(
+                        side: BorderSide(color: Colors.amber))),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width / 85.375),
+                  child: Text(
+                    fileName != null ? '$fileName' : 'No File Selected!',
+                    style: TextStyle(color: Colors.red, fontSize: 15),
+                  ),
+                ),
+                SizedBox(width: MediaQuery.of(context).size.width / 34),
+                VerticalDivider(
+                  color: Colors.grey,
+                  width: 1.5,
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: IconButton(
+                            onPressed: () async {
+                              if (fileName == null) return;
+                              final destination =
+                                  'biodata/${widget.authId}/${widget.titlePath}/${fileName}';
+                              await uploadFile(destination, pickedFile!);
+
+                              if (task == null) return;
+
+                              final snapshot = await task!.whenComplete(() {});
+                              final urlDownload =
+                                  await snapshot.ref.getDownloadURL();
+                              widget.docUrl[widget.titlePath] = urlDownload;
+                              setState(() {});
+                              // print('Download-Link: $urlDownload');
+                            },
+                            icon: Icon(Icons.upload)),
+                      ),
+                      task != null ? buildUploadStatus(task!) : Text(''),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

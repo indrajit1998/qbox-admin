@@ -198,12 +198,20 @@ class _StudentManagementState extends State<StudentManagement> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasData) {
+
+              double screenWidth=MediaQuery.of(context).size.width;
+              double columnSpacingWidth;
+              if(screenWidth>1376){
+                columnSpacingWidth=screenWidth/18;
+              }else{
+                columnSpacingWidth=screenWidth/22.7;
+              }
               return SingleChildScrollView(
                 primary: false,
                 child: Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.white),
                   child: DataTable(
-                    columnSpacing: MediaQuery.of(context).size.width/22.7,
+                    columnSpacing: columnSpacingWidth,
                     columns: const [
                       DataColumn(label: Text('Image')),
                       DataColumn(

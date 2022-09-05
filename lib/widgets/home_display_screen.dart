@@ -1,109 +1,110 @@
-import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:qbox_admin/utilities/dimensions.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:chewie/chewie.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
+// import 'package:qbox_admin/utilities/dimensions.dart';
+// import 'package:video_player/video_player.dart';
 
-import '../models/free_videos_model.dart';
-import '../screens/managements/video_details.dart';
+// import '../models/free_videos_model.dart';
+// import '../screens/managements/video_details.dart';
 
-class HomeDisplayScreen extends StatefulWidget {
-  final String title;
-  final String imageUrl;
-  final String videoLink;
-  final String category;
-  final String subject;
-  final String chapter;
-  final String description;
-  final int likes;
-  final Map uploadDate;
-  const HomeDisplayScreen({
-    Key? key,
-    required this.title,
-    required this.imageUrl,
-    required this.likes,
-    required this.videoLink,
-    required this.uploadDate, required this.category, required this.subject, required this.chapter, required this.description,
-  }) : super(key: key);
+// class HomeDisplayScreen extends StatefulWidget {
+//   final String title;
+//   final String imageUrl;
+//   final String videoLink;
+//   final String category;
+//   final String subject;
+//   final String chapter;
+//   final String description;
+//   final int likes;
+//   final Map uploadDate;
+//   const HomeDisplayScreen({
+//     Key? key,
+//     required this.title,
+//     required this.imageUrl,
+//     required this.likes,
+//     required this.videoLink,
+//     required this.uploadDate, required this.category, required this.subject, required this.chapter, required this.description,
+//   }) : super(key: key);
 
-  @override
-  State<HomeDisplayScreen> createState() => _HomeDisplayScreenState();
-}
+//   @override
+//   State<HomeDisplayScreen> createState() => _HomeDisplayScreenState();
+// }
 
 
-class _HomeDisplayScreenState extends State<HomeDisplayScreen> {
-  // List<FreeVideoModel> freeVideoModelList = [];
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: Dimensions.width10 * 3,
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.width * (1 / 153.6),
-        ),
-        child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: _dataTable(),
-        )
-      )
-      //child: Column(
-      //crossAxisAlignment: CrossAxisAlignment.start,
-      // children: [
-      // GestureDetector(
-      //   onTap: () {
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) => VideoScreen(
-      //               title: title,
-      //               videoLink: videoLink,
-      //             )));
-      //   },
-      //   child: Image(
-      //     image: NetworkImage(imageUrl),
-      //     height: 170,
-      //     width: 310,
-      //     fit: BoxFit.cover,
-      //     loadingBuilder: (context, child, loadingProgress) {
-      //       return loadingProgress == null
-      //           ? child
-      //           : const LinearProgressIndicator();
-      //     },
-      //   ),
-      // ),
-      // const SizedBox(
-      //   height: 5,
-      // ),
-      // Text(
-      //   title,
-      //   textAlign: TextAlign.start,
-      //   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      // ),
-      // const SizedBox(
-      //   height: 3,
-      // ),
-      // Row(
-      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //   children: [
-      //     const SizedBox(),
-      //     const Text('Figma '),
-      //     Text('$likes Likes'),
-      //     Row(
-      //       children: [
-      //         Text('${uploadDate['value']} ${uploadDate['string']} ago'),
-      //       ],
-      //     ),
-      //     const SizedBox(),
-      //   ],
-      // ),
-      // ],
-      // ),
-    );
-  }
+// class _HomeDisplayScreenState extends State<HomeDisplayScreen> {
+//   // List<FreeVideoModel> freeVideoModelList = [];
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       width: MediaQuery.of(context).size.width,
+//       height: Dimensions.width10 * 3,
+//       child: Container(
+//         width: double.infinity,
+//         height: double.infinity,
+//         margin: EdgeInsets.only(
+//           bottom: MediaQuery.of(context).size.width * (1 / 153.6),
+//         ),
+//         child: SingleChildScrollView(
+//                     scrollDirection: Axis.horizontal,
+//                     child: _dataTable(),
+//         )
+//       )
+//       //child: Column(
+//       //crossAxisAlignment: CrossAxisAlignment.start,
+//       // children: [
+//       // GestureDetector(
+//       //   onTap: () {
+//       // Navigator.push(
+//       //     context,
+//       //     MaterialPageRoute(
+//       //         builder: (context) => VideoScreen(
+//       //               title: title,
+//       //               videoLink: videoLink,
+//       //             )));
+//       //   },
+//       //   child: Image(
+//       //     image: NetworkImage(imageUrl),
+//       //     height: 170,
+//       //     width: 310,
+//       //     fit: BoxFit.cover,
+//       //     loadingBuilder: (context, child, loadingProgress) {
+//       //       return loadingProgress == null
+//       //           ? child
+//       //           : const LinearProgressIndicator();
+//       //     },
+//       //   ),
+//       // ),
+//       // const SizedBox(
+//       //   height: 5,
+//       // ),
+//       // Text(
+//       //   title,
+//       //   textAlign: TextAlign.start,
+//       //   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//       // ),
+//       // const SizedBox(
+//       //   height: 3,
+//       // ),
+//       // Row(
+//       //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       //   children: [
+//       //     const SizedBox(),
+//       //     const Text('Figma '),
+//       //     Text('$likes Likes'),
+//       //     Row(
+//       //       children: [
+//       //         Text('${uploadDate['value']} ${uploadDate['string']} ago'),
+//       //       ],
+//       //     ),
+//       //     const SizedBox(),
+//       //   ],
+//       // ),
+//       // ],
+//       // ),
+//     );
+//   }
+
 
    Widget _dataTable(){
     return Container(
@@ -163,25 +164,26 @@ class _HomeDisplayScreenState extends State<HomeDisplayScreen> {
                                                           chapter: widget.chapter,
                                                           subject: widget.subject,
                                                           description: widget.description,
-                                                          
-                                                        )),
-                                              );
-                                            },
-                                            icon: const Icon(
-                                              Icons.arrow_right_alt,
-                                              color: Colors.blue,
-                                            ))
-                                      ],
-                                    )),
-                                  ]
-                                  )
-                            ],
 
-                          )),
-                    );
+                                                          
+//                                                         )),
+//                                               );
+//                                             },
+//                                             icon: const Icon(
+//                                               Icons.arrow_right_alt,
+//                                               color: Colors.blue,
+//                                             ))
+//                                       ],
+//                                     )),
+//                                   ]
+//                                   )
+//                             ],
+
+//                           )),
+//                     );
                 
       
-   }
+//    }
 
-}
+// }
 

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qbox_admin/models/free_videos_model.dart';
+import 'package:qbox_admin/screens/managements/video_details.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/home_display_screen.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
@@ -18,6 +19,7 @@ class DidYouKnow extends StatefulWidget {
 }
 
 class _DidYouKnowState extends State<DidYouKnow> {
+  int sl_no = 0;
   final _titleController = TextEditingController();
   final _categoryController = TextEditingController();
   final _courseController = TextEditingController();
@@ -132,32 +134,16 @@ class _DidYouKnowState extends State<DidYouKnow> {
                           return const Center(
                               child: CircularProgressIndicator());
                         }
+
                         
-                        return Wrap(
-                          spacing: 20,
-                          runSpacing: 15,
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: snapshot.data!.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            Map timeDifferenceValue = timeDifference(
-                                DateTime.parse(data['uploadDate']),
-                                DateTime.now());
-                            return HomeDisplayScreen(
-                              videoLink: data['videoLink'],
-                              imageUrl: data['imageUrl'],
-                              uploadDate: timeDifferenceValue,
-                              title: data['title'],
-                              likes: data['likes'], 
-                               category: data['category'],
-                                chapter: data['chapter'],
-                               subject: data['subject'],
-                               description: data['description'],
-                            );
-                          }).toList(),
+                    
+             
+
+                         return SingleChildScrollView(
+                           child: _dataList(),
+
                         );
+                      
                       }),
                 ),
               ),
@@ -300,5 +286,112 @@ class _DidYouKnowState extends State<DidYouKnow> {
         ),
       ),
     );
+  }
+
+ 
+   Widget _dataList() {
+    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('videos')
+                          .where("uploadedTeacherEmail",
+                              isEqualTo: FirebaseAuth
+                                  .instance.currentUser!.email
+                                  .toString())
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong!');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  // width: MediaQuery.of(context).size.width,
+                  width: 1200,
+                    child: Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                  child: DataTable(
+                      columns: [
+                         DataColumn(label: Text('Sl no.')),
+                        DataColumn(label: Text('Title')),
+                              DataColumn(label: Text('Description')),
+                              DataColumn(label: Text('Likes')),
+                              DataColumn(label: Text('Category')),
+                              DataColumn(label: Text('Date')),
+                              DataColumn(label: Text('Comment')),
+                              DataColumn(label: Text('Download')),
+                              DataColumn(label: Text('Subject')),
+                              DataColumn(label: Text('Chapter')),
+                      ],
+                      rows:
+                         snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data()! as Map<String, dynamic>;
+                            Map timeDifferenceValue = timeDifference(
+                                DateTime.parse(data['uploadDate']),
+                                DateTime.now());
+                                sl_no = sl_no+1;
+                        return DataRow(
+                            color: MaterialStateColor.resolveWith(
+                                (states) => Colors.black12),
+                            cells: <DataCell>[
+                              DataCell(Text('${sl_no}')),
+                              DataCell(Text(data['title'])),
+                                     DataCell(Text(data['description'])),
+                                    DataCell(Text(data['likes'].toString())),
+                                    DataCell(
+                                        Text(data['category'])),
+                                    DataCell(
+                                        Text(timeDifferenceValue.toString())),
+                                     const DataCell(Text('1.2k')),
+                                    const DataCell(Text('1.2k')),
+                                     DataCell(
+                                        Text(data['subject'])),
+                                    DataCell(Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                         Text(data['chapter']),
+                                        const Spacer(),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        VideoDetails(
+                                                          imageUrl: data['imageUrl'], 
+                                                          
+                                                          category: data['category'],
+                                                          likes: data['likes'],
+                                                          title: data['title'],
+                                                          uploadDate: timeDifferenceValue,
+                                                          videoLink: data['videoLink'], 
+                                                          chapter: data['chapter'],
+                                                          subject: data['subject'],
+                                                          description: data['description'],
+                                                          
+                                                        )),
+                                              );
+                                            },
+                                            icon: const Icon(
+                                              Icons.arrow_right_alt,
+                                              color: Colors.blue,
+                                            ))
+                                      ],
+                                    )),
+                            ]);
+                      }).toList()),
+                )));
+          }
+          sl_no = 0;
+          return Text('Loading');
+        });
   }
 }

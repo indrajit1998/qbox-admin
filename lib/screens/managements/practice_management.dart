@@ -6,23 +6,27 @@ import 'package:qbox_admin/screens/question_adding_screen.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/horizontal_card.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
+import 'package:universal_html/html.dart';
 
 import '../question_paper_preview.dart';
 
 class PracticeManagement extends StatefulWidget {
-  const PracticeManagement({Key? key}) : super(key: key);
+  const PracticeManagement({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PracticeManagement> createState() => _PracticeManagementState();
 }
 
 class _PracticeManagementState extends State<PracticeManagement> {
+  int sl_no = 0;
   final _chapterController = TextEditingController();
   final _courseController = TextEditingController();
   final _cidController = TextEditingController();
   final _categoryController = TextEditingController();
   final _subjectController = TextEditingController();
-
+  final updateDate = '';
   final GlobalKey<FormState> _questionPaperDetailsFormKey =
       GlobalKey<FormState>();
 
@@ -54,100 +58,7 @@ class _PracticeManagementState extends State<PracticeManagement> {
                   bottom: MediaQuery.of(context).size.width * (1 / 153.6),
                 ),
                 child: SingleChildScrollView(
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('practice')
-                          .where("uploadedTeacher",
-                              isEqualTo: FirebaseAuth
-                                  .instance.currentUser!.email
-                                  .toString())
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return const Text('Something went wrong!');
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        return Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          alignment: WrapAlignment.center,
-                          runSpacing: 10,
-                          spacing: 10,
-                          children: snapshot.data!.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            PracticeModel model = PracticeModel.fromJson(data);
-                            practiceModelList.add(model);
-                            return Container(
-                              // height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              child: Theme(
-                                  data: Theme.of(context)
-                                      .copyWith(dividerColor: Colors.white),
-                                  child: DataTable(
-                                    //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
-                                    columns: [
-                                      DataColumn(label: Text('Category')),
-                                      DataColumn(label: Text('Course Name')),
-                                      DataColumn(label: Text('ID')),
-                                      DataColumn(label: Text('Publish Date')),
-                                      DataColumn(label: Text('Update Date')),
-                                      DataColumn(label: Text('Chapter Name')),
-                                      DataColumn(label: Text('Subject')),
-                                    ],
-                                    rows: [
-                                      DataRow(
-                                          color: MaterialStateColor.resolveWith(
-                                              (states) => Colors.black12),
-                                          cells: <DataCell>[
-                                            DataCell(Text(
-                                                model.category.toString())),
-                                            DataCell(
-                                                Text(model.course.toString())),
-                                            DataCell(Text('2133443')),
-                                            DataCell(Text('22-08-2022')),
-                                            DataCell(Text('20-08-2022')),
-                                            DataCell(
-                                                Text(model.chapter.toString())),
-                                            DataCell(Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Text(model.subject.toString()),
-                                                Spacer(),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                QuestionPaperPreview(
-                                                                    questionPaper:
-                                                                        model)),
-                                                      );
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.arrow_right_alt,
-                                                      color: Colors.blue,
-                                                    ))
-                                              ],
-                                            )),
-                                            // DataCell(Text('icon'))
-                                          ])
-                                    ],
-                                  )),
-                            );
-                            // return HorizontalCard(
-                            //   model: model,
-                            // );
-                          }).toList(),
-                        );
-                      }),
+                  child: _dataList(),
                 ),
               ),
             ),
@@ -234,6 +145,8 @@ class _PracticeManagementState extends State<PracticeManagement> {
                       type: MaterialType.button,
                       child: MaterialButton(
                         onPressed: () {
+                          DateTime currentTime = DateTime.now();
+
                           if (_questionPaperDetailsFormKey.currentState!
                               .validate()) {
                             Navigator.push(
@@ -246,6 +159,9 @@ class _PracticeManagementState extends State<PracticeManagement> {
                                         chapter: _chapterController.text.trim(),
                                         cid: _cidController.text.trim(),
                                         subject: _subjectController.text.trim(),
+                                        publishDate: currentTime.toString(),
+                                        updateDate: currentTime.toString(),
+                                        // updateDate: updateDate,
                                       )),
                             );
                           }
@@ -269,5 +185,114 @@ class _PracticeManagementState extends State<PracticeManagement> {
         ),
       ),
     );
+  }
+
+  Widget _dataList() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('practice')
+            .where("uploadedTeacher",
+                isEqualTo: FirebaseAuth.instance.currentUser!.email.toString())
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong!');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    // width: MediaQuery.of(context).size.width,
+                    width: 1200,
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
+                      child: DataTable(
+                          columns: [
+                            DataColumn(label: Text('Sl no.')),
+                            DataColumn(label: Text('Category')),
+                            DataColumn(label: Text('Course Name')),
+                            DataColumn(label: Text('ID')),
+                            DataColumn(label: Text('Publish Date')),
+                            DataColumn(label: Text('Update Date')),
+                            DataColumn(label: Text('Chapter Name')),
+                            DataColumn(label: Text('Subject')),
+                          ],
+                          rows: snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data()! as Map<String, dynamic>;
+                            PracticeModel model = PracticeModel.fromJson(data);
+                            practiceModelList.add(model);
+                            sl_no = sl_no + 1;
+                            return DataRow(
+                                color: MaterialStateColor.resolveWith(
+                                    (states) => Colors.black12),
+                                cells: <DataCell>[
+                                  DataCell(Text('${sl_no}')),
+                                  DataCell(Text(model.category.toString())),
+                                  DataCell(Text(model.course.toString())),
+                                  DataCell(Text(model.cid.toString())),
+                                  DataCell(Text(model.publishDate
+                                      .toString()
+                                      .split(' ')
+                                      .first)),
+                                  DataCell(Text(model.updateDate
+                                      .toString()
+                                      .split(' ')
+                                      .first)),
+                                  DataCell(Text(model.chapter.toString())),
+                                  DataCell(Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(model.subject.toString()),
+                                      Spacer(),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      QuestionPaperPreview(
+                                                        questionPaper: model,
+                                                        category: model.category
+                                                            .toString(),
+                                                        chapter: model.chapter
+                                                            .toString(),
+                                                        cid: model.cid
+                                                            .toString(),
+                                                        course: model.course
+                                                            .toString(),
+                                                        publishDate: model
+                                                            .publishDate
+                                                            .toString(),
+                                                        subject: model.subject
+                                                            .toString(),
+                                                        updateDate: model
+                                                            .updateDate
+                                                            .toString(),
+                                                      )),
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.arrow_right_alt,
+                                            color: Colors.blue,
+                                          ))
+                                    ],
+                                  )),
+                                ]);
+                          }).toList()),
+                    )));
+          }
+          sl_no = 0;
+          setState(() {
+            
+          });
+          return Text('Loading....');
+        });
   }
 }
