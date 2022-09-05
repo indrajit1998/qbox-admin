@@ -4,6 +4,11 @@ class PracticeModel {
   String? course;
   String? chapter;
   String? subject;
+  String ? cid;
+ String? publishDate;
+   String? updateDate;
+
+
   List<Questions>? questions;
 
   PracticeModel(
@@ -12,6 +17,9 @@ class PracticeModel {
       this.course,
       this.chapter,
       this.subject,
+      this.cid,
+      this.publishDate,
+      this.updateDate,
       this.questions});
 
   PracticeModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +28,9 @@ class PracticeModel {
     course = json['course'] as String;
     chapter = json['chapter'] as String;
     subject = json['subject'] as String;
+    updateDate = json['updateDate'] as String;
+    publishDate = json['publishDate'] as String;
+    cid = json['cid'] as String;
     if (json['questions'] != null) {
       questions = <Questions>[];
       json['questions'].forEach((k, v) {
@@ -35,6 +46,9 @@ class PracticeModel {
     data['course'] = course;
     data['chapter'] = chapter;
     data['subject'] = subject;
+    data['publishDate'] = publishDate;
+    data['updateDate'] = updateDate;
+    data['cid'] = cid;
     if (questions != null) {
       data['questions'] = questions!.map((v) => v.toJson()).toList();
     }
