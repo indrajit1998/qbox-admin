@@ -4,6 +4,7 @@ import 'package:qbox_admin/widgets/question_paper_options_card.dart';
 
 class LevelUpQuestionPreview extends StatelessWidget {
   final QuestionsList question;
+
   const LevelUpQuestionPreview({Key? key, required this.question})
       : super(key: key);
 
@@ -27,27 +28,72 @@ class LevelUpQuestionPreview extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              QuestionPaperOptionsCard(
-                option: question.answers!.answerA!,
-                correctAnswer: question.correctAnswers!.answerACorrect!,
+              Card(
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    width: MediaQuery.of(context).size.width * (408 / 1563),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                        question.correctAnswers!.answerACorrect!.toString())),
               ),
-              QuestionPaperOptionsCard(
-                option: question.answers!.answerB!,
-                correctAnswer: question.correctAnswers!.answerBCorrect!,
-              ),
+              Card(
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    width: MediaQuery.of(context).size.width * (408 / 1563),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                        question.correctAnswers!.answerBCorrect!.toString())),
+              )
+              // QuestionPaperOptionsCard(
+              //   option: question.answers!.answerA.toString(),
+              //   correctAnswer: question.correctAnswers!.answerACorrect!,
+              // ),
+              // QuestionPaperOptionsCard(
+              //   option: question.answers!.answerB.toString(),
+              //   correctAnswer: question.correctAnswers!.answerBCorrect!,
+              // ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              QuestionPaperOptionsCard(
-                option: question.answers!.answerC!,
-                correctAnswer: question.correctAnswers!.answerCCorrect!,
+              Card(
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    width: MediaQuery.of(context).size.width * (408 / 1563),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                        question.correctAnswers!.answerCCorrect!.toString())),
               ),
-              QuestionPaperOptionsCard(
-                option: question.answers!.answerD!,
-                correctAnswer: question.correctAnswers!.answerDCorrect!,
-              ),
+              Card(
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    width: MediaQuery.of(context).size.width * (408 / 1563),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                        question.correctAnswers!.answerDCorrect!.toString())),
+              )
+              // QuestionPaperOptionsCard(
+              //   option: question.answers!.answerC.toString(),
+              //   correctAnswer: question.correctAnswers!.answerCCorrect!,
+              // ),
+
+              // QuestionPaperOptionsCard(
+              //   option: question.answers!.answerD,
+              //   correctAnswer: question.correctAnswers!.answerDCorrect!,
+              // ),
             ],
           ),
           Row(

@@ -450,9 +450,14 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                             color: Colors.blue,
                                           ))
                                     ],
-                                  )),
-                                ]);
-                          }).toList()),
+                                  )
+                                  ),
+                                ]
+                                );
+                          }
+                          )
+                          .toList()
+                          ),
                     )));
           }
           sl_no = 0;

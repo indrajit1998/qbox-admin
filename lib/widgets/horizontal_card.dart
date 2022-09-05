@@ -14,7 +14,16 @@ class HorizontalCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => QuestionPaperPreview(questionPaper: model)),
+              builder: (context) => QuestionPaperPreview(
+                    questionPaper: model,
+                    category: model.category.toString(),
+                    chapter: model.chapter.toString(),
+                    cid: model.cid.toString(),
+                    course: model.course.toString(),
+                    publishDate: model.publishDate.toString(),
+                    subject: model.subject.toString(),
+                    updateDate: model.updateDate.toString(),
+                  )),
         );
       },
       child: Card(
