@@ -105,65 +105,66 @@
 //     );
 //   }
 
-//    Widget _dataTable(){
-//     return Container(
-//       // margin: EdgeInsets.symmetric(vertical: 10),
-//                       width: 1200,
-//                       child: Theme(
-//                           data: Theme.of(context)
-//                               .copyWith(dividerColor: Colors.white),
-//                           child: DataTable(
-//                             // border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
-//                             columns: const [
-//                               DataColumn(label: Text('Title')),
-//                               DataColumn(label: Text('Description')),
-//                               DataColumn(label: Text('Likes')),
-//                               DataColumn(label: Text('Category')),
-//                               DataColumn(label: Text('Date')),
-//                               DataColumn(label: Text('Comment')),
-//                               DataColumn(label: Text('Download')),
-//                               DataColumn(label: Text('Subject')),
-//                               DataColumn(label: Text('Chapter')),
-//                             ],
-//                             rows: [
-//                               DataRow(
-//                                   color: MaterialStateColor.resolveWith(
-//                                       (states) => Colors.black12,),
-//                                   cells: <DataCell>[
-//                                     DataCell(Text(widget.title.toString())),
-//                                      DataCell(Text(widget.description)),
-//                                     DataCell(Text(widget.likes.toString())),
-//                                     DataCell(
-//                                         Text(widget.category.toString())),
-//                                     DataCell(
-//                                         Text(widget.uploadDate.toString())),
-//                                      const DataCell(Text('1.2k')),
-//                                     const DataCell(Text('1.2k')),
-//                                      DataCell(
-//                                         Text(widget.subject)),
-//                                     DataCell(Row(
-//                                       mainAxisAlignment:
-//                                           MainAxisAlignment.start,
-//                                       children: [
-//                                          Text(widget.chapter),
-//                                         const Spacer(),
-//                                         IconButton(
-//                                             onPressed: () {
-//                                               Navigator.push(
-//                                                 context,
-//                                                 MaterialPageRoute(
-//                                                     builder: (context) =>
-//                                                         VideoDetails(
-//                                                           imageUrl: widget.imageUrl.toString(), 
-                                                          
-//                                                           category: widget.category,
-//                                                           likes: widget.likes.toInt(),
-//                                                           title: widget.title.toString(),
-//                                                           uploadDate: widget.uploadDate,
-//                                                           videoLink: widget.videoLink.toString(), 
-//                                                           chapter: widget.chapter,
-//                                                           subject: widget.subject,
-//                                                           description: widget.description,
+
+   Widget _dataTable(){
+    return Container(
+      // margin: EdgeInsets.symmetric(vertical: 10),
+                      width: MediaQuery.of(context).size.width,
+                      child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.white),
+                          child: DataTable(
+                            // border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+                            columns: const [
+                              DataColumn(label: Text('Title')),
+                              DataColumn(label: Text('Description')),
+                              DataColumn(label: Text('Likes')),
+                              DataColumn(label: Text('Category')),
+                              DataColumn(label: Text('Date')),
+                              DataColumn(label: Text('Comment')),
+                              DataColumn(label: Text('Download')),
+                              DataColumn(label: Text('Subject')),
+                              DataColumn(label: Text('Chapter')),
+                            ],
+                            rows: [
+                              DataRow(
+                                  color: MaterialStateColor.resolveWith(
+                                      (states) => Colors.black12,),
+                                  cells: <DataCell>[
+                                    DataCell(Text(widget.title.toString())),
+                                     DataCell(Text(widget.description)),
+                                    DataCell(Text(widget.likes.toString())),
+                                    DataCell(
+                                        Text(widget.category.toString())),
+                                    DataCell(
+                                        Text(widget.uploadDate.toString())),
+                                     const DataCell(Text('1.2k')),
+                                    const DataCell(Text('1.2k')),
+                                     DataCell(
+                                        Text(widget.subject)),
+                                    DataCell(Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                         Text(widget.chapter),
+                                        const Spacer(),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        VideoDetails(
+                                                          imageUrl: widget.imageUrl.toString(), 
+                                                          category: widget.category,
+                                                          likes: widget.likes.toInt(),
+                                                          title: widget.title.toString(),
+                                                          uploadDate: widget.uploadDate,
+                                                          videoLink: widget.videoLink.toString(), 
+                                                          chapter: widget.chapter,
+                                                          subject: widget.subject,
+                                                          description: widget.description,
+
                                                           
 //                                                         )),
 //                                               );

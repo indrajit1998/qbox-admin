@@ -510,6 +510,7 @@ class _VideoScreenState extends State<VideoScreen> {
             text: 'Whats up? :)',
           ),
         ]),
+        
         subtitleBuilder: (context, subtitle) => Container(
               padding: const EdgeInsets.all(10.0),
               child: Text(
