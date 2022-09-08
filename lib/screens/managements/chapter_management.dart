@@ -19,7 +19,8 @@ class _ChapterManagementState extends State<ChapterManagement> {
   TextEditingController _chapterController = TextEditingController();
     TextEditingController _chapterTextController = TextEditingController();
   TextEditingController _chapterDetailsController = TextEditingController();
-  
+  TextEditingController _subjectController = TextEditingController();
+
   bool isLoading = false;
   String? errorMessage;
   String? _chosenCourse;
@@ -28,6 +29,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
   String? _chapterCourse;
   String? _chapterCategory;
   String? _chapterBatch;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -537,7 +539,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                   Container(
                                     height: 50,
                                     width: Dimensions.width10 * 6,
-                                    margin: EdgeInsets.only(left: 4),
+                                    margin: const EdgeInsets.only(left: 4),
                                     // padding: const EdgeInsets.all(5),
                                     // padding: EdgeInsets.symmetric(horizontal: 4.0),
                                     decoration: BoxDecoration(
@@ -640,7 +642,50 @@ class _ChapterManagementState extends State<ChapterManagement> {
                         )
                                        ],
                                      ),
+                                      Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              Padding(
+                                       padding: EdgeInsets.symmetric(vertical: 6,horizontal: Dimensions.padding20 * 0.8),
+                                        child: Text(
+                                          'Subject',
+                                          style: TextStyle(
+                                              fontSize: 19, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
                         
+                                  Container(
+                                    height: 50,
+                                    width: Dimensions.width10 * 17,
+                                    margin: EdgeInsets.symmetric(horizontal: Dimensions.padding20 * 0.8),
+                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Colors.black12,
+                                          style: BorderStyle.solid,
+                                          width: 0.80),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _subjectController,
+                                       decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                              hintText: 'Subject Name',
+                                              labelText: 'Subject'
+                                      ),
+                                       validator: (value) {
+                                  if (value!.isEmpty) {
+                                      return ("Field cannot be empty");
+                                  }
+                                  return null;
+                                },
+                                    ),
+                             
+                                    ),
+                          ],
+                        ),
+                        SizedBox(height: 20,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:  [
@@ -652,8 +697,8 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                                   fontSize: 19, fontWeight: FontWeight.w600),
                                             ),
                                           ),
-                            ],
-                          ),
+                            
+                          
                           
                         
                                   Container(
@@ -686,9 +731,11 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                     ),
                           
                           ),
+                            ])
                         ],
                                        ),
                                      ),
+              
                                      popUpactions: [
                                        Material(
                         color: Colors.amberAccent,
@@ -704,6 +751,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                 await  FirebaseFirestore.instance.collection('chapter').add({
                                       'category' : _chosenCategory,
                                       'course' : _chosenCourse,
+                                      'subject': _subjectController.text,
                                       'batch' : _chosenBatch,
                                       'chapter' : _chapterController.text,
                                       'chapterDetails' : _chapterDetailsController.text.toString()
@@ -795,6 +843,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                             DataColumn(label: Text('Course')),
                             DataColumn(label: Text('Batch')),
                             DataColumn(label: Text('Chapter')),
+                            DataColumn(label: Text('Subject')),
                             DataColumn(label: Text('Chapter Details')),
                            
                           
@@ -808,6 +857,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                       DataCell(Text(rowData['course'])),
                                       DataCell(Text(rowData['batch'])),
                                       DataCell(Text(rowData['chapter'])),
+                                       DataCell(Text(rowData['subject'])),
                                       DataCell(Text(rowData['chapterDetails'])),
                                      
                                     ],
@@ -816,7 +866,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                     ),
                   );
                 }
-                return Text('No Meeting');
+                return Text('No Data');
               },
             ),
           );
