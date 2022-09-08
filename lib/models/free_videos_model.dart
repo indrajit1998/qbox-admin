@@ -11,6 +11,7 @@ class FreeVideoModel {
   String? description;
   String ? chapter;
   String? subject;
+  String ? id;
   String? uploadedTeacherEmail;
 
   FreeVideoModel(
@@ -25,6 +26,7 @@ class FreeVideoModel {
       this.category,
       this.chapter,
       this.subject,
+      this.id,
       this.description,
       this.uploadedTeacherEmail});
   FreeVideoModel.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class FreeVideoModel {
     category = json['category'];
     chapter = json['chapter'];
     subject = json['subject'];
+    id = json['id'];
     description = json['description'];
     uploadedTeacherEmail = json['uploadedTeacherEmail'];
   }
@@ -56,6 +59,7 @@ class FreeVideoModel {
     data['category'] = category;
     data['chapter'] = chapter;
     data['subject'] = subject;
+    data['id'] = id;
     data['description'] = description;
     data['uploadedTeacherEmail'] = uploadedTeacherEmail;
     return data;

@@ -262,7 +262,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                 onPressed: () async {
                                   await uploadFile('videos');
                                 },
-                                child: Text('Pick Video'),
+                                child: const Text('Pick Video'),
                               ),
                             ),
                           ],
@@ -286,11 +286,13 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                               imageFileName.isNotEmpty &&
                               videoFileName.isNotEmpty) {
                             try {
-                              DateTime currentTime = DateTime.now();
-                              await FirebaseFirestore.instance
+                              final document = FirebaseFirestore.instance
                                   .collection('videos')
-                                  .doc()
-                                  .set(FreeVideoModel(
+                                  .doc();
+                              DateTime currentTime = DateTime.now();
+                              await 
+                                  document.set(FreeVideoModel(
+                                    id: document.id,
                                     title: _titleController.text.trim(),
                                     category: _categoryController.text.trim(),
                                     course: _courseController.text.trim(),
