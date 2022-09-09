@@ -67,6 +67,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
   TextEditingController _meetingLinkController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
+  final _scrollController = ScrollController();
 
   Future<void> _launchUrl(Uri _url) async {
     if (!await launchUrl(_url)) {
@@ -205,6 +206,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
   }
 
   Widget switchContent() {
+    int index=1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -245,56 +247,64 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                 }
 
                 if (snapshot.hasData) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thumbVisibility: true,
                     child: SingleChildScrollView(
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.white),
-                        child: DataTable(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: SingleChildScrollView(
+                        primary: false,
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.white),
+                          child: DataTable(
 
-                            //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
-                            columns: const [
-                              DataColumn(label: Text('Category')),
-                              DataColumn(label: Text('Course')),
-                              DataColumn(label: Text('Batch')),
-                              DataColumn(label: Text('Date')),
-                              DataColumn(label: Text('Time')),
-                              DataColumn(label: Text('Meet Link')),
-                              DataColumn(label: Text('Edit')),
-                              DataColumn(label: Text('Delete')),
-                            ],
-                            rows: snapshot.data!.docs
-                                .map((rowData) => DataRow(
-                                      color: MaterialStateColor.resolveWith(
-                                          (states) => Colors.black12),
-                                      cells: <DataCell>[
-                                        DataCell(Text(rowData['category'])),
-                                        DataCell(Text(rowData['course'])),
-                                        DataCell(Text(rowData['batch'])),
-                                        DataCell(Text(rowData['date'])),
-                                        DataCell(Text(rowData['time'])),
-                                        DataCell(
-                                          TextButton(
-                                            onPressed: () => _launchUrl(Uri.parse(
-                                                rowData['meetingLink'])),
-                                            child: Text(rowData['meetingLink']),
-                                            style: TextButton.styleFrom(
-                                                primary: Colors.blue),
+                              //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+                              columns: const [
+                                DataColumn(label: Text('Serial No')),
+                                DataColumn(label: Text('Category')),
+                                DataColumn(label: Text('Course')),
+                                DataColumn(label: Text('Batch')),
+                                DataColumn(label: Text('Date')),
+                                DataColumn(label: Text('Time')),
+                                DataColumn(label: Text('Meet Link')),
+                                DataColumn(label: Text('Edit')),
+                                DataColumn(label: Text('Delete')),
+                              ],
+                              rows: snapshot.data!.docs
+                                  .map((rowData) => DataRow(
+                                        color: MaterialStateColor.resolveWith(
+                                            (states) => Colors.black12),
+                                        cells: <DataCell>[
+                                          DataCell(Text('${index++}')),
+                                          DataCell(Text(rowData['category'])),
+                                          DataCell(Text(rowData['course'])),
+                                          DataCell(Text(rowData['batch'])),
+                                          DataCell(Text(rowData['date'])),
+                                          DataCell(Text(rowData['time'])),
+                                          DataCell(
+                                            TextButton(
+                                              onPressed: () => _launchUrl(Uri.parse(
+                                                  rowData['meetingLink'])),
+                                              child: Text(rowData['meetingLink']),
+                                              style: TextButton.styleFrom(
+                                                  primary: Colors.blue),
+                                            ),
                                           ),
-                                        ),
-                                        DataCell(IconButton(
-                                            onPressed: () => edit_ptm(rowData),
-                                            icon: Icon(Icons.edit))),
-                                        DataCell(IconButton(
-                                            onPressed: () => delete_ptm(rowData),
-                                            icon: Icon(
-                                              Icons.delete,
-                                              color: Theme.of(context).errorColor,
-                                            )))
-                                      ],
-                                    ))
-                                .toList()),
+                                          DataCell(IconButton(
+                                              onPressed: () => edit_ptm(rowData),
+                                              icon: Icon(Icons.edit))),
+                                          DataCell(IconButton(
+                                              onPressed: () => delete_ptm(rowData),
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Theme.of(context).errorColor,
+                                              )))
+                                        ],
+                                      ))
+                                  .toList()),
+                        ),
                       ),
                     ),
                   );

@@ -388,7 +388,7 @@ class _BioDataState extends State<BioData> {
   }
 
   TableRow _buildExtraQualRows(int i) {
-    print('url map is $docUrl');
+   // print('url map is $docUrl');
     return TableRow(children: [
       ...getListOfExtraQualTextField(i),
       Container(
@@ -1020,78 +1020,76 @@ class _UploadDocumentState extends State<UploadDocument> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       height: 49.5,
-      width: MediaQuery.of(context).size.width / 4.102,
+     // width: MediaQuery.of(context).size.width / 4.102,
       alignment: Alignment.centerLeft,
       margin:
           EdgeInsets.symmetric(vertical: 2.5, horizontal: screenWidth / 118),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Colors.black45)),
-      child: Expanded(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 341.5,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 341.5,
+              ),
+              TextButton.icon(
+                  onPressed: () => _selectFile(),
+                  label: Text((widget.titlePath != 'voterId' &&
+                          widget.titlePath != 'bankpassbook' &&
+                          widget.titlePath != 'aadharCard')
+                      ? 'Select File'
+                      : ' ${widget.titlePath}'),
+                  icon: Icon(
+                    Icons.attach_file,
+                  ),
+                  style: TextButton.styleFrom(
+                      side: BorderSide(color: Colors.amber))),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width / 85.375),
+                child: Text(
+                  fileName != null ? '$fileName' : 'No File Selected!',
+                  style: TextStyle(color: Colors.red, fontSize: 15),
                 ),
-                TextButton.icon(
-                    onPressed: () => _selectFile(),
-                    label: Text((widget.titlePath != 'voterId' &&
-                            widget.titlePath != 'bankpassbook' &&
-                            widget.titlePath != 'aadharCard')
-                        ? 'Select File'
-                        : ' ${widget.titlePath}'),
-                    icon: Icon(
-                      Icons.attach_file,
+              ),
+              SizedBox(width:(widget.titlePath=='voterId' || widget.titlePath=='bankpassbook'||widget.titlePath=='aadharCard')?screenWidth/7  :screenWidth / 34),
+              VerticalDivider(
+                color: Colors.grey,
+                width: 1.5,
+              ),
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                          onPressed: () async {
+                            if (fileName == null) return;
+                            final destination =
+                                'biodata/${widget.authId}/${widget.titlePath}/${fileName}';
+                            await uploadFile(destination, pickedFile!);
+
+                            if (task == null) return;
+
+                            final snapshot = await task!.whenComplete(() {});
+                            final urlDownload =
+                                await snapshot.ref.getDownloadURL();
+                            widget.docUrl[widget.titlePath] = urlDownload;
+                            setState(() {});
+                            // print('Download-Link: $urlDownload');
+                          },
+                          icon: Icon(Icons.upload)),
                     ),
-                    style: TextButton.styleFrom(
-                        side: BorderSide(color: Colors.amber))),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width / 85.375),
-                  child: Text(
-                    fileName != null ? '$fileName' : 'No File Selected!',
-                    style: TextStyle(color: Colors.red, fontSize: 15),
-                  ),
+                    task != null ? buildUploadStatus(task!) : Text(''),
+                  ],
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width / 34),
-                VerticalDivider(
-                  color: Colors.grey,
-                  width: 1.5,
-                ),
-                SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: IconButton(
-                            onPressed: () async {
-                              if (fileName == null) return;
-                              final destination =
-                                  'biodata/${widget.authId}/${widget.titlePath}/${fileName}';
-                              await uploadFile(destination, pickedFile!);
-
-                              if (task == null) return;
-
-                              final snapshot = await task!.whenComplete(() {});
-                              final urlDownload =
-                                  await snapshot.ref.getDownloadURL();
-                              widget.docUrl[widget.titlePath] = urlDownload;
-                              setState(() {});
-                              // print('Download-Link: $urlDownload');
-                            },
-                            icon: Icon(Icons.upload)),
-                      ),
-                      task != null ? buildUploadStatus(task!) : Text(''),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

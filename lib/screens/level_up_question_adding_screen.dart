@@ -6,31 +6,36 @@ import 'package:qbox_admin/models/practice_model.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 import 'package:qbox_admin/widgets/question_preview.dart';
+import 'package:universal_html/html.dart';
 
 // ignore: must_be_immutable
 class LevelUpQuestionAddingScreen extends StatefulWidget {
-  final String category;
-  final String course;
+  String? category;
+  String? course;
   final String chapter;
   final String subject;
-  final String testName;
-  final int duration;
-  final String cid;
-  final String examTime;
-  final int paperSet;
-  String? collectionName;
-  LevelUpQuestionAddingScreen(
-      {Key? key,
-      required this.chapter,
-      required this.subject,
-      required this.course,
-      required this.category,
-      required this.testName,
-      required this.duration,
-      required this.paperSet,
-      required this.examTime,
-      this.collectionName = "levelUpTest",
-      required this.cid})
+  String? levelName;
+  DocumentSnapshot? document;
+  String? testName;
+  int? duration;
+  String? cid;
+  String? examTime;
+  int? paperSet;
+ String? collectionName;
+  LevelUpQuestionAddingScreen({Key? key,
+    required this.chapter,
+    required this.subject,
+     this.levelName,
+     this.document,
+     this.course='',
+     this.category='',
+     this.testName='',
+     this.duration,
+     this.paperSet,
+    this.examTime='',
+    this.collectionName = "levelUpTest",
+     this.cid=''
+   })
       : super(key: key);
 
   @override
@@ -54,12 +59,46 @@ class _LevelUpQuestionAddingScreenState
   final _descriptionController = TextEditingController();
   final _tipController = TextEditingController();
   final _difficultyController = TextEditingController();
-
+  bool _isLoading=false;
   final GlobalKey<FormState> _questionAddScreenFormKey = GlobalKey<FormState>();
 
   List<Questions> questionsList = [];
 
   String? errorMessage;
+
+  @override
+  initState(){
+    if(widget.levelName!=''){
+      getData();
+    }
+    super.initState();
+  }
+  void getData() async{
+    setState(() {
+      _isLoading=true;
+    });
+    final documentSnapshot=await FirebaseFirestore.instance.collection('chapter').doc(widget.document!.id).collection('levels').doc(widget.levelName).get();
+    final initializeData=documentSnapshot.data();
+
+    initializeData!.forEach((key, value) {
+      questionsList.add(
+        Questions(
+      id: value['id'],
+      description: value['description'],
+      tip:value['tip'],
+      tags: [],
+      difficulty: value['difficulty'],
+      question: value['question'],
+      correctAnswers: CorrectAnswers(answerACorrect: value['correct_answers']['answer_a_correct'],answerBCorrect:value['correct_answers']['answer_b_correct'],answerCCorrect: value['correct_answers']['answer_c_correct'],answerDCorrect: value['correct_answers']['answer_d_correct'] ),
+      options: Options(optionA: value['options']['optionA'],optionB:value['options']['optionB'],optionC: value['options']['optionC'],optionD: value['options']['optionD'] ),
+      explanation: value['explanation'],
+      multipleCorrectAnswers: value['multiple_correct_answers'],
+    )); });
+    setState(() {
+      print(questionsList);
+      _isLoading=false;
+    });
+  }
 
   int questionsLength() {
     int length = 0;
@@ -97,7 +136,26 @@ class _LevelUpQuestionAddingScreenState
     }
     return value;
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _descriptionController.dispose();
+    _correctOptionAController.dispose();
+    _correctOptionBController.dispose();
+    _correctOptionCController.dispose();
+    _correctOptionDController.dispose();
+    _difficultyController.dispose();
+    _explanationController.dispose();
+    _multiCorrectAnswerController.dispose();
+    _optionAController.dispose();
+    _optionBController.dispose();
+    _optionCController.dispose();
+    _optionDController.dispose();
+    _questionController.dispose();
+    _tipController.dispose();
+    questionsList.clear() ;
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,31 +167,31 @@ class _LevelUpQuestionAddingScreenState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  widget.testName,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
+                // Text(
+                //   widget.testName,
+                //   style: const TextStyle(
+                //     fontSize: 15,
+                //   ),
+                // ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  widget.category,
+                  'Subject-${widget.subject}',
                   style: const TextStyle(
                     fontSize: 15,
                   ),
                 ),
+                // Text(
+                //   widget.course,
+                //   style: const TextStyle(
+                //     fontSize: 15,
+                //   ),
+                // ),
                 Text(
-                  widget.course,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                Text(
-                  widget.chapter,
+                  'Chapter-${widget.chapter}',
                   style: const TextStyle(
                     fontSize: 15,
                   ),
@@ -147,7 +205,7 @@ class _LevelUpQuestionAddingScreenState
       body: SizedBox(
         width: double.infinity,
         child: SingleChildScrollView(
-          child: Column(
+          child: _isLoading? Center(child: CircularProgressIndicator()):Column(
             children: [
               SizedBox(
                 height: 685,
@@ -406,23 +464,24 @@ class _LevelUpQuestionAddingScreenState
                           String userEmail = FirebaseAuth
                               .instance.currentUser!.email
                               .toString();
-                          await FirebaseFirestore.instance
-                              .collection(widget.collectionName!)
-                              .doc()
-                              .set({
-                                "uploadedTeacher": userEmail,
-                                "testName": widget.testName,
-                                "examTime": (widget.examTime).toString(),
-                                "duration": widget.duration,
-                                "category": widget.category,
-                                "cid": widget.cid,
-                                "course": widget.course,
-                                "chapter": widget.chapter,
-                                "subject": widget.subject,
-                                "paperSet": widget.paperSet,
-                                "questionsList":
+                          await FirebaseFirestore.instance.
+                             collection('chapter')
+                             // .collection(widget.collectionName!)
+                              .doc(widget.document!.id).collection('levels').doc(widget.levelName)
+                              .set(
+                                // "uploadedTeacher": userEmail,
+                                // "testName": widget.testName,
+                                // "examTime": (widget.examTime).toString(),
+                                // "duration": widget.duration,
+                                // "category": widget.category,
+                                // "cid": widget.cid,
+                                // "course": widget.course,
+                                // "chapter": widget.chapter,
+                                // "subject": widget.subject,
+                                // "paperSet": widget.paperSet,
+
                                     questionsListToMap(questionsList),
-                              })
+                              )
                               .then((value) => print("Practice Set Added"))
                               .catchError((error) =>
                                   print("Failed to add Practice Set: $error"));

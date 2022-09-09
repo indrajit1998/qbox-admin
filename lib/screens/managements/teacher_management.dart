@@ -37,6 +37,7 @@ class _TeacherManagementState extends State<TeacherManagement> {
   final _phoneNumberController = TextEditingController();
   final _subjectController = TextEditingController();
   final _experienceController = TextEditingController();
+  final _scrollController=ScrollController();
 
   @override
   void initState() {
@@ -63,12 +64,13 @@ class _TeacherManagementState extends State<TeacherManagement> {
 
   List<DataRow> _getRowList(AsyncSnapshot<QuerySnapshot> snapshot) {
     final lst = snapshot.data!.docs;
-
+    int index=1;
     return lst.map((data) {
       Map<String,dynamic> rowData=data.data() as Map<String,dynamic>;
       return DataRow(
           color: MaterialStateColor.resolveWith((states) => Colors.black12),
           cells: <DataCell>[
+            DataCell(Text('${index++}')),
             DataCell(Text('${rowData['firstName']} ${rowData['lastName']}')),
             DataCell(
               SingleChildScrollView(
@@ -140,61 +142,69 @@ class _TeacherManagementState extends State<TeacherManagement> {
   }
 
   Widget getTableList() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('teachers')
-              .where("role", isEqualTo: "teacher")
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong!');
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasData) {
-              return SingleChildScrollView(
-                primary: false,
-                child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.white),
-                  child: DataTable(
-                    columnSpacing: MediaQuery.of(context).size.width / 22.7,
-                    dataRowHeight: 70,
-                    columns: const [
-                      DataColumn(label: Text('Teacher Name')),
-                      DataColumn(
-                        label: Text('Batch'),
-                      ),
-                      DataColumn(
-                        label: Text('Course'),
-                      ),
-                      DataColumn(
-                        label: Text('Subject'),
-                      ),
-                      DataColumn(
-                        label: Text('Experienced'),
-                      ),
-                      DataColumn(
-                        label: Text('Phone Number'),
-                      ),
-                      DataColumn(
-                        label: Text('Email'),
-                      ),
-                      DataColumn(
-                        label: Text('Login Date-time'),
-                      ),
-                    ],
-                    rows: _getRowList(snapshot),
+    int index=1;
+    return Scrollbar(
+      controller: _scrollController,
+      thumbVisibility: true,
+      trackVisibility: true,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('teachers')
+                .where("role", isEqualTo: "teacher")
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong!');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasData) {
+                return SingleChildScrollView(
+                  primary: false,
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                    child: DataTable(
+                      columnSpacing: MediaQuery.of(context).size.width / 22.7,
+                      dataRowHeight: 70,
+                      columns: const [
+                        DataColumn(label: Text('Serial No.')),
+                        DataColumn(label: Text('Teacher Name')),
+                        DataColumn(
+                          label: Text('Batch'),
+                        ),
+                        DataColumn(
+                          label: Text('Course'),
+                        ),
+                        DataColumn(
+                          label: Text('Subject'),
+                        ),
+                        DataColumn(
+                          label: Text('Experienced'),
+                        ),
+                        DataColumn(
+                          label: Text('Phone Number'),
+                        ),
+                        DataColumn(
+                          label: Text('Email'),
+                        ),
+                        DataColumn(
+                          label: Text('Login Date-time'),
+                        ),
+                      ],
+                      rows: _getRowList(snapshot),
+                    ),
                   ),
-                ),
-              );
-            }
+                );
+              }
 
-            return const Text('No Student data');
-          }),
+              return const Text('No Student data');
+            }),
+      ),
     );
   }
 
@@ -517,7 +527,7 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                                           },
                                                           title: Text(
                                                               'Batch ${batchList[i].keys.toList()[j]}'),
-                                                          shape: RoundedRectangleBorder(
+                                                          shape:const RoundedRectangleBorder(
                                                               side: BorderSide(
                                                                   width: 1.5,
                                                                   color: Colors

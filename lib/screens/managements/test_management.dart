@@ -339,18 +339,18 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => LevelUpQuestionAddingScreen(
-                                category: _categoryController.text.trim(),
-                                course: _courseController.text.trim(),
+                             //   category: _categoryController.text.trim(),
+                             //   course: _courseController.text.trim(),
                                 chapter: "",
                                 subject: "",
-                                cid: _cidController.text.trim(),
-                                testName: _testNameController.text.trim(),
-                                duration:
-                                    int.parse(_durationController.text.trim()),
-                                paperSet:
-                                    int.parse(_paperSetController.text.trim()),
-                                examTime: _examTimeController.text.trim(),
-                                collectionName: "fullLengthTest",
+                             //   cid: _cidController.text.trim(),
+                             //   testName: _testNameController.text.trim(),
+                             //   duration:
+                             //       int.parse(_durationController.text.trim()),
+                             //   paperSet:
+                             //       int.parse(_paperSetController.text.trim()),
+                             //   examTime: _examTimeController.text.trim(),
+                             //   collectionName: "fullLengthTest",
                               ),
                             ),
                           );

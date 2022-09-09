@@ -191,8 +191,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                     trailing: IconButton(
                                       onPressed: () {
                                         try {
-                                          String teacherDropDownValue =
-                                              teachersList.first;
+                                          String? teacherDropDownValue=teachersList.first;
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
@@ -252,6 +251,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .min,
@@ -384,7 +384,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             borderRadius:
-                                                                                BorderRadius.circular(50),
+                                                                                BorderRadius.circular(9),
                                                                             color:
                                                                                 Colors.amberAccent,
                                                                             border:
