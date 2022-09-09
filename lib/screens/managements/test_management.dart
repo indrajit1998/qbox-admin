@@ -8,6 +8,8 @@ import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/level_up_horizontal_card.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
 
+import '../../widgets/level_up_question_paper_preview.dart';
+
 class FullLengthTestManagement extends StatefulWidget {
   const FullLengthTestManagement({Key? key}) : super(key: key);
 
@@ -17,9 +19,10 @@ class FullLengthTestManagement extends StatefulWidget {
 }
 
 class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
-  
+  int sl_no = 0;
   String? selectedValue = null;
   final _dropdownFormKey = GlobalKey<FormState>();
+
   List<DropdownMenuItem<String>> get dropdownItems{
   List<DropdownMenuItem<String>> menuItems = [
     DropdownMenuItem(child: Text("20 minute"),value: "20"),
@@ -30,6 +33,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   return menuItems;
 }
 
+
   final GlobalKey<FormState> _fullLengthTestFormKey = GlobalKey<FormState>();
   final _testNameController = TextEditingController();
   final _courseController = TextEditingController();
@@ -39,7 +43,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   final _durationController = TextEditingController();
   final _examTimeController = TextEditingController();
   bool download = false;
-  
+
   List<LevelUpTestModel> fullLengthModelList = [];
   setDate() async {
     DateTime? picked = await showDatePicker(
@@ -56,6 +60,7 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
       Fluttertoast.showToast(msg: "Date not selected is not selected");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,8 +115,8 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                                 return Wrap(
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
-                                  runSpacing: 10,
-                                  spacing: 10,
+                                  // runSpacing: 10,
+                                  // spacing: 10,
                                   children: snapshot.data!.docs
                                       .map((DocumentSnapshot document) {
                                     Map<String, dynamic> data = document.data()!
@@ -157,59 +162,60 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                           color: Theme.of(context).primaryColor,
                         ),
                         SingleChildScrollView(
-                          child: StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('fullLengthTest')
-                                  .snapshots(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasError) {
-                                  return const Text('Something went wrong!');
-                                }
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                                return Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  alignment: WrapAlignment.center,
-                                  runSpacing: 10,
-                                  spacing: 10,
-                                  children: snapshot.data!.docs
-                                      .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document.data()!
-                                        as Map<String, dynamic>;
-                                    DateTime endTime =
-                                        DateTime.parse(data['examTime']);
-                                    DateTime now = DateTime.now();
-                                    if (DateTime(
-                                                endTime.year,
-                                                endTime.month,
-                                                endTime.day,
-                                                endTime.hour,
-                                                endTime.minute,
-                                                endTime.second)
-                                            .difference(DateTime(
-                                                now.year,
-                                                now.month,
-                                                now.day,
-                                                now.hour,
-                                                now.second))
-                                            .inSeconds <
-                                        0) {
-                                      LevelUpTestModel model =
-                                          LevelUpTestModel.fromJson(data);
-                                      fullLengthModelList.add(model);
-                                      return LevelUpHorizontalCard(
-                                        model: model,
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }).toList(),
-                                );
-                              }),
+                          child: _dataList(),
+                          // StreamBuilder<QuerySnapshot>(
+                          //     stream: FirebaseFirestore.instance
+                          //         .collection('fullLengthTest')
+                          //         .snapshots(),
+                          //     builder: (BuildContext context,
+                          //         AsyncSnapshot<QuerySnapshot> snapshot) {
+                          //       if (snapshot.hasError) {
+                          //         return const Text('Something went wrong!');
+                          //       }
+                          //       if (snapshot.connectionState ==
+                          //           ConnectionState.waiting) {
+                          //         return const Center(
+                          //             child: CircularProgressIndicator());
+                          //       }
+                          //       return Wrap(
+                          //         crossAxisAlignment: WrapCrossAlignment.center,
+                          //         alignment: WrapAlignment.center,
+                          //         runSpacing: 10,
+                          //         spacing: 10,
+                          //         children: snapshot.data!.docs
+                          //             .map((DocumentSnapshot document) {
+                          //           Map<String, dynamic> data = document.data()!
+                          //               as Map<String, dynamic>;
+                          //           DateTime endTime =
+                          //               DateTime.parse(data['examTime']);
+                          //           DateTime now = DateTime.now();
+                          //           if (DateTime(
+                          //                       endTime.year,
+                          //                       endTime.month,
+                          //                       endTime.day,
+                          //                       endTime.hour,
+                          //                       endTime.minute,
+                          //                       endTime.second)
+                          //                   .difference(DateTime(
+                          //                       now.year,
+                          //                       now.month,
+                          //                       now.day,
+                          //                       now.hour,
+                          //                       now.second))
+                          //                   .inSeconds <
+                          //               0) {
+                          //             LevelUpTestModel model =
+                          //                 LevelUpTestModel.fromJson(data);
+                          //             fullLengthModelList.add(model);
+                          //             return LevelUpHorizontalCard(
+                          //               model: model,
+                          //             );
+                          //           } else {
+                          //             return Container();
+                          //           }
+                          //         }).toList(),
+                          //       );
+                          //     }),
                         ),
                       ],
                     ),
@@ -292,33 +298,32 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                           return null;
                         },
                       ),
-                  durationDropDown(),
-                      // InkWell(
-                      //   onTap: () => setState(() {
-                      //     durationDropDown();
-                      //   }),
-                      //   child: PopUpTextField(
-                      //     controller: _durationController,
-                      //     hint: '90 minutes',
-                      //     label: 'Duration',
-                      //     widthRatio: 1,
-                      //     validator: (value) {
-                      //       if (value!.isEmpty) {
-                      //         return ("Field cannot be empty");
-                      //       }
-                      //       return null;
-                      //     },
-                      //   ),
-                      // ),
-                               
-                                
-                      InkWell(
-                        onTap: setDate,
-                        child: PopUpTextField(
+                      durationDropDown(),
+
+                      Container(
+                        // width: MediaQuery.of(context).size.width * (350 / 1563) * widthRatio,
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          onTap: setDate,
                           controller: _examTimeController,
-                          hint: '2022-07-08 19:30:00',
-                          label: 'Exam Date',
-                          widthRatio: 2,
+                          decoration: InputDecoration(
+                            hintText: '2022-09-05 19:30:00',
+                            labelText: 'Exam Date',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            fillColor: Colors.grey[100],
+                            filled: true,
+                          ),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return ("Field cannot be empty");
@@ -326,7 +331,22 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                             return null;
                           },
                         ),
-                      ),
+                      )
+                      // InkWell(
+                      //   onTap: setDate,
+                      //   child: PopUpTextField(
+                      //     controller: _examTimeController,
+                      //     hint: '2022-07-08 19:30:00',
+                      //     label: 'Exam Date',
+                      //     widthRatio: 2,
+                      // validator: (value) {
+                      //   if (value!.isEmpty) {
+                      //     return ("Field cannot be empty");
+                      //   }
+                      //   return null;
+                      // },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -370,23 +390,23 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                       ),
                     ),
                   ),
-                  Material(
-                    color: Colors.amberAccent,
-                    elevation: 4,
-                    type: MaterialType.button,
-                    child: MaterialButton(
-                      onPressed: setDate,
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8),
-                      child: Text(
-                        'Exam Date',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 86,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Material(
+                  //   color: Colors.amberAccent,
+                  //   elevation: 4,
+                  //   type: MaterialType.button,
+                  //   child: MaterialButton(
+                  //     onPressed: setDate,
+                  //     padding: EdgeInsets.all(
+                  //         MediaQuery.of(context).size.width / 76.8),
+                  //     child: Text(
+                  //       'Exam Date',
+                  //       style: TextStyle(
+                  //         fontSize: MediaQuery.of(context).size.width / 86,
+                  //         color: Colors.black,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -395,29 +415,31 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
       ),
     );
   }
-   durationDropDown(){
-    return  Form(
+
+  Widget durationDropDown() {
+    return Form(
         key: _dropdownFormKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             DropdownButtonFormField(
-              hint: Text('Duration'),
-               decoration: InputDecoration(
+                hint: Text('Duration'),
+                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                   borderSide: const BorderSide(
-              color: Colors.white,),
-                  borderRadius: BorderRadius.circular(12),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          fillColor: Colors.grey[100],
-          filled: true,
-        ),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  fillColor: Colors.grey[100],
+                  filled: true,
+                ),
                 validator: (value) => value == null ? "Duration" : null,
                 value: selectedValue,
                 onChanged: (String? newValue) {
@@ -426,9 +448,144 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                   });
                 },
                 items: dropdownItems),
-           
           ],
-        )
-        );
+        ));
+  }
+
+  Widget _dataList() {
+    return StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance.collection('fullLengthTest').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong!');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    // width: MediaQuery.of(context).size.width,
+                    width: 1200,
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
+                      child: DataTable(
+                          columns: const [
+                            DataColumn(label: Text('Sl no.')),
+                            DataColumn(label: Text('Category')),
+                            DataColumn(label: Text('Course')),
+                            DataColumn(label: Text('Cid')),
+                            DataColumn(label: Text('Chapter')),
+                            DataColumn(label: Text('Duration')),
+                            DataColumn(label: Text('Exam Time')),
+                            DataColumn(label: Text('Paper Set')),
+                            DataColumn(label: Text('Test Name')),
+                          ],
+                          rows: snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data()! as Map<String, dynamic>;
+                            DateTime endTime = DateTime.parse(data['examTime']);
+                            DateTime now = DateTime.now();
+                            LevelUpTestModel model =
+                                LevelUpTestModel.fromJson(data);
+                            sl_no = sl_no + 1;
+
+                            return DataRow(
+                                color: MaterialStateColor.resolveWith(
+                                    (states) => Colors.black12),
+                                cells: <DataCell>[
+                                  DataCell(Text('${sl_no}')),
+                                  DataCell(Text(model.category.toString())),
+                                  DataCell(Text(model.course.toString())),
+                                  DataCell(Text(model.cid.toString())),
+                                  DataCell(Text(model.chapter.toString())),
+                                  DataCell(Text(model.duration.toString())),
+                                  DataCell(Text(model.examTime.toString())),
+                                  DataCell(Text(model.paperSet.toString())),
+                                  DataCell(Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(model.testName.toString()),
+                                      Spacer(),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LevelUpQuestionPaperPreview(
+                                                          questionPaper:
+                                                              model)),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.arrow_right_alt,
+                                            color: Colors.blue,
+                                          ))
+                                    ],
+                                  )),
+                                ]);
+                          }).toList()),
+                    )));
+          }
+          sl_no = 0;
+          return Text('Loading.....');
+        });
   }
 }
+
+
+
+
+
+
+
+
+
+
+//    Widget _dataList(){
+//     return Theme(
+//                       data: Theme.of(context)
+//                           .copyWith(dividerColor: Colors.white),
+//                       child: DataTable(
+
+//                           //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+//                           columns: const [
+                          //   DataColumn(label: Text('Category')),
+                          //   DataColumn(label: Text('Course')),
+                          //   DataColumn(label: Text('Cid')),
+                          //   DataColumn(label: Text('Chapter')),
+                          //   DataColumn(label: Text('Duration')),
+                          //  DataColumn(label: Text('Exam Time')),
+                          //  DataColumn(label: Text('Paper Set')),
+                          // DataColumn(label: Text('Test Name')),
+//                           ],
+//                           rows: [
+
+//                            DataRow(
+//                                     color: MaterialStateColor.resolveWith(
+//                                         (states) => Colors.black12),
+//                                     cells: <DataCell>[
+//                                       DataCell(Text(widget.model.category.toString())),
+//                                       DataCell(Text(widget.model.course.toString())),
+//                                        DataCell(Text(widget.model.cid.toString())),
+//                                         DataCell(Text(widget.model.chapter.toString())),
+//                                          DataCell(Text(widget.model.duration.toString())),
+//                                           DataCell(Text(widget.model.examTime.toString())),
+//                                            DataCell(Text(widget.model.paperSet.toString())),
+//                                             DataCell(Text(widget.model.testName.toString())),
+                                     
+//                                     ],
+//                                   )
+//                           ]
+//                                   )
+                                  
+                          
+//                     );
+//   }
+// }

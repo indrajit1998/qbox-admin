@@ -13,13 +13,15 @@ class QuestionAddingScreen extends StatefulWidget {
   final String chapter;
   final String cid;
   final String subject;
+  final String updateDate;
+  final String publishDate;
   const QuestionAddingScreen(
       {Key? key,
       required this.chapter,
       required this.course,
       required this.category,
       required this.subject,
-      required this.cid})
+      required this.cid, required this.updateDate, required this.publishDate})
       : super(key: key);
 
   @override
@@ -116,6 +118,24 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
             ),
             Text(
               widget.chapter,
+              style: const TextStyle(
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              widget.publishDate,
+              style: const TextStyle(
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              widget.updateDate,
+              style: const TextStyle(
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              widget.cid.toString(),
               style: const TextStyle(
                 fontSize: 15,
               ),
@@ -418,6 +438,7 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                     child: MaterialButton(
                       onPressed: () async {
                         try {
+                           DateTime currentTime = DateTime.now();
                           String userEmail = FirebaseAuth
                               .instance.currentUser!.email
                               .toString();
@@ -431,6 +452,8 @@ class _QuestionAddingScreenState extends State<QuestionAddingScreen> {
                                 "chapter": widget.chapter,
                                 "subject": widget.subject,
                                 "cid": widget.cid,
+                                "updateDate": currentTime.toString(),
+                                "publishDate":widget.publishDate,
                                 "questions": questionsListToMap(questionsList),
                               })
                               .then((value) => print("Practice Set Added"))
