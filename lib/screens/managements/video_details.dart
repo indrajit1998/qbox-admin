@@ -7,7 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qbox_admin/models/free_videos_model.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../utilities/dimensions.dart';
 // import 'package:qbox_admin/screens/managements/free_video_management.dart';
 // import 'package:video_player/video_player.dart';
 
@@ -24,26 +27,53 @@ class VideoDetails extends StatefulWidget {
   final String description;
   final int likes;
   final Map uploadDate;
-  const VideoDetails(
-      {Key? key,
-      required this.imageUrl,
-      required this.title,
-      required this.likes,
-      required this.uploadDate,
-      required this.videoLink,
-      required this.category,
-      required this.subject,
-      required this.chapter,
-      required this.description})
-      : super(key: key);
+  final String id;
+
+  const VideoDetails({
+    Key? key,
+    required this.imageUrl,
+    required this.title,
+    required this.likes,
+    required this.uploadDate,
+    required this.videoLink,
+    required this.category,
+    required this.subject,
+    required this.chapter,
+    required this.description,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<VideoDetails> createState() => _VideoDetailsState();
 }
 
 class _VideoDetailsState extends State<VideoDetails> {
+  List element = [];
+
+  @override
+  void initState() {
+    displayCommments();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void displayCommments() async {
+    FirebaseFirestore.instance
+        .collection('videos')
+        .doc(widget.id)
+        .get()
+        .then((value) {
+      Map<String, dynamic>? data = value.data();
+      setState(() {
+        element = data!['comments'] as List;
+      });
+    });
+  }
+
   final _sendController = TextEditingController();
   File? imageFile;
+
+  var collect = FirebaseFirestore.instance.collection('videos');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,60 +345,24 @@ class _VideoDetailsState extends State<VideoDetails> {
                                     fontWeight: FontWeight.w700),
                               ),
                             ),
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage:
-                                    Image.asset('assets/images/user.jpg').image,
-                              ), //Image.asset('assets/images/user.jpg'),
-                              title: const Text('Riya Patel'),
-                              subtitle: const Text(
-                                  'I want to know today weather report'),
-                            ),
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage:
-                                    Image.asset('assets/images/user.jpg').image,
-                              ), //Image.asset('assets/images/user.jpg'),
-                              title: const Text('Praveen Kumar'),
-                              subtitle: const Text(
-                                  'I want to know today weather report'),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 60),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.blue,
-                                  backgroundImage:
-                                      Image.asset('assets/images/user.jpg')
-                                          .image,
-                                ), //Image.asset('assets/images/user.jpg'),
-                                title: const Text('sneha Verma'),
-                                subtitle:
-                                    const Text('I want to know today date'),
-                              ),
-                            ),
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage:
-                                    Image.asset('assets/images/user.jpg').image,
-                              ), //Image.asset('assets/images/user.jpg'),
-                              title: const Text('Chandan Verma'),
-                              subtitle: const Text(
-                                  'I want to know today weather report'),
-                            ),
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage:
-                                    Image.asset('assets/images/user.jpg').image,
-                              ), //Image.asset('assets/images/user.jpg'),
-                              title: const Text('Mayank Nigam'),
-                              subtitle: const Text(
-                                  'I want to know today weather report'),
-                            ),
+                            Container(
+                              margin: EdgeInsets.all(Dimensions.padding20 / 5),
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: element.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.blue,
+                                        backgroundImage: Image.asset(
+                                                'assets/images/user.jpg')
+                                            .image,
+                                      ),
+                                      title: Text(element[index]['username']),
+                                      subtitle: Text(element[index]['text']),
+                                    );
+                                  }),
+                            )
                           ],
                         ),
                       )
@@ -377,32 +371,6 @@ class _VideoDetailsState extends State<VideoDetails> {
                 )),
               ),
             ),
-//              Container(
-//             margin: EdgeInsets.all(Dimensions.padding20 / 5),
-//             padding: EdgeInsets.symmetric(horizontal: 13, vertical: 17),
-//             child: FutureBuilder<QuerySnapshot>(
-//   future: FirebaseFirestore.instance.collection('videos').get(),
-//   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//     if (snapshot.hasData) {
-//       return Column(
-//         children: snapshot.data!.docs.map((doc) {
-//         List l = doc['comments'] as List;
-//             return ListTile(
-//               leading: CircleAvatar(
-//                                 radius: 30,
-//                                 child: Image.asset('assets/images/user.jpg'),),
-//              title: Text(l[0]['username']),
-//             subtitle: Text(l[0]['text']),
-//             );
-//         }).toList(),
-//       );
-//     } else {
-//       // or your loading widget here
-//       return Container();
-//     }
-//   },
-// ),
-//           ),
 
             Padding(
               padding: const EdgeInsets.all(18.0),
@@ -428,9 +396,10 @@ class _VideoDetailsState extends State<VideoDetails> {
                         ),
                         IconButton(
                           onPressed: () {
-                           setState(() {
-                             _send();
-                           });
+                            setState(() {
+                              _send();
+                            });
+                            _sendController.clear();
                           },
                           icon: Icon(
                             Icons.send_sharp,
@@ -477,21 +446,27 @@ class _VideoDetailsState extends State<VideoDetails> {
       });
     }
   }
-  
+
   void _send() async {
     DateTime _date = DateTime.now();
-   final document = FirebaseFirestore.instance.collection('videos').doc();
+    var collection = FirebaseFirestore.instance.collection('videos');
     try {
-      await FirebaseFirestore.instance
-          .collection('videos').doc().set({
-             'text': _sendController,
-            'createdAt' : _date,
-             'userId': document.id,
-            'username': FirebaseAuth
-                                        .instance.currentUser!.displayName
-                                        .toString(),
-          })
-         
+      List<Map<String, dynamic>> updatedList = [
+        {
+          'text': _sendController.text,
+          'createdAt': _date.toString(),
+          'username': FirebaseAuth.instance.currentUser!.email,
+          'userId': collection.id
+        }
+      ];
+
+      Map<String, dynamic> updatedData = {
+        'comments': FieldValue.arrayUnion(updatedList),
+      };
+
+      collection
+          .doc(widget.id)
+          .update(updatedData)
           .then((value) => print("Comments send"))
           .catchError((error) => print("Failed to send: $error"));
       setState(() {});
@@ -521,10 +496,10 @@ class VideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<VideoScreen> {
   // Initial Selected Value
-  String dropdownvalue = '144p';
+  // String dropdownvalue = '144p';
 
   // List of items in our dropdown menu
-  var items = ['144p', '240p', '360p', '480p', '720p', '1080p'];
+  // var items = ['144p', '240p', '360p', '480p', '720p', '1080p'];
   late VideoPlayerController videoPlayerController;
   ChewieController? chewieController;
   Future<void> setVolume(double volume) async {
@@ -568,7 +543,6 @@ class _VideoScreenState extends State<VideoScreen> {
             text: 'Whats up? :)',
           ),
         ]),
-        
         subtitleBuilder: (context, subtitle) => Container(
               padding: const EdgeInsets.all(10.0),
               child: Text(
@@ -607,15 +581,16 @@ class _VideoScreenState extends State<VideoScreen> {
             onPressed: () {
               Navigator.of(context).pop();
             },
+            
             child: const Icon(Icons.close)),
       ),
       body: Column(
         children: [
-          Text(widget.title, 
+          Text(
+            widget.title,
             style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),),
+                fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           Container(
               height: 550,
               width: double.infinity,
@@ -630,26 +605,26 @@ class _VideoScreenState extends State<VideoScreen> {
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
-              DropdownButton(
-                dropdownColor: Colors.white,
-                icon: Text('Quality (${dropdownvalue})'),
-                // icon: Icon(
-                //   Icons.more_vert,
-                //   color: Theme.of(context).primaryIconTheme.color,
-                // ),
-                // value: dropdownvalue,
-                items: items.map((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownvalue = newValue!;
-                  });
-                },
-              ),
+              // DropdownButton(
+              //   dropdownColor: Colors.white,
+              //   icon: Text('Quality (${dropdownvalue})'),
+              //   // icon: Icon(
+              //   //   Icons.more_vert,
+              //   //   color: Theme.of(context).primaryIconTheme.color,
+              //   // ),
+              //   // value: dropdownvalue,
+              //   items: items.map((String items) {
+              //     return DropdownMenuItem(
+              //       value: items,
+              //       child: Text(items),
+              //     );
+              //   }).toList(),
+              //   onChanged: (String? newValue) {
+              //     setState(() {
+              //       dropdownvalue = newValue!;
+              //     });
+              //   },
+              // ),
             ],
           ),
         ],
