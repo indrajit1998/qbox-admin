@@ -111,12 +111,6 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                                                 .close_rounded))
                                                       ],
                                                     ),
-                                                    // contentPadding: EdgeInsets
-                                                    //     .all(MediaQuery.of(
-                                                    //     context)
-                                                    //     .size
-                                                    //     .width *
-                                                    //     (2 / 153.6)),
                                                     content: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment.start,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qbox_admin/models/level_up_series_model.dart';
-import 'package:qbox_admin/screens/level_up_question_adding_screen.dart';
+import 'package:qbox_admin/screens/full_length_adding_screen.dart';
 import 'package:qbox_admin/widgets/bottom_material_button.dart';
 import 'package:qbox_admin/widgets/level_up_horizontal_card.dart';
 import 'package:qbox_admin/widgets/pop_up_text_field.dart';
@@ -22,10 +22,10 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
   final _dropdownFormKey = GlobalKey<FormState>();
   List<DropdownMenuItem<String>> get dropdownItems{
   List<DropdownMenuItem<String>> menuItems = [
-    DropdownMenuItem(child: Text("20 minute"),value: "20 minutes"),
-    DropdownMenuItem(child: Text("50 minutes"),value: "50 minutes"),
-    DropdownMenuItem(child: Text("120 minutes"),value: "120 minutes"),
-    DropdownMenuItem(child: Text("2 hours"),value: "2 hour"),
+    DropdownMenuItem(child: Text("20 minute"),value: "20"),
+    DropdownMenuItem(child: Text("50 minutes"),value: "50"),
+    DropdownMenuItem(child: Text("120 minutes"),value: "120"),
+    DropdownMenuItem(child: Text("2 hours"),value: "2"),
   ];
   return menuItems;
 }
@@ -279,12 +279,15 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                       ),
                       PopUpTextField(
                         controller: _paperSetController,
-                        hint: 'Set 1',
+                        hint: '1',
                         label: 'Paper Set',
                         widthRatio: 2,
                         validator: (value) {
-                          if (value!.isEmpty) {
+                          if (value!.isEmpty ) {
                             return ("Field cannot be empty");
+                          }
+                          if(double.tryParse(value)==null){
+                            return 'Enter number';
                           }
                           return null;
                         },
@@ -338,19 +341,19 @@ class _FullLengthTestManagementState extends State<FullLengthTestManagement> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LevelUpQuestionAddingScreen(
-                             //   category: _categoryController.text.trim(),
-                             //   course: _courseController.text.trim(),
+                              builder: (context) =>FullLengthAddingScreen(
+                               category: _categoryController.text.trim(),
+                               course: _courseController.text.trim(),
                                 chapter: "",
                                 subject: "",
-                             //   cid: _cidController.text.trim(),
-                             //   testName: _testNameController.text.trim(),
-                             //   duration:
-                             //       int.parse(_durationController.text.trim()),
-                             //   paperSet:
-                             //       int.parse(_paperSetController.text.trim()),
-                             //   examTime: _examTimeController.text.trim(),
-                             //   collectionName: "fullLengthTest",
+                               cid: _cidController.text.trim(),
+                               testName: _testNameController.text.trim(),
+                               duration:
+                                   int.parse(selectedValue!.trim()),
+                               paperSet:
+                                   int.parse(_paperSetController.text.trim()),
+                               examTime: _examTimeController.text.trim(),
+                               collectionName: "fullLengthTest",
                               ),
                             ),
                           );
