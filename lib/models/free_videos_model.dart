@@ -8,12 +8,12 @@ class FreeVideoModel {
   String? course;
   String? category;
   String? description;
-  String ? chapter;
+  String? chapter;
   String? subject;
-  String ? id;
-  String ? batchName;
+  String? id;
+  String? batchName;
   String? uploadedTeacherEmail;
-  List<Comments>? comments; 
+  List<Comments>? comments;
 
   FreeVideoModel(
       {this.title,
@@ -30,8 +30,7 @@ class FreeVideoModel {
       this.id,
       this.description,
       this.uploadedTeacherEmail,
-      this.comments
-});
+      this.comments});
   FreeVideoModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     imageUrl = json['imageUrl'];
@@ -44,10 +43,10 @@ class FreeVideoModel {
     chapter = json['chapter'];
     subject = json['subject'];
     id = json['id'];
-     batchName = json['batchName'];
+    batchName = json['batchName'];
     description = json['description'];
     uploadedTeacherEmail = json['uploadedTeacherEmail'];
-     if (json['comments'] != null) {
+    if (json['comments'] != null) {
       comments = <Comments>[];
       json['comments'].forEach((k, v) {
         comments!.add(Comments.fromJson(v));
@@ -71,27 +70,26 @@ class FreeVideoModel {
     data['batchName'] = batchName;
     data['description'] = description;
     data['uploadedTeacherEmail'] = uploadedTeacherEmail;
-     if (comments != null) {
+    if (comments != null) {
       data['comments'] = comments!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
-class Comments{
-   String? username;
+
+class Comments {
+  String? username;
   String? userId;
   String? createdAt;
   String? text;
 
-  Comments(Map<String, Object> map, {
-    this.createdAt, this.text, this.userId, this.username
-    });
- Comments.fromJson(Map<String, dynamic> json) {
+  Comments(Map<String, Object> map,
+      {this.createdAt, this.text, this.userId, this.username});
+  Comments.fromJson(Map<String, dynamic> json) {
     text = json['text'];
     userId = json['userId'];
     username = json['username'];
     createdAt = json['createdAt'];
-   
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -102,4 +100,3 @@ class Comments{
     return data;
   }
 }
-

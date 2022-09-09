@@ -173,7 +173,6 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                         return SingleChildScrollView(
                           child: _dataList(),
                         );
-                      
                       }),
                 ),
               ),
@@ -271,7 +270,6 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                       LinearProgressIndicator(
                         value: progress / 100,
                       ),
-                      
                     ],
                   ),
                 ),
@@ -290,27 +288,26 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                   .collection('videos')
                                   .doc();
                               DateTime currentTime = DateTime.now();
-                              await 
-                                  document.set(FreeVideoModel(
-                                    id: document.id,
-                                    comments: [],
-                                    batchName: 'batch 9',
-                                    title: _titleController.text.trim(),
-                                    category: _categoryController.text.trim(),
-                                    course: _courseController.text.trim(),
-                                    description:
-                                        _descriptionController.text.trim(),
-                                    chapter: _chapterController.text.trim(),
-                                    subject: _subjectController.text.trim(),
-                                    likes: 20,
-                                    download: 500,
-                                    imageUrl: imageFileName,
-                                    videoLink: videoFileName,
-                                    uploadDate: currentTime.toString(),
-                                    uploadedTeacherEmail: FirebaseAuth
-                                        .instance.currentUser!.email
-                                        .toString(),
-                                  ).toJson())
+                              await document
+                                  .set(FreeVideoModel(
+                                id: document.id,
+                                comments: [],
+                                batchName: 'batch 9',
+                                title: _titleController.text.trim(),
+                                category: _categoryController.text.trim(),
+                                course: _courseController.text.trim(),
+                                description: _descriptionController.text.trim(),
+                                chapter: _chapterController.text.trim(),
+                                subject: _subjectController.text.trim(),
+                                likes: 20,
+                                download: 500,
+                                imageUrl: imageFileName,
+                                videoLink: videoFileName,
+                                uploadDate: currentTime.toString(),
+                                uploadedTeacherEmail: FirebaseAuth
+                                    .instance.currentUser!.email
+                                    .toString(),
+                              ).toJson())
                                   .then((value) {
                                 setState(() {
                                   isUploaded = false;
@@ -383,8 +380,8 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                       data: Theme.of(context)
                           .copyWith(dividerColor: Colors.white),
                       child: DataTable(
-                          columns: const[
-                             DataColumn(label: Text('Sl no.')),
+                          columns: const [
+                            DataColumn(label: Text('Sl no.')),
                             DataColumn(label: Text('Title')),
                             DataColumn(label: Text('Description')),
                             DataColumn(label: Text('Likes')),
@@ -402,14 +399,13 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                             Map timeDifferenceValue = timeDifference(
                                 DateTime.parse(data['uploadDate']),
                                 DateTime.now());
-                                sl_no = sl_no+1;
+                            sl_no = sl_no + 1;
                             return DataRow(
                                 color: MaterialStateColor.resolveWith(
                                     (states) => Colors.black12),
                                 cells: <DataCell>[
-                                  
                                   DataCell(Text('${sl_no}')),
-                                   DataCell(Text(data['title'])),
+                                  DataCell(Text(data['title'])),
                                   DataCell(Text(data['description'])),
                                   DataCell(Text(data['likes'].toString())),
                                   DataCell(Text(data['category'])),
@@ -455,14 +451,9 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                             color: Colors.blue,
                                           ))
                                     ],
-                                  )
-                                  ),
-                                ]
-                                );
-                          }
-                          )
-                          .toList()
-                          ),
+                                  )),
+                                ]);
+                          }).toList()),
                     )));
           }
           sl_no = 0;

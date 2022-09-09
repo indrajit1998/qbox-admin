@@ -29,19 +29,19 @@ class VideoDetails extends StatefulWidget {
   final Map uploadDate;
   final String id;
 
-  const VideoDetails(
-      {Key? key,
-      required this.imageUrl,
-      required this.title,
-      required this.likes,
-      required this.uploadDate,
-      required this.videoLink,
-      required this.category,
-      required this.subject,
-      required this.chapter,
-      required this.description, required this.id,
-  })
-      : super(key: key);
+  const VideoDetails({
+    Key? key,
+    required this.imageUrl,
+    required this.title,
+    required this.likes,
+    required this.uploadDate,
+    required this.videoLink,
+    required this.category,
+    required this.subject,
+    required this.chapter,
+    required this.description,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<VideoDetails> createState() => _VideoDetailsState();
@@ -52,7 +52,7 @@ class _VideoDetailsState extends State<VideoDetails> {
 
   @override
   void initState() {
-displayCommments();
+    displayCommments();
     // TODO: implement initState
     super.initState();
   }
@@ -69,10 +69,11 @@ displayCommments();
       });
     });
   }
+
   final _sendController = TextEditingController();
   File? imageFile;
-  
-   var collect= FirebaseFirestore.instance.collection('videos');
+
+  var collect = FirebaseFirestore.instance.collection('videos');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -344,25 +345,24 @@ displayCommments();
                                     fontWeight: FontWeight.w700),
                               ),
                             ),
-
-                             Container(
-            margin: EdgeInsets.all(Dimensions.padding20 / 5),
-            child: ListView.builder(
-              shrinkWrap: true,
-                    itemCount: element.length,
-              itemBuilder: (context, index){
-               return ListTile(
-                leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage:
-                                    Image.asset('assets/images/user.jpg').image,
-                              ), 
-               title: Text(element[index]['username']),
-               subtitle: Text(element[index]['text']),
-                );
-
-            }),
-                             )
+                            Container(
+                              margin: EdgeInsets.all(Dimensions.padding20 / 5),
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: element.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.blue,
+                                        backgroundImage: Image.asset(
+                                                'assets/images/user.jpg')
+                                            .image,
+                                      ),
+                                      title: Text(element[index]['username']),
+                                      subtitle: Text(element[index]['text']),
+                                    );
+                                  }),
+                            )
                           ],
                         ),
                       )
@@ -459,12 +459,13 @@ displayCommments();
           'userId': collection.id
         }
       ];
-      
+
       Map<String, dynamic> updatedData = {
         'comments': FieldValue.arrayUnion(updatedList),
       };
 
-       collection.doc(widget.id)
+      collection
+          .doc(widget.id)
           .update(updatedData)
           .then((value) => print("Comments send"))
           .catchError((error) => print("Failed to send: $error"));
