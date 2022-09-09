@@ -437,6 +437,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                                             timeDifferenceValue,
                                                         videoLink:
                                                             data['videoLink'],
+                                                            
                                                         chapter:
                                                             data['chapter'],
                                                         subject:

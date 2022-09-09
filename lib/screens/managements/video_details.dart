@@ -581,6 +581,7 @@ class _VideoScreenState extends State<VideoScreen> {
             onPressed: () {
               Navigator.of(context).pop();
             },
+            
             child: const Icon(Icons.close)),
       ),
       body: Column(
