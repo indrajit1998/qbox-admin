@@ -15,8 +15,8 @@ class LevelUpManagement extends StatefulWidget {
 }
 
 class _LevelUpManagementState extends State<LevelUpManagement> {
-  TextEditingController _addLevelController=TextEditingController();
-  List<String> levels=[];
+  final TextEditingController _addLevelController = TextEditingController();
+  bool validate=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,9 +53,11 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
                     return ListView(
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
+                      primary: false,
                       children:
                           snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data =
@@ -81,106 +83,185 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
                                 ),
                               ),
                               ExpansionTile(
-                                title: ListTile(
-                                  title: Text(data['chapter']),
-                                  trailing: IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                                  children: [
-                                                    const Text(
-                                                        'Add Level'),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          Navigator.of(
-                                                              context,
-                                                              rootNavigator:
-                                                              true)
-                                                              .pop();
-                                                        },
-                                                        icon: const Icon(
-                                                            Icons
-                                                                .close_rounded))
-                                                  ],
-                                                ),
-                                                // contentPadding: EdgeInsets
-                                                //     .all(MediaQuery.of(
-                                                //     context)
-                                                //     .size
-                                                //     .width *
-                                                //     (2 / 153.6)),
-                                                content: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .start,
-                                                  mainAxisSize:
-                                                  MainAxisSize
-                                                      .min,
-                                                  children: [
-                                                    const Divider(
-                                                      color: Colors
-                                                          .amber,
-                                                    ),
-                                                    TextField(
-                                                      controller: _addLevelController,
-                                                      decoration: InputDecoration(hintText: 'Level Name'),
-                                                    ),
+                                  title: ListTile(
+                                    title: Text(data['chapter']),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return StatefulBuilder(
 
-                                                  ],
-                                                ),
-                                                actions: [
-                                                Material(
-                                                color: Colors
-                                                .amberAccent,
-                                                elevation: 4,
-                                                type: MaterialType
-                                                    .button,
-                                                child: MaterialButton(
-                                                  onPressed: (){
-                                                    setState(() {
-                                                      levels.add(_addLevelController.text);
-                                                      _addLevelController.clear();
-                                                      Navigator.of(context).pop();
-                                                    });
-                                                  },
-                                                  color: Colors
-                                                      .amberAccent,
-                                                  child: Text(
-                                                    'Add Level',
-                                                    style:
-                                                    TextStyle(
-                                                      fontSize:
-                                                      MediaQuery.of(context).size.width /
-                                                          86,
-                                                      color: Colors
-                                                          .black,
+                                                  builder:(context,setState)=> AlertDialog(
+                                                    title: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        const Text('Add Level'),
+                                                        IconButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context,
+                                                                      rootNavigator:
+                                                                          true)
+                                                                  .pop();
+                                                            },
+                                                            icon: const Icon(Icons
+                                                                .close_rounded))
+                                                      ],
                                                     ),
+                                                    content: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        const Divider(
+                                                          color: Colors.amber,
+                                                        ),
+                                                        TextField(
+
+                                                          controller:
+                                                              _addLevelController,
+                                                          decoration:
+                                                               InputDecoration(
+                                                                  hintText:
+                                                                      'level 1',
+                                                              errorText: validate?'Format like "level 1"' :null  ,
+                                                              ),
+
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    actions: [
+                                                      Material(
+                                                          color:
+                                                              Colors.amberAccent,
+                                                          elevation: 4,
+                                                          type:
+                                                              MaterialType.button,
+                                                          child: MaterialButton(
+                                                            onPressed: () async {
+                                                              if(_addLevelController.text.isEmpty){
+                                                                return ;
+                                                              }
+                                                              final tmp=_addLevelController.text.trim().split(" ");
+                                                              if(tmp.length<2|| tmp[0]!='level' || double.tryParse(tmp[1])==null){
+                                                                setState((){
+                                                                  validate = true;
+                                                                });
+
+                                                              }else{
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                    'chapter')
+                                                                    .doc(
+                                                                    document.id)
+                                                                    .collection(
+                                                                    'levels')
+                                                                    .doc(
+                                                                    _addLevelController
+                                                                        .text)
+                                                                    .set({}).then(
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        _addLevelController
+                                                                            .clear();
+                                                                        Navigator.of(
+                                                                            context)
+                                                                            .pop();
+                                                                      });
+                                                                    });
+                                                              }
+
+                                                            },
+                                                            color: Colors
+                                                                .amberAccent,
+                                                            child: Text(
+                                                              'Add Level',
+                                                              style: TextStyle(
+                                                                fontSize: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width /
+                                                                    86,
+                                                                color:
+                                                                    Colors.black,
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ],
                                                   ),
-                                                )),
-                                                ],
-                                              );
-                                            });
-                                      },
-                                      icon: Icon(Icons.add_circle_outline)),
-                                ),
-                                children: levels.map((levelName) => ListTile(
-                                  leading: Text(levelName),
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                    },
-                                    icon: Icon(
-                                      Icons.arrow_right_alt,
-                                      color: Colors.lightBlueAccent,
-                                    ),
+                                                );
+                                              });
+                                        },
+                                        icon: const Icon(
+                                            Icons.add_circle_outline)),
                                   ),
-                                ), ).toList()
-                              )
+                                  children: [
+                                    StreamBuilder(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('chapter')
+                                            .doc(document.id)
+                                            .collection('levels')
+                                            .snapshots(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<QuerySnapshot>
+                                                snapshot) {
+                                          if (snapshot.hasError) {
+                                            return const Text(
+                                                'Something went wrong!');
+                                          }
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                          return Column(
+                                              children: snapshot.data!.docs.map(
+                                                  (DocumentSnapshot docum) {
+                                            // Map<String, dynamic> data =
+                                            // docum.data()! as Map<String, dynamic>;
+                                            return ListTile(
+                                              leading: Text(docum.id),
+                                              trailing: IconButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          LevelUpQuestionAddingScreen(
+                                                        //  category: _categoryController.text.trim(),
+                                                        //  course: _courseController.text.trim(),
+                                                        //  cid:_cidController.text.trim(),
+                                                        chapter:
+                                                            data['chapter'],
+                                                        subject:
+                                                            data['subject'],
+                                                        levelName: docum.id,
+                                                        document: document,
+                                                        //  testName: _testNameController.text.trim(),
+                                                        //  duration: int.parse(
+                                                        //      selectedValue!.trim()),
+                                                        //  paperSet: int.parse(
+                                                        //      _paperSetController.text.trim()),
+                                                        //  examTime: _examTimeController.text.trim(),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                icon: const Icon(
+                                                  Icons.arrow_right_alt,
+                                                  color: Colors.lightBlueAccent,
+                                                ),
+                                              ),
+                                            );
+                                          }).toList());
+                                        })
+                                  ])
                             ]);
                       }).toList(),
                     );
@@ -198,10 +279,10 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
 //   final _dropdownFormKey = GlobalKey<FormState>();
 //   List<DropdownMenuItem<String>> get dropdownItems{
 //   List<DropdownMenuItem<String>> menuItems = [
-//     DropdownMenuItem(child: Text("20 minute"),value: "20 minutes"),
-//     DropdownMenuItem(child: Text("50 minutes"),value: "50 minutes"),
-//     DropdownMenuItem(child: Text("120 minutes"),value: "120 minutes"),
-//     DropdownMenuItem(child: Text("2 hours"),value: "2 hour"),
+//     DropdownMenuItem(child: Text("20 minute"),value: "20"),
+//     DropdownMenuItem(child: Text("50 minutes"),value: "50"),
+//     DropdownMenuItem(child: Text("120 minutes"),value: "120"),
+//     DropdownMenuItem(child: Text("2 hours"),value: "2"),
 //   ];
 //   return menuItems;
 // }
@@ -482,7 +563,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
 //                       ),
 //                       PopUpTextField(
 //                         controller: _paperSetController,
-//                         hint: 'Set 1',
+//                         hint: '1',
 //                         label: 'Paper Set',
 //                         widthRatio: 2,
 //                         validator: (value) {
@@ -544,7 +625,7 @@ class _LevelUpManagementState extends State<LevelUpManagement> {
 //                                 subject: _subjectController.text.trim(),
 //                                 testName: _testNameController.text.trim(),
 //                                 duration: int.parse(
-//                                     _durationController.text.trim()),
+//                                     selectedValue!.trim()),
 //                                 paperSet: int.parse(
 //                                     _paperSetController.text.trim()),
 //                                 examTime: _examTimeController.text.trim(),

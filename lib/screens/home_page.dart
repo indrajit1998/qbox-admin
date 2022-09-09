@@ -254,35 +254,37 @@ class _HomePageState extends State<HomePage> {
                                       builder: (context) => const Profile()));
                             }
                           },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CircleAvatar(
-                                radius: MediaQuery.of(context).size.width / 48,
-                                child: Icon(
-                                  Icons.person,
-                                  size: MediaQuery.of(context).size.width / 48,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CircleAvatar(
+                                  radius: MediaQuery.of(context).size.width / 48,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: MediaQuery.of(context).size.width / 48,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                name,
-                                style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width / 70,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(width: 5,),
-                              if(_role=='Admin')
-                                IconButton(
-                                 // style: ElevatedButton.styleFrom(primary: Colors.green[300]),
-                                  onPressed: ()=>_logout(context),
-                                  icon: Icon(Icons.logout),
-
-                                  //child: Text('Log Out'),
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width / 70,
+                                      fontWeight: FontWeight.bold),
                                 ),
+                                if(_role=='Admin')
+                                  IconButton(
 
-                            ],
+                                   // style: ElevatedButton.styleFrom(primary: Colors.green[300]),
+                                    onPressed: ()=>_logout(context),
+                                    icon: Icon(Icons.logout),
+                                    iconSize:MediaQuery.of(context).size.width/ 57,
+                                  ),
+
+                              ],
+                            ),
                           ),
                         ),
                       ),

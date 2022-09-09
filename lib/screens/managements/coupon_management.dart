@@ -27,7 +27,7 @@ class _CouponManagementState extends State<CouponManagement> {
   String? selectedCategory;
   List<String?> _category = [];
   List<String?> _allCourse = [];
-  int index = 1;
+
   String? errorMessage;
 
   @override
@@ -112,9 +112,10 @@ class _CouponManagementState extends State<CouponManagement> {
           )),
     );
   }
-
+  final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    int index = 1;
     //print(MediaQuery.of(context).size.width); 1366
     return Scaffold(
       body: Container(
@@ -145,81 +146,88 @@ class _CouponManagementState extends State<CouponManagement> {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
                         List data = snapshot.data;
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
+                        return Scrollbar(
+                          thumbVisibility: true,
+                          radius: Radius.circular(20),
+                          controller: _scrollController,
                           child: SingleChildScrollView(
-                            child: DataTable(
-                              headingRowColor: MaterialStateColor.resolveWith(
-                                (states) {
-                                  return Colors.amber;
-                                },
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollController,
+                            child: SingleChildScrollView(
+                              primary: false,
+                              child: DataTable(
+                                headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) {
+                                    return Colors.amber;
+                                  },
+                                ),
+                                columnSpacing:
+                                    MediaQuery.of(context).size.width / 16.4,
+                                columns: const [
+                                  DataColumn(
+                                    label: Text('Serial No'),
+                                  ),
+                                  DataColumn(
+                                    label: Text('Title'),
+                                  ),
+                                  DataColumn(
+                                      label: Text(
+                                    'Discount',
+                                  )),
+                                  DataColumn(
+                                      label: Text(
+                                    'Coupon Code',
+                                  )),
+                                  DataColumn(
+                                      label: Text(
+                                    'Category',
+                                  )),
+                                  DataColumn(
+                                    label:Text('Course')
+                                  ),
+                                  DataColumn(
+                                      label: Text(
+                                    'Expiry Date',
+                                  )),
+                                  DataColumn(
+                                      label: Text(
+                                    'Description',
+                                  )),
+                                ],
+                                rows: data
+                                    .map(
+                                      ((rowData) => DataRow(
+                                            cells: <DataCell>[
+                                              DataCell(
+                                                Text('${index++}'),
+                                              ),
+                                              DataCell(
+                                                Text(rowData['title']),
+                                              ),
+                                              //Extracting from Map element the value
+                                              DataCell(
+                                                Text(rowData['discount']),
+                                              ),
+                                              DataCell(
+                                                Text(rowData['couponCode']),
+                                              ),
+                                              DataCell(
+                                                Text(rowData['category']),
+                                              ),
+                                              DataCell(
+                                                Text(rowData['course'])
+                                              ),
+                                              DataCell(
+                                                Text(rowData['expiryDate']),
+                                              ),
+                                              DataCell(
+                                                Text(rowData['description']),
+                                              ),
+                                            ],
+                                          )),
+                                    )
+                                    .toList(),
                               ),
-                              columnSpacing:
-                                  MediaQuery.of(context).size.width / 16.4,
-                              columns: const [
-                                DataColumn(
-                                  label: Text('Serial No'),
-                                ),
-                                DataColumn(
-                                  label: Text('Title'),
-                                ),
-                                DataColumn(
-                                    label: Text(
-                                  'Discount',
-                                )),
-                                DataColumn(
-                                    label: Text(
-                                  'Coupon Code',
-                                )),
-                                DataColumn(
-                                    label: Text(
-                                  'Category',
-                                )),
-                                DataColumn(
-                                  label:Text('Course')
-                                ),
-                                DataColumn(
-                                    label: Text(
-                                  'Expiry Date',
-                                )),
-                                DataColumn(
-                                    label: Text(
-                                  'Description',
-                                )),
-                              ],
-                              rows: data
-                                  .map(
-                                    ((rowData) => DataRow(
-                                          cells: <DataCell>[
-                                            DataCell(
-                                              Text('${index++}'),
-                                            ),
-                                            DataCell(
-                                              Text(rowData['title']),
-                                            ),
-                                            //Extracting from Map element the value
-                                            DataCell(
-                                              Text(rowData['discount']),
-                                            ),
-                                            DataCell(
-                                              Text(rowData['couponCode']),
-                                            ),
-                                            DataCell(
-                                              Text(rowData['category']),
-                                            ),
-                                            DataCell(
-                                              Text(rowData['course'])
-                                            ),
-                                            DataCell(
-                                              Text(rowData['expiryDate']),
-                                            ),
-                                            DataCell(
-                                              Text(rowData['description']),
-                                            ),
-                                          ],
-                                        )),
-                                  )
-                                  .toList(),
                             ),
                           ),
                         );
@@ -297,6 +305,18 @@ class _CouponManagementState extends State<CouponManagement> {
                           },
                         ),
                         PopUpTextField(
+                          controller: _couponCodeController,
+                          hint: 'cixeqzd',
+                          label: 'Coupan Code',
+                          widthRatio: 1,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Field cannot be empty");
+                            }
+                            return null;
+                          },
+                        ),
+                        PopUpTextField(
                           controller: _couponDescriptionController,
                           hint: '',
                           label: 'Description',
@@ -312,68 +332,79 @@ class _CouponManagementState extends State<CouponManagement> {
                     color: Colors.amberAccent,
                     elevation: 4,
                     type: MaterialType.button,
-                    child: MaterialButton(
-                      onPressed: () async {
-                        if (_couponFormKey.currentState!.validate()) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          try {
-                            await FirebaseFirestore.instance
-                                .collection('coupons')
-                                .doc(_couponNameController.text.trim())
-                                .set(CouponModel(
-                                        title:
-                                            _couponNameController.text.trim(),
-                                        discount: _couponDiscountController.text
-                                            .trim(),
-                                        category:selectedCategory,
-                                        course:selectedCourse,
-                                        couponCode:
-                                            _couponCodeController.text.trim(),
-                                        description:
-                                            _couponDescriptionController.text
-                                                .trim(),
-                                        expiryDate: _couponExpiryDateController
-                                            .text
-                                            .trim())
-                                    .toJson())
-                                .then((value) => print("Coupon Added"))
-                                .catchError((error) {
-                              // ignore: invalid_return_type_for_catch_error
-                              return Fluttertoast.showToast(msg: error!);
+                    child: StatefulBuilder(
+                      builder:(context,setState)=>isLoading?CircularProgressIndicator(): MaterialButton(
+                        onPressed: () async {
+                          if (_couponFormKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
                             });
-                          } on FirebaseAuthException catch (error) {
-                            switch (error.code) {
-                              default:
-                                errorMessage =
-                                    "An undefined Error happened.+$error";
+                            try {
+                              await FirebaseFirestore.instance
+                                  .collection('coupons')
+                                  .doc(_couponNameController.text.trim())
+                                  .set(CouponModel(
+                                          title:
+                                              _couponNameController.text.trim(),
+                                          discount: _couponDiscountController.text
+                                              .trim(),
+                                          category:selectedCategory,
+                                          course:selectedCourse,
+                                          couponCode:
+                                              _couponCodeController.text.trim(),
+                                          description:
+                                              _couponDescriptionController.text
+                                                  .trim(),
+                                          expiryDate: _couponExpiryDateController
+                                              .text
+                                              .trim())
+                                      .toJson())
+                                  .then((value) => print("Coupon Added"))
+                                  .catchError((error) {
+                                // ignore: invalid_return_type_for_catch_error
+                                return Fluttertoast.showToast(msg: error!);
+                              });
+                            } on FirebaseAuthException catch (error) {
+                              switch (error.code) {
+                                default:
+                                  errorMessage =
+                                      "An undefined Error happened.+$error";
+                              }
+                              Fluttertoast.showToast(msg: errorMessage!);
                             }
-                            Fluttertoast.showToast(msg: errorMessage!);
+
+                            Fluttertoast.showToast(
+                                msg: "Coupon Added Successfully");
+                            if (!mounted) {
+                              return;
+                            }
+                            Navigator.of(context, rootNavigator: true).pop();
+                            _couponCategoryController.clear();
+                            _couponCodeController.clear();
+                            _couponDescriptionController.clear();
+                            _couponDiscountController.clear();
+                            _couponExpiryDateController.clear();
+                            _couponNameController.clear();
+                            _courseDurationController.clear();
+                            setState(() {
+                              isLoading = false;
+                            });
+
                           }
-                          setState(() {
-                            isLoading = false;
-                          });
-                          Fluttertoast.showToast(
-                              msg: "Coupon Added Successfully");
-                          if (!mounted) {
-                            return;
-                          }
-                          Navigator.of(context, rootNavigator: true).pop();
-                        }
-                      },
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width / 76.8),
-                      child: isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(
-                              'Add Coupon',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width / 86,
-                                color: Colors.black,
+                        },
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width / 76.8),
+                        child: isLoading
+                            ? const CircularProgressIndicator()
+                            : Text(
+                                'Add Coupon',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width / 86,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
+                      ),
                     ),
                   )
                 ],

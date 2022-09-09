@@ -22,6 +22,7 @@ class _StudentManagementState extends State<StudentManagement> {
 
   DateTime? _startDate ;
   DateTime? _toDate;
+  final _scrollController=ScrollController();
 
   //   Future<String> getUserImagePath(String userEmail, String fileName) async {
   //   final userRef = FirebaseStorage.instance.ref();
@@ -94,12 +95,13 @@ class _StudentManagementState extends State<StudentManagement> {
         return true;
       });
     }
-
+     int index=1;
     return lst!.map((rowData) {
       return DataRow(
           color: MaterialStateColor.resolveWith(
               (states) => Colors.black12),
           cells: <DataCell>[
+            DataCell(Text('${index++}')),
             DataCell(FutureBuilder(
               //  future: getUserImagePath(data['email'],
               //     data['profileImageName']),
@@ -183,60 +185,67 @@ class _StudentManagementState extends State<StudentManagement> {
 
   //time string 2022-08-01 13:14:02.802515
   Widget getTableList() {
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('users').snapshots(),
-          //where('dateOfJoin',isGreaterThanOrEqualTo: _startDate).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Something is wrong');
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasData) {
-
-              double screenWidth=MediaQuery.of(context).size.width;
-              double columnSpacingWidth;
-              if(screenWidth>1376){
-                columnSpacingWidth=screenWidth/18;
-              }else{
-                columnSpacingWidth=screenWidth/22.7;
+    return Scrollbar(
+      thumbVisibility: true,
+      trackVisibility: true,
+      controller: _scrollController,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
+            //where('dateOfJoin',isGreaterThanOrEqualTo: _startDate).snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text('Something is wrong');
               }
-              return SingleChildScrollView(
-                primary: false,
-                child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.white),
-                  child: DataTable(
-                    columnSpacing: columnSpacingWidth,
-                    columns: const [
-                      DataColumn(label: Text('Image')),
-                      DataColumn(
-                        label: Text('Name'),
-                      ),
-                      DataColumn(
-                        label: Text('Email'),
-                      ),
-                      DataColumn(
-                        label: Text('Number'),
-                      ),
-                      DataColumn(
-                        label: Text('SignUp Date'),
-                      ),
-                      DataColumn(
-                        label: Text('Course'),
-                      ),
-                    ],
-                    rows: _getRowList(snapshot),
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasData) {
+
+                double screenWidth=MediaQuery.of(context).size.width;
+                double columnSpacingWidth;
+                if(screenWidth>1376){
+                  columnSpacingWidth=screenWidth/11.5;
+                }else{
+                  columnSpacingWidth=screenWidth/22.7;
+                }
+                return SingleChildScrollView(
+                  primary: false,
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.white),
+                    child: DataTable(
+                      columnSpacing: columnSpacingWidth,
+                      dataRowHeight: 70,
+                      columns: const [
+                        DataColumn(label: Text('Serial No')),
+                        DataColumn(label: Text('Image')),
+                        DataColumn(
+                          label: Text('Name'),
+                        ),
+                        DataColumn(
+                          label: Text('Email'),
+                        ),
+                        DataColumn(
+                          label: Text('Number'),
+                        ),
+                        DataColumn(
+                          label: Text('SignUp Date'),
+                        ),
+                        DataColumn(
+                          label: Text('Course'),
+                        ),
+                      ],
+                      rows: _getRowList(snapshot),
+                    ),
                   ),
-                ),
-              );
-            }
-            return const Text('No Student data');
-          }),
+                );
+              }
+              return const Text('No Student data');
+            }),
+      ),
     );
   }
 
