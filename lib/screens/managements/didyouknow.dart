@@ -367,7 +367,6 @@ class _DidYouKnowState extends State<DidYouKnow> {
                                                     builder: (context) =>
                                                         VideoDetails(
                                                           imageUrl: data['imageUrl'], 
-                                                          
                                                           category: data['category'],
                                                           likes: data['likes'],
                                                           title: data['title'],
@@ -376,6 +375,7 @@ class _DidYouKnowState extends State<DidYouKnow> {
                                                           chapter: data['chapter'],
                                                           subject: data['subject'],
                                                           description: data['description'],
+                                                           id: data['id'],
                                                           
                                                         )),
                                               );

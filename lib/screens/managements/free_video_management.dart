@@ -293,6 +293,8 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                               await 
                                   document.set(FreeVideoModel(
                                     id: document.id,
+                                    comments: [],
+                                    batchName: 'batch 9',
                                     title: _titleController.text.trim(),
                                     category: _categoryController.text.trim(),
                                     course: _courseController.text.trim(),
@@ -301,7 +303,6 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                     chapter: _chapterController.text.trim(),
                                     subject: _subjectController.text.trim(),
                                     likes: 20,
-                                    comment: 300,
                                     download: 500,
                                     imageUrl: imageFileName,
                                     videoLink: videoFileName,
@@ -429,6 +430,7 @@ class _FreeVideoManagementState extends State<FreeVideoManagement> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       VideoDetails(
+                                                        id: data['id'],
                                                         imageUrl:
                                                             data['imageUrl'],
                                                         category:
