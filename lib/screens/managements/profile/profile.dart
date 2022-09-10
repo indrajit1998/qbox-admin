@@ -20,35 +20,47 @@ class ProfileState extends State<Profile> {
     'Information show to student'
   ];
   int pageIndex = 0;
-  bool isLoading = false;
+  List pages=[];
+  bool _isLoading = false;
   @override
   void initState() {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
     getData();
-    super.initState();
-    setState(() {
-      isLoading = false;
+    Future.delayed(const Duration(seconds:2), () {
+      setState(() {
+        _isLoading = false;
+      });
     });
+    super.initState();
   }
 
   Map<String, dynamic> data = {};
   Map<String, dynamic> accountDetailsMap = {};
   Map<String, dynamic> infoToShowStudentMap = {};
- // Map<String, dynamic> biodataMap = {};
-  getData() async {
+
+  void getPagesList() {
+    pages = [
+      profile(context, data),
+      accountDetails(context, accountDetailsMap),
+      BioData(),
+      infoToShowStudent(context, infoToShowStudentMap),
+    ];
+  }
+
+  Future<void> getData() async {
     var userEmail = FirebaseAuth.instance.currentUser!.email;
-    FirebaseFirestore.instance
+   await FirebaseFirestore.instance
         .collection('teachers')
         .doc(userEmail)
         .get()
         .then((value) {
       setState(() {
         data = value.data()!;
-      });
+     });
     });
-    FirebaseFirestore.instance
+   await FirebaseFirestore.instance
         .collection('teachers')
         .doc(userEmail)
         .collection("accountDetail")
@@ -56,9 +68,9 @@ class ProfileState extends State<Profile> {
         .then((value) {
       setState(() {
         accountDetailsMap = value.docs[0].data();
-      });
+     });
     });
-    FirebaseFirestore.instance
+   await FirebaseFirestore.instance
         .collection('teachers')
         .doc(userEmail)
         .collection("informationToShowStudent")
@@ -67,22 +79,19 @@ class ProfileState extends State<Profile> {
       setState(() {
         infoToShowStudentMap = value.docs[0].data();
       });
+    }).then((value){
+       getPagesList();
     });
   }
 
   void _logout(BuildContext context)async{
     Navigator.of(context).pushReplacementNamed(SignIn.routeName);
     await FirebaseAuth.instance.signOut();
-
   }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [
-      profile(context, data),
-      accountDetails(context, accountDetailsMap),
-      BioData(),
-      infoToShowStudent(context, infoToShowStudentMap),
-    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Teacher Profile'),
@@ -91,7 +100,7 @@ class ProfileState extends State<Profile> {
           child: Text('Log Out'),
         ),]
       ),
-      body: isLoading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
