@@ -2,30 +2,47 @@ class FreeVideoModel {
   String? title;
   String? imageUrl;
   int? likes;
+  int? comment;
+  int? download;
   String? videoLink;
   String? uploadDate;
   String? course;
   String? category;
+  String? description;
+  String ? chapter;
+  String? subject;
+  String ? id;
   String? uploadedTeacherEmail;
 
   FreeVideoModel(
       {this.title,
       this.imageUrl,
       this.likes,
+      this.download,
+      this.comment,
       this.videoLink,
       this.uploadDate,
       this.course,
       this.category,
+      this.chapter,
+      this.subject,
+      this.id,
+      this.description,
       this.uploadedTeacherEmail});
-
   FreeVideoModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     imageUrl = json['imageUrl'];
     likes = json['likes'];
+    download = json['download'];
+    comment = json['comment'];
     videoLink = json['videoLink'];
     uploadDate = json['uploadDate'];
     course = json['course'];
     category = json['category'];
+    chapter = json['chapter'];
+    subject = json['subject'];
+    id = json['id'];
+    description = json['description'];
     uploadedTeacherEmail = json['uploadedTeacherEmail'];
   }
 
@@ -34,10 +51,16 @@ class FreeVideoModel {
     data['title'] = title;
     data['imageUrl'] = imageUrl;
     data['likes'] = likes;
+    data['comment'] = comment;
+    data['download'] = download;
     data['videoLink'] = videoLink;
     data['uploadDate'] = uploadDate;
     data['course'] = course;
     data['category'] = category;
+    data['chapter'] = chapter;
+    data['subject'] = subject;
+    data['id'] = id;
+    data['description'] = description;
     data['uploadedTeacherEmail'] = uploadedTeacherEmail;
     return data;
   }

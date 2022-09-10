@@ -19,7 +19,8 @@ class _ChapterManagementState extends State<ChapterManagement> {
   TextEditingController _chapterController = TextEditingController();
     TextEditingController _chapterTextController = TextEditingController();
   TextEditingController _chapterDetailsController = TextEditingController();
-  
+  TextEditingController _subjectController = TextEditingController();
+
   bool isLoading = false;
   String? errorMessage;
   String? _chosenCourse;
@@ -28,6 +29,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
   String? _chapterCourse;
   String? _chapterCategory;
   String? _chapterBatch;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '          Chapter',
+                  '        Chapter',
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width / 32,
                   ),
@@ -57,6 +59,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -89,12 +92,13 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                     child: CupertinoActivityIndicator(),
                                   );
                                 }
-
+                              
                                 return Container(
                                   height: 150,
                                   width: Dimensions.width10 * 10,
                                   padding: EdgeInsets.all(15),
-                                  child: DropdownButtonHideUnderline(
+                                  child:  
+                                  DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       icon: const Visibility(
                                           visible: true,
@@ -108,7 +112,8 @@ class _ChapterManagementState extends State<ChapterManagement> {
                                             doc.data() as Map<String, dynamic>;
                                         return DropdownMenuItem<String>(
                                             value: data['title'],
-                                            child: Text(data['title']));
+                                            child: Text(data['title'])
+                                            );
                                       }).toList(),
                                       hint: const Text("Choose Category"),
                                       onChanged: (value) {
@@ -125,6 +130,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                         ],
                       ),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -202,6 +208,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -270,6 +277,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                         ],
                       ),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -335,7 +343,7 @@ class _ChapterManagementState extends State<ChapterManagement> {
                   ),
                 ),
                 Text(
-                  '          Chapter List',
+                  '        Chapter List',
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width / 32,
                   ),
@@ -343,82 +351,8 @@ class _ChapterManagementState extends State<ChapterManagement> {
                 const Divider(
                   color: Colors.amberAccent,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
-                    Text(
-                      'Category',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Course',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Batch',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Chapter',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('chapter')
-                        .snapshots(),
-                    builder: ((BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      return snapshot.hasData
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, index) {
-                                Map<String, dynamic> data =
-                                    snapshot.data!.docs[index].data()
-                                        as Map<String, dynamic>;
-                                return Container(
-                                  height: 60,
-                                  child: Card(
-                                    
-                                    elevation: 3,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          data['category'],
-                                        ),
-                                        Text(
-                                          data['course'],
-                                        ),
-                                        Text(
-                                          data['batch'],
-                                        ),
-                                        Text(
-                                          data['chapter'],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              })
-                          : Center(
-                              child: CircularProgressIndicator(),
-                            );
-                    }),
-                  ),
-                ),
-                
+
+                _chapterList(),
 
                    GestureDetector(
                     onTap: () {
@@ -426,400 +360,448 @@ class _ChapterManagementState extends State<ChapterManagement> {
                         
                       });
                     },
-                     child: Align(
-                                 alignment: Alignment.bottomRight,
-                                 child: BottomMaterialButton(
-                                   text: 'Add Chapter',
-                                   popUpChild: Form(
-                                     key: _chapterFormKey,
-                                     child: Wrap(
-                      children: [
-                        const Divider(
-                          color: Colors.amber,
-                        ),
-                             Padding(
-                                     padding:
-                        const EdgeInsets.symmetric(vertical: 3,),
-                                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                'Category',
-                                style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              width: Dimensions.width10 * 6,
-                              // padding: const EdgeInsets.all(5),
-                              padding: EdgeInsets.symmetric(horizontal: 3.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                    color: Colors.black12,
-                                    style: BorderStyle.solid,
-                                    width: 0.80),
-                              ),
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('cat')
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const Center(
-                                      child: CupertinoActivityIndicator(),
-                                    );
-                                  }
-                   
-                                  return Container(
-                                    height: 50,
-                                    width: Dimensions.width10 * 3,
-                                    padding: EdgeInsets.all(15),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        icon: const Visibility(
-                                            visible: true,
-                                            child:
-                                                Icon(Icons.keyboard_arrow_down)),
-                                        value: _chosenCategory,
-                                        // isDense: true,
-                                        items: snapshot.data!.docs
-                                            .map((DocumentSnapshot doc) {
-                                          Map<String, dynamic> data =
-                                              doc.data() as Map<String, dynamic>;
-                                          return DropdownMenuItem<String>(
-                                              value: data['title'],
-                                              child: Text(data['title']));
-                                        }).toList(),
-                                        hint: const Text("Choose Category"),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _chosenCategory = value as String?;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                'Course',
-                                style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              width: Dimensions.width10 * 6,
-                              // padding: const EdgeInsets.all(5),
-                              padding: EdgeInsets.symmetric(horizontal: 3.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                    color: Colors.black12,
-                                    style: BorderStyle.solid,
-                                    width: 0.80),
-                              ),
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('PTM')
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const Center(
-                                      child: CupertinoActivityIndicator(),
-                                    );
-                                  }
-                   
-                                  return Container(
-                                    height: 50,
-                                    width: Dimensions.width10 * 3,
-                                    padding: EdgeInsets.all(15),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        icon: const Visibility(
-                                            visible: true,
-                                            child:
-                                                Icon(Icons.keyboard_arrow_down)),
-                                        value: _chosenCourse,
-                                        // isDense: true,
-                                        items: snapshot.data!.docs
-                                            .map((DocumentSnapshot doc) {
-                                          Map<String, dynamic> data =
-                                              doc.data() as Map<String, dynamic>;
-                                          return DropdownMenuItem<String>(
-                                              value: data['course'],
-                                              child: Text(data['course']));
-                                        }).toList(),
-                                        hint: const Text("Choose Course"),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _chosenCourse = value as String?;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                                     ),
-                                   ),
-                   
-                                   Row(
-                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                     children: [
-                      Column(
+                     child: Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                       child: Align(
+                                   alignment: Alignment.bottomRight,
+                                   child: BottomMaterialButton(
+                                     text: 'Add Chapter',
+                                     popUpChild: Form(
+                                       key: _chapterFormKey,
+                                       child: Wrap(
                         children: [
-                          const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 6),
-                                      child: Text(
-                                        'Batch Name',
-                                        style: TextStyle(
-                                            fontSize: 19, fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                      
-                                Container(
-                                  height: 50,
-                                  width: Dimensions.width10 * 6,
-                                  margin: EdgeInsets.only(left: 4),
-                                  // padding: const EdgeInsets.all(5),
-                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Colors.black12,
-                                        style: BorderStyle.solid,
-                                        width: 0.80),
-                                  ),
-                                  child: StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('PTM')
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return const Center(
-                                          child: CupertinoActivityIndicator(),
-                                        );
-                                      }
-                   
-                                      return Container(
-                                        height: 50,
-                                        width: Dimensions.width10 * 3,
-                                        padding: EdgeInsets.all(15),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                            icon: const Visibility(
-                                                visible: true,
-                                                child:
-                                                    Icon(Icons.keyboard_arrow_down)),
-                                            value: _chosenBatch,
-                                            // isDense: true,
-                                            items: snapshot.data!.docs
-                                                .map((DocumentSnapshot doc) {
-                                              Map<String, dynamic> data =
-                                                  doc.data() as Map<String, dynamic>;
-                                              return DropdownMenuItem<String>(
-                                                  value: data['batch'],
-                                                  child: Text(data['batch']));
-                                            }).toList(),
-                                            hint: const Text("Batch Name"),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _chosenBatch = value as String?;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                          const Divider(
+                            color: Colors.amber,
+                          ),
+                               Padding(
+                                       padding:
+                          const EdgeInsets.symmetric(vertical: 3,),
+                                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 6),
+                                child: Text(
+                                  'Category',
+                                  style: TextStyle(
+                                      fontSize: 19, fontWeight: FontWeight.w600),
                                 ),
-                                  
-                                  ],
-                      ),
-                      Column(
-                        children: [
-                           const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 6),
-                                      child: Text(
-                                        'Chapter',
-                                        style: TextStyle(
-                                            fontSize: 19, fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                height: 50,
+                                width: Dimensions.width10 * 6,
+                                // padding: const EdgeInsets.all(5),
+                                // padding: EdgeInsets.symmetric(horizontal: 3.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  border: Border.all(
+                                      color: Colors.black12,
+                                      style: BorderStyle.solid,
+                                      width: 0.80),
+                                ),
+                                child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('cat')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                        child: CupertinoActivityIndicator(),
+                                      );
+                                    }
+                   
+                                    return Container(
+                                      height: 50,
+                                      width: Dimensions.width10 * 3,
+                                      padding: EdgeInsets.all(15),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          icon: const Visibility(
+                                              visible: true,
+                                              child:
+                                                  Icon(Icons.keyboard_arrow_down)),
+                                          value: _chosenCategory,
+                                          // isDense: true,
+                                          items: snapshot.data!.docs
+                                              .map((DocumentSnapshot doc) {
+                                            Map<String, dynamic> data =
+                                                doc.data() as Map<String, dynamic>;
+                                            return DropdownMenuItem<String>(
+                                                value: data['title'],
+                                                child: Text(data['title']));
+                                          }).toList(),
+                                          hint: const Text("Choose Category"),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _chosenCategory = value as String?;
+                                            });
+                                          },
+                                        ),
                                       ),
-                                    ),
-                      
-                                Container(
-                                  height: 50,
-                                  width: Dimensions.width10 * 6,
-                                  margin: EdgeInsets.only(left: 4),
-                                  // padding: const EdgeInsets.all(5),
-                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Colors.black12,
-                                        style: BorderStyle.solid,
-                                        width: 0.80),
-                                  ),
-                                  child: TextFormField(
-                                    controller: _chapterController,
-                                     decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                            hintText: 'Chapter',
-                                            labelText: 'Chapter'
-                                    ),
-                                     validator: (value) {
-                                if (value!.isEmpty) {
-                                    return ("Field cannot be empty");
-                                }
-                                return null;
-                              },
-                                  ),
-                           
-                                  ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 6),
+                                child: Text(
+                                  'Course',
+                                  style: TextStyle(
+                                      fontSize: 19, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Container(
+                                height: 50,
+                                width: Dimensions.width10 * 6,
+                                // padding: const EdgeInsets.all(5),
+                                // padding: EdgeInsets.symmetric(horizontal: 3.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  border: Border.all(
+                                      color: Colors.black12,
+                                      style: BorderStyle.solid,
+                                      width: 0.80),
+                                ),
+                                child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('PTM')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                        child: CupertinoActivityIndicator(),
+                                      );
+                                    }
+                   
+                                    return Container(
+                                      height: 50,
+                                      width: Dimensions.width10 * 3,
+                                      padding: EdgeInsets.all(15),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          icon: const Visibility(
+                                              visible: true,
+                                              child:
+                                                  Icon(Icons.keyboard_arrow_down)),
+                                          value: _chosenCourse,
+                                          // isDense: true,
+                                          items: snapshot.data!.docs
+                                              .map((DocumentSnapshot doc) {
+                                            Map<String, dynamic> data =
+                                                doc.data() as Map<String, dynamic>;
+                                            return DropdownMenuItem<String>(
+                                                value: data['course'],
+                                                child: Text(data['course']));
+                                          }).toList(),
+                                          hint: const Text("Choose Course"),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _chosenCourse = value as String?;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
-                      )
-                                     ],
-                                   ),
-                      
-                        Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: Dimensions.padding20 * 1.5),
+                                       ),
+                                     ),
+                   
+                                     Row(
+                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                       children: [
+                        Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 6),
+                                        child: Text(
+                                          'Batch Name',
+                                          style: TextStyle(
+                                              fontSize: 19, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
                         
-                          child: Column(
-                            children: const [
+                                  Container(
+                                    height: 50,
+                                    width: Dimensions.width10 * 6,
+                                    margin: const EdgeInsets.only(left: 4),
+                                    // padding: const EdgeInsets.all(5),
+                                    // padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Colors.black12,
+                                          style: BorderStyle.solid,
+                                          width: 0.80),
+                                    ),
+                                    child: StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('PTM')
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const Center(
+                                            child: CupertinoActivityIndicator(),
+                                          );
+                                        }
+                   
+                                        return Container(
+                                          height: 50,
+                                          width: Dimensions.width10 * 3,
+                                          padding: EdgeInsets.all(15),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton(
+                                              icon: const Visibility(
+                                                  visible: true,
+                                                  child:
+                                                      Icon(Icons.keyboard_arrow_down)),
+                                              value: _chosenBatch,
+                                              // isDense: true,
+                                              items: snapshot.data!.docs
+                                                  .map((DocumentSnapshot doc) {
+                                                Map<String, dynamic> data =
+                                                    doc.data() as Map<String, dynamic>;
+                                                return DropdownMenuItem<String>(
+                                                    value: data['batch'],
+                                                    child: Text(data['batch']));
+                                              }).toList(),
+                                              hint: const Text("Batch Name"),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _chosenBatch = value as String?;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                    
+                                    ],
+                        ),
+                        Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                             const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 6),
+                                        child: Text(
+                                          'Chapter',
+                                          style: TextStyle(
+                                              fontSize: 19, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                        
+                                  Container(
+                                    height: 50,
+                                    width: Dimensions.width10 * 6,
+                                    margin: EdgeInsets.only(left: 4),
+                                    // padding: const EdgeInsets.all(5),
+                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Colors.black12,
+                                          style: BorderStyle.solid,
+                                          width: 0.80),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _chapterController,
+                                       decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                              hintText: 'Chapter',
+                                              labelText: 'Chapter'
+                                      ),
+                                       validator: (value) {
+                                  if (value!.isEmpty) {
+                                      return ("Field cannot be empty");
+                                  }
+                                  return null;
+                                },
+                                    ),
+                             
+                                    ),
+                          ],
+                        )
+                                       ],
+                                     ),
+                                      Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                               Padding(
-                                            padding: EdgeInsets.symmetric(vertical: 6,),
+                                       padding: EdgeInsets.symmetric(vertical: 6,horizontal: Dimensions.padding20 * 0.8),
+                                        child: Text(
+                                          'Subject',
+                                          style: TextStyle(
+                                              fontSize: 19, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                        
+                                  Container(
+                                    height: 50,
+                                    width: Dimensions.width10 * 17,
+                                    margin: EdgeInsets.symmetric(horizontal: Dimensions.padding20 * 0.8),
+                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Colors.black12,
+                                          style: BorderStyle.solid,
+                                          width: 0.80),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _subjectController,
+                                       decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                              hintText: 'Subject Name',
+                                              labelText: 'Subject'
+                                      ),
+                                       validator: (value) {
+                                  if (value!.isEmpty) {
+                                      return ("Field cannot be empty");
+                                  }
+                                  return null;
+                                },
+                                    ),
+                             
+                                    ),
+                          ],
+                        ),
+                        SizedBox(height: 20,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:  [
+                              Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 6,horizontal: Dimensions.padding20 * 0.8),
                                             child: Text(
                                               'Chapter Details',
                                               style: TextStyle(
                                                   fontSize: 19, fontWeight: FontWeight.w600),
                                             ),
                                           ),
-                            ],
-                          ),
-                        ),
+                            
+                          
+                          
                         
-                      
-                                Container(
+                                  Container(
                                   
-                                  // height: 50,
-                                  // width: Dimensions.width10 * 8,
-                                  margin: EdgeInsets.symmetric(horizontal: Dimensions.padding20 * 0.8),
-                                  // padding: const EdgeInsets.all(5),
-                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Colors.black12,
-                                        style: BorderStyle.solid,
-                                        width: 0.80),
-                                  ),
-                                  child: TextFormField(
-                                    controller: _chapterDetailsController,
-                                     decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                          labelText: 'Description',
-                                          hintText: 'Chapter Description'
+                                    margin: EdgeInsets.symmetric(horizontal: Dimensions.padding20 * 0.8),
+                                    // padding: const EdgeInsets.all(5),
+                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Colors.black12,
+                                          style: BorderStyle.solid,
+                                          width: 0.80),
                                     ),
-                                    maxLines: 5,
-                                     validator: (value) {
-                                if (value!.isEmpty) {
-                                    return ("Field cannot be empty");
-                                }
-                                return null;
-                              },
-                                  ),
-                        
-                        ),
-                      ],
+                                    child: TextFormField(
+                                      controller: _chapterDetailsController,
+                                       decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                            labelText: 'Description',
+                                            hintText: 'Chapter Description'
+                                      ),
+                                      maxLines: 5,
+                                       validator: (value) {
+                                  if (value!.isEmpty) {
+                                      return ("Field cannot be empty");
+                                  }
+                                  return null;
+                                },
+                                    ),
+                          
+                          ),
+                            ])
+                        ],
+                                       ),
                                      ),
-                                   ),
-                                   popUpactions: [
-                                     Material(
-                      color: Colors.amberAccent,
-                      elevation: 4,
-                      type: MaterialType.button,
-                      child: MaterialButton(
-                        onPressed: () async {
-                          if (_chapterFormKey.currentState!.validate()) {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            try {
-                              await  FirebaseFirestore.instance.collection('chapter').add({
-                                    'category' : _chosenCategory,
-                                    'course' : _chosenCourse,
-                                    'batch' : _chosenBatch,
-                                    'chapter' : _chapterController.text,
-                                    'chapterDetails' : _chapterDetailsController.text.toString()
-                                    })
-                                   
-                             .then((value) => print("User Added"))
-                             .catchError((error) => print("Failed to add user: $error"));
+              
+                                     popUpactions: [
+                                       Material(
+                        color: Colors.amberAccent,
+                        elevation: 4,
+                        type: MaterialType.button,
+                        child: MaterialButton(
+                          onPressed: () async {
+                            if (_chapterFormKey.currentState!.validate()) {
                               setState(() {
-                                      
-                                    });
-                                    _chapterController.clear();
-                                    _chapterDetailsController.clear();
-                                  _chapterTextController.clear();
-                            } on FirebaseAuthException catch (error) {
-                              switch (error.code) {
-                                default:
-                                  errorMessage =
-                                      "An undefined Error happened.+$error";
+                                isLoading = true;
+                              });
+                              try {
+                                await  FirebaseFirestore.instance.collection('chapter').add({
+                                      'category' : _chosenCategory,
+                                      'course' : _chosenCourse,
+                                      'subject': _subjectController.text,
+                                      'batch' : _chosenBatch,
+                                      'chapter' : _chapterController.text,
+                                      'chapterDetails' : _chapterDetailsController.text.toString()
+                                      })
+                                     
+                               .then((value) => print("User Added"))
+                               .catchError((error) => print("Failed to add user: $error"));
+                                setState(() {
+                                        
+                                      });
+                                      _chapterController.clear();
+                                      _chapterDetailsController.clear();
+                                    _chapterTextController.clear();
+                              } on FirebaseAuthException catch (error) {
+                                switch (error.code) {
+                                  default:
+                                    errorMessage =
+                                        "An undefined Error happened.+$error";
+                                }
+                                Fluttertoast.showToast(msg: errorMessage!);
                               }
-                              Fluttertoast.showToast(msg: errorMessage!);
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Fluttertoast.showToast(
+                                  msg: "Chapter Added Successfully");
+                              if (!mounted) {
+                                return;
+                              }
+                              Navigator.of(context, rootNavigator: true).pop();
                             }
-                            setState(() {
-                              isLoading = false;
-                            });
-                            Fluttertoast.showToast(
-                                msg: "Chapter Added Successfully");
-                            if (!mounted) {
-                              return;
-                            }
-                            Navigator.of(context, rootNavigator: true).pop();
-                          }
-                        },
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width / 76.8),
-                        child: isLoading
-                            ? const CircularProgressIndicator()
-                            : Text(
-                                'Save',
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width / 86,
-                                  color: Colors.black,
+                          },
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width / 76.8),
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width / 86,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                      ),
-                                     )
-                                   ],
+                        ),
+                                       )
+                                     ],
+                                   ),
                                  ),
-                               ),
+                     ),
                    ),
 
 
@@ -829,5 +811,64 @@ class _ChapterManagementState extends State<ChapterManagement> {
         ),
       ),
     ));
+  }
+
+
+  Widget _chapterList(){
+    return  Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height / 2.3,
+            margin: EdgeInsets.symmetric(vertical: 8),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('chapter').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something is wrong');
+                }
+                if (ConnectionState.waiting == snapshot.connectionState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasData) {
+                  return SingleChildScrollView(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.white),
+                      child: DataTable(
+
+                          //border: TableBorder.symmetric(inside: BorderSide(width: 1.5,style: BorderStyle.solid,color: Colors.red)),
+                          columns: const [
+                            DataColumn(label: Text('Category')),
+                            DataColumn(label: Text('Course')),
+                            DataColumn(label: Text('Batch')),
+                            DataColumn(label: Text('Chapter')),
+                            DataColumn(label: Text('Subject')),
+                            DataColumn(label: Text('Chapter Details')),
+                           
+                          
+                          ],
+                          rows: snapshot.data!.docs
+                              .map((rowData) => DataRow(
+                                    color: MaterialStateColor.resolveWith(
+                                        (states) => Colors.black12),
+                                    cells: <DataCell>[
+                                      DataCell(Text(rowData['category'])),
+                                      DataCell(Text(rowData['course'])),
+                                      DataCell(Text(rowData['batch'])),
+                                      DataCell(Text(rowData['chapter'])),
+                                       DataCell(Text(rowData['subject'])),
+                                      DataCell(Text(rowData['chapterDetails'])),
+                                     
+                                    ],
+                                  ))
+                              .toList()),
+                    ),
+                  );
+                }
+                return Text('No Data');
+              },
+            ),
+          );
   }
 }
