@@ -54,18 +54,24 @@ class _BioDataState extends State<BioData> {
 
   @override
   void initState() {
+    setState(() {
+      _isLoading = true;
+    });
     getData();
+    Future.delayed(const Duration(milliseconds:1500 ),(){
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
     _authId = FirebaseAuth.instance.currentUser!.uid;
     super.initState();
   }
 
   Future<void> getData() async {
-    // print('inide getData');
 
     _userEmail = FirebaseAuth.instance.currentUser!.email;
-    setState(() {
-      _isLoading = true;
-    });
+
     try {
       final docUser = await FirebaseFirestore.instance
           .collection('teachers')
@@ -136,9 +142,6 @@ class _BioDataState extends State<BioData> {
       print('error at getData method');
     }
 
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   Future<void> _saveForm() async {
@@ -380,29 +383,32 @@ class _BioDataState extends State<BioData> {
   TableRow _buildEducationRows(int i) {
     return TableRow(children: [
       ...getListOfEducationTextField(i),
-      Container(
-        child: UploadDocument(
-            '${_lstGroupContollers[i].examController.text}', _authId, docUrl),
-      ),
+      Container(child: UploadQualificationDoc(_lstGroupContollers[i].examController,_authId,docUrl,''),)
+      // Container(
+      //   child: UploadDocument(
+      //       '${_lstGroupContollers[i].examController.text}', _authId, docUrl),
+      // ),
     ]);
   }
 
   TableRow _buildExtraQualRows(int i) {
-   // print('url map is $docUrl');
+    //print('url map is $docUrl');
     return TableRow(children: [
       ...getListOfExtraQualTextField(i),
-      Container(
-        child: UploadDocument(
-            '${_lstExtraQualControllers[i].companyNameController.text}slip',
-            _authId,
-            docUrl),
-      ),
-      Container(
-        child: UploadDocument(
-            '${_lstExtraQualControllers[i].companyNameController.text}exp',
-            _authId,
-            docUrl),
-      )
+      Container(child: UploadQualificationDoc(_lstExtraQualControllers[i].companyNameController,_authId,docUrl,'slip')),
+      Container(child: UploadQualificationDoc(_lstExtraQualControllers[i].companyNameController,_authId,docUrl,'exp')),
+      // Container(
+      //   child: UploadDocument(
+      //       _lstExtraQualControllers[i].companyNameController.text.isEmpty?'':'${_lstExtraQualControllers[i].companyNameController.text}slip',
+      //       _authId,
+      //       docUrl),
+      // ),
+      // Container(
+      //   child: UploadDocument(
+      //       _lstExtraQualControllers[i].companyNameController.text.isEmpty?'':'${_lstExtraQualControllers[i].companyNameController.text}exp',
+      //       _authId,
+      //       docUrl),
+      // )
     ]);
   }
 
@@ -729,6 +735,9 @@ class _BioDataState extends State<BioData> {
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -811,7 +820,7 @@ class _BioDataState extends State<BioData> {
                                 ),
                               ]),
                           const SizedBox(
-                            height: 13,
+                            height: 19,
                           ),
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 3),
@@ -889,15 +898,15 @@ class _BioDataState extends State<BioData> {
                     ),
                   ),
                   const SizedBox(
-                    height: 6,
+                    height: 16,
                   ),
                   ElevatedButton(
                     onPressed: _saveForm,
-                    child: const Text("                 Save                "),
+                    child: const Text("                 Save                ",style: TextStyle(fontSize: 21),),
                     style: ElevatedButton.styleFrom(primary: Colors.green[400]),
                   ),
                   const SizedBox(
-                    height: 13,
+                    height: 19,
                   ),
                 ],
               ),
@@ -938,8 +947,168 @@ class GroupExtraQualControllers {
   }
 }
 
+class UploadQualificationDoc extends StatefulWidget {
+  //String? titlePath='';
+   TextEditingController controller;
+  final String? authId;
+  final String? joinString;
+  Map docUrl;
+
+  UploadQualificationDoc(this.controller, this.authId, this.docUrl, this.joinString,{Key? key})
+      : super(key: key);
+
+  @override
+  State<UploadQualificationDoc> createState() => _UploadQualificationDocState();
+}
+
+class _UploadQualificationDocState extends State<UploadQualificationDoc> {
+  UploadTask? task;
+  String? fileName;
+  FilePickerResult? pickedFile;
+
+  @override
+  initState() {
+    // print(widget.titlePath);
+    if (widget.controller.text.isNotEmpty && widget.docUrl.isNotEmpty) {
+      fileName = FirebaseStorage.instance
+          .refFromURL(widget.docUrl['${widget.controller.text}${widget.joinString}'])
+          .name
+          .removeAllWhitespace;
+      setState(() {});
+    }
+    super.initState();
+  }
+
+  Future _selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    if (result == null) return;
+
+    setState(() {
+      fileName = result.files.first.name;
+      pickedFile = result;
+    });
+  }
+
+  Future uploadFile(String destination, FilePickerResult result) async {
+    String metaDataString = "image";
+    try {
+      if (result != null) {
+        Uint8List? file = result.files.first.bytes;
+        task = FirebaseStorage.instance.ref().child(destination).putData(
+            file!,
+            SettableMetadata(
+              contentType: metaDataString,
+            ));
+        setState(() {});
+      }
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: 'Upload error');
+      return null;
+    }
+  }
+
+  Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
+    stream: task.snapshotEvents,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        final snap = snapshot.data!;
+        final progress = snap.bytesTransferred / snap.totalBytes;
+        final percentage = (progress * 100).toStringAsFixed(1);
+
+        return Text(
+          '$percentage%',
+          style: TextStyle(fontSize: 13),
+        );
+      } else {
+        return Text('Done');
+      }
+    },
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      height: 49.5,
+      // width: MediaQuery.of(context).size.width / 4.102,
+      alignment: Alignment.centerLeft,
+      margin:
+      EdgeInsets.symmetric(vertical: 2.5, horizontal: screenWidth / 118),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black45)),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 341.5,
+              ),
+              TextButton.icon(
+                  onPressed: () => _selectFile(),
+                  label: Text('SelectFile'),
+                  // label: Text((widget.titlePath != 'voterId' &&
+                  //     widget.titlePath != 'bankpassbook' &&
+                  //     widget.titlePath != 'aadharCard')
+                  //     ? 'Select File'
+                  //     : ' ${widget.titlePath}'),
+                  icon: Icon(
+                    Icons.attach_file,
+                  ),
+                  style: TextButton.styleFrom(
+                      side: BorderSide(color: Colors.amber))),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width / 85.375),
+                child: Text(
+                  fileName != null ? '$fileName' : 'No File Selected!',
+                  style: TextStyle(color: Colors.red, fontSize: 15),
+                ),
+              ),
+             // SizedBox(width:(widget.titlePath=='voterId' || widget.titlePath=='bankpassbook'||widget.titlePath=='aadharCard')?screenWidth/7  :screenWidth / 34),
+              SizedBox(width:screenWidth / 34 ,),
+              VerticalDivider(
+                color: Colors.grey,
+                width: 1.5,
+              ),
+              FittedBox(
+                child: Column(
+                  children: [
+                    IconButton(
+                        onPressed: () async {
+                          if (fileName == null) return;
+                          final destination =
+                              'biodata/${widget.authId}/${widget.controller.text}${widget.joinString}/${fileName}';
+                          await uploadFile(destination, pickedFile!);
+
+                          if (task == null) return;
+
+                          final snapshot = await task!.whenComplete(() {});
+                          final urlDownload =
+                          await snapshot.ref.getDownloadURL();
+                          widget.docUrl['${widget.controller.text}${widget.joinString}'] = urlDownload;
+                          setState(() {});
+                          // print('Download-Link: $urlDownload');
+                        },
+                        icon: Icon(Icons.upload)),
+                    task != null ? buildUploadStatus(task!) : Text(''),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
 class UploadDocument extends StatefulWidget {
-  final String? titlePath;
+   String? titlePath='';
 
   final String? authId;
   Map docUrl;
@@ -951,6 +1120,8 @@ class UploadDocument extends StatefulWidget {
   State<UploadDocument> createState() => _UploadDocumentState();
 }
 
+
+
 class _UploadDocumentState extends State<UploadDocument> {
   UploadTask? task;
   String? fileName;
@@ -958,7 +1129,8 @@ class _UploadDocumentState extends State<UploadDocument> {
 
   @override
   initState() {
-    if (widget.docUrl.isNotEmpty) {
+   // print(widget.titlePath);
+    if (widget.titlePath!=''&& widget.docUrl.isNotEmpty) {
       fileName = FirebaseStorage.instance
           .refFromURL(widget.docUrl[widget.titlePath])
           .name
@@ -1021,76 +1193,71 @@ class _UploadDocumentState extends State<UploadDocument> {
     return Container(
       height: 49.5,
      // width: MediaQuery.of(context).size.width / 4.102,
-      alignment: Alignment.centerLeft,
+     // alignment: Alignment.centerLeft,
       margin:
-          EdgeInsets.symmetric(vertical: 2.5, horizontal: screenWidth / 118),
+          EdgeInsets.symmetric(vertical: 2.5, horizontal: screenWidth / 114),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Colors.black45)),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 341.5,
-              ),
-              TextButton.icon(
-                  onPressed: () => _selectFile(),
-                  label: Text((widget.titlePath != 'voterId' &&
-                          widget.titlePath != 'bankpassbook' &&
-                          widget.titlePath != 'aadharCard')
-                      ? 'Select File'
-                      : ' ${widget.titlePath}'),
-                  icon: Icon(
-                    Icons.attach_file,
-                  ),
-                  style: TextButton.styleFrom(
-                      side: BorderSide(color: Colors.amber))),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width / 85.375),
-                child: Text(
-                  fileName != null ? '$fileName' : 'No File Selected!',
-                  style: TextStyle(color: Colors.red, fontSize: 15),
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 341.5,
+            ),
+            TextButton.icon(
+                onPressed: () => _selectFile(),
+                label: Text((widget.titlePath != 'voterId' &&
+                        widget.titlePath != 'bankpassbook' &&
+                        widget.titlePath != 'aadharCard')
+                    ? 'Select File'
+                    : ' ${widget.titlePath}'),
+                icon: Icon(
+                  Icons.attach_file,
                 ),
+                style: TextButton.styleFrom(
+                    side: BorderSide(color: Colors.amber))),
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width / 85.375),
+              child: Text(
+                fileName != null ? '$fileName' : 'No File Selected!',
+                style: TextStyle(color: Colors.red, fontSize: 15),
               ),
-              SizedBox(width:(widget.titlePath=='voterId' || widget.titlePath=='bankpassbook'||widget.titlePath=='aadharCard')?screenWidth/7  :screenWidth / 34),
-              VerticalDivider(
-                color: Colors.grey,
-                width: 1.5,
-              ),
-              SizedBox(
-                height: 40,
-                width: 40,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: IconButton(
-                          onPressed: () async {
-                            if (fileName == null) return;
-                            final destination =
-                                'biodata/${widget.authId}/${widget.titlePath}/${fileName}';
-                            await uploadFile(destination, pickedFile!);
+            ),
+            SizedBox(width:screenWidth/7 ),
 
-                            if (task == null) return;
+            VerticalDivider(
+              color: Colors.grey,
+              width: 2,
+            ),
+            FittedBox(
+              child: Column(
+                children: [
+                  IconButton(
+                      onPressed: () async {
+                        if (fileName == null) return;
+                        final destination =
+                            'biodata/${widget.authId}/${widget.titlePath}/${fileName}';
+                        await uploadFile(destination, pickedFile!);
 
-                            final snapshot = await task!.whenComplete(() {});
-                            final urlDownload =
-                                await snapshot.ref.getDownloadURL();
-                            widget.docUrl[widget.titlePath] = urlDownload;
-                            setState(() {});
-                            // print('Download-Link: $urlDownload');
-                          },
-                          icon: Icon(Icons.upload)),
-                    ),
-                    task != null ? buildUploadStatus(task!) : Text(''),
-                  ],
-                ),
+                        if (task == null) return;
+
+                        final snapshot = await task!.whenComplete(() {});
+                        final urlDownload =
+                            await snapshot.ref.getDownloadURL();
+                        widget.docUrl[widget.titlePath] = urlDownload;
+                        setState(() {});
+                        // print('Download-Link: $urlDownload');
+                      },
+                      icon: Icon(Icons.upload)),
+                  task != null ? buildUploadStatus(task!) : Text(''),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
