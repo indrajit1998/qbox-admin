@@ -5,7 +5,7 @@ import 'package:qbox_admin/screens/managements/batch_management.dart';
 import 'package:qbox_admin/screens/managements/chapter_management.dart';
 import 'package:qbox_admin/screens/managements/coupon_management.dart';
 import 'package:qbox_admin/screens/managements/course_management.dart';
-import 'package:qbox_admin/screens/managements/filters.dart';
+//import 'package:qbox_admin/screens/managements/filters.dart';
 import 'package:qbox_admin/screens/managements/free_video_management.dart';
 import 'package:qbox_admin/screens/managements/level_up_management.dart';
 import 'package:qbox_admin/screens/managements/parent_teacher_meeting.dart';
@@ -37,7 +37,7 @@ enum Management {
   levelUpSeriesManagement,
   practiceQuestionManagement,
   patentsTeacherMeeting,
-  contentFilter,
+ // contentFilter,
   teacherMeeting,
   didYouKnow,
 }
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
     'Level Up Tests',
     'Live Videos',
     'Free Videos',
-    "Content Filter",
+   // "Content Filter",
     'Did You Know',
   ];
   // Left Panel Management List
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
     Management.levelUpSeriesManagement,
     Management.videoManagement,
     Management.freeVideosManagement,
-    Management.contentFilter,
+  //  Management.contentFilter,
     Management.didYouKnow
   ];
 
@@ -206,7 +206,7 @@ class _HomePageState extends State<HomePage> {
     const LevelUpManagement(),
     const VideoManagement(),
     const FreeVideoManagement(),
-    const ContentFilterPage(),
+  //  const ContentFilterPage(),
     const DidYouKnow(),
   ];
 

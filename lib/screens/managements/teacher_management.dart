@@ -420,35 +420,35 @@ class _TeacherManagementState extends State<TeacherManagement> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(padding20 / 2),
-                                  child: TextFormField(
-                                    controller: _experienceController,
-                                    onSaved: (value) {
-                                      _experienceController.text = value!;
-                                    },
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                          color: Colors.white,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                            Dimensions.borderRadius12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                            Dimensions.borderRadius12),
-                                      ),
-                                      hintText: "Experience",
-                                      fillColor: Colors.grey[100],
-                                      filled: true,
-                                    ),
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding: EdgeInsets.all(padding20 / 2),
+                                //   child: TextFormField(
+                                //     controller: _experienceController,
+                                //     onSaved: (value) {
+                                //       _experienceController.text = value!;
+                                //     },
+                                //     textInputAction: TextInputAction.next,
+                                //     decoration: InputDecoration(
+                                //       enabledBorder: OutlineInputBorder(
+                                //         borderSide: const BorderSide(
+                                //           color: Colors.white,
+                                //         ),
+                                //         borderRadius: BorderRadius.circular(
+                                //             Dimensions.borderRadius12),
+                                //       ),
+                                //       focusedBorder: OutlineInputBorder(
+                                //         borderSide: BorderSide(
+                                //           color: Theme.of(context).primaryColor,
+                                //         ),
+                                //         borderRadius: BorderRadius.circular(
+                                //             Dimensions.borderRadius12),
+                                //       ),
+                                //       hintText: "Experience",
+                                //       fillColor: Colors.grey[100],
+                                //       filled: true,
+                                //     ),
+                                //   ),
+                                // ),
                                 Padding(
                                   padding: EdgeInsets.all(padding20 / 2),
                                   child: TextFormField(

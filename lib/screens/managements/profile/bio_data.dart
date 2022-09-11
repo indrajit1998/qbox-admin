@@ -58,7 +58,7 @@ class _BioDataState extends State<BioData> {
       _isLoading = true;
     });
     getData();
-    Future.delayed(const Duration(milliseconds:1500 ),(){
+    Future.delayed(const Duration(milliseconds:1700 ),(){
       setState(() {
         _isLoading = false;
       });
@@ -283,7 +283,7 @@ class _BioDataState extends State<BioData> {
       ),
       Padding(
         padding: EdgeInsets.only(left: 2.5),
-        child: _grades[index],
+        child: _boards[index],
       ),
       Padding(
         padding: EdgeInsets.only(left: 2.5),
@@ -291,12 +291,14 @@ class _BioDataState extends State<BioData> {
       ),
       Padding(
         padding: EdgeInsets.only(left: 2.5),
-        child: _percentage[index],
+        child: _grades[index],
       ),
+
       Padding(
         padding: EdgeInsets.only(left: 2.5),
-        child: _boards[index],
+        child: _percentage[index],
       ),
+
     ];
   }
 
@@ -1079,7 +1081,11 @@ class _UploadQualificationDocState extends State<UploadQualificationDoc> {
                   children: [
                     IconButton(
                         onPressed: () async {
-                          if (fileName == null) return;
+                          if (fileName == null ) return;
+                          if( widget.controller.text.isEmpty){
+                            Fluttertoast.showToast(msg: "Fill Exam or Company Name");
+                            return;
+                          }
                           final destination =
                               'biodata/${widget.authId}/${widget.controller.text}${widget.joinString}/${fileName}';
                           await uploadFile(destination, pickedFile!);

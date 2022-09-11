@@ -140,12 +140,17 @@ class _CouponManagementState extends State<CouponManagement> {
                 margin: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.width * (1 / 153.6),
                 ),
-                child: FutureBuilder(
-                    future: getData(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        List data = snapshot.data;
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection('coupons').snapshots(),//getData(),
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      }
+                      if (ConnectionState.waiting == snapshot.connectionState) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasData) {
                         return Scrollbar(
                           thumbVisibility: true,
                           radius: Radius.circular(20),
@@ -194,7 +199,7 @@ class _CouponManagementState extends State<CouponManagement> {
                                     'Description',
                                   )),
                                 ],
-                                rows: data
+                                rows: snapshot.data!.docs
                                     .map(
                                       ((rowData) => DataRow(
                                             cells: <DataCell>[
@@ -232,9 +237,7 @@ class _CouponManagementState extends State<CouponManagement> {
                           ),
                         );
                       }
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      }
+
                       return const Text('No Coupons');
                     }),
               ),
@@ -386,9 +389,11 @@ class _CouponManagementState extends State<CouponManagement> {
                             _couponExpiryDateController.clear();
                             _couponNameController.clear();
                             _courseDurationController.clear();
+
                             setState(() {
                               isLoading = false;
                             });
+
 
                           }
                         },
