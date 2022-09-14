@@ -464,7 +464,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         .doc(_batchController
                                                                             .text
                                                                             .trim())
-                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid)
+                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid,startDate: startdateController.text,endDate:enddateController.text)
                                                                             .toJson())
                                                                         .then(
                                                                             (value) {
