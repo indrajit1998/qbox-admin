@@ -189,7 +189,7 @@ class _ParentTeacherMeetingState extends State<ParentTeacherMeeting> {
                 ],
               ),
               titlePadding: const EdgeInsets.symmetric(horizontal: 14,vertical: 5),
-              content: Text('Are You Sure you want to delete'),
+              content: Text('Are You Sure you want to delete?'),
               actions: [
                 ElevatedButton(onPressed: ()async {
                   setState(() {

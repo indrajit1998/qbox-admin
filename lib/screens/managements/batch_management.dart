@@ -29,24 +29,45 @@ class _BatchManagementState extends State<BatchManagement> {
   @override
   void initState() {
     getTeachers();
-    getBatches("JEE");
+   // getBatches("JEE");
 
     super.initState();
   }
 
-  void getBatches(String courseName) async {
-    FirebaseFirestore.instance
-        .collection('batches')
-        .where("courseName", isEqualTo: courseName)
-        .get()
-        .then((value) {
+  Future<List> getBatches(String courseName) async {
+
+    final value=await FirebaseFirestore.instance.collection('batches').where("courseName",isEqualTo: courseName).get();
       setState(() {
         for (var element in value.docs) {
-          batchesList.add(element.data());
-          batchIdList.add(element.id);
+          final data=element.data();
+          batchesList.add(data['batchName']);
+          batchIdList.add(data['cid']);
         }
+       // print('outside for loop $batchesList');
       });
-    });
+     // print('outside setState $batchesList');
+      return batchesList;
+
+
+    // FirebaseFirestore.instance
+    //     .collection('batches')
+    //     .where("courseName", isEqualTo: courseName)
+    //     .get()
+    //     .then((value) {
+    //   setState(() {
+    //     for (var element in value.docs) {
+    //       final data=element.data();
+    //      // print('${element.data}');
+    //       batchesList.add(data['batchName']);
+    //       batchIdList.add(data['cid']);
+    //     }
+    //   });
+    //   print('inside get batches $batchesList');
+    //   return batchesList;
+    //
+    // });
+    // print('iside getbatches outside $batchesList');
+    // return batchesList;
   }
 
   void getTeachers() async {
@@ -436,11 +457,6 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         true;
                                                                   });
                                                                   try {
-                                                                    String
-                                                                        title =
-                                                                        _batchController
-                                                                            .text
-                                                                            .trim();
                                                                     await FirebaseFirestore
                                                                         .instance
                                                                         .collection(
@@ -448,7 +464,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                         .doc(_batchController
                                                                             .text
                                                                             .trim())
-                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid)
+                                                                        .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList, courseName: course.courseName!.toLowerCase(), cid: course.cid,startDate: startdateController.text,endDate:enddateController.text)
                                                                             .toJson())
                                                                         .then(
                                                                             (value) {
@@ -468,42 +484,48 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                           .showToast(
                                                                               msg: error!);
                                                                     });
-                                                                    getBatches(course
+                                                                     getBatches(course
                                                                         .courseName!
-                                                                        .toLowerCase());
-                                                                    await FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'cat')
-                                                                        .doc(document
-                                                                            .id)
-                                                                        .update({
-                                                                          "courses.${course.courseName!.toLowerCase()}":
-                                                                              {
-                                                                            "startDate":
-                                                                                startdateController.text,
-                                                                            "endDate":
-                                                                                enddateController.text,
-                                                                            "courseName":
-                                                                                course.courseName,
-                                                                            "cid":
-                                                                                course.cid,
-                                                                            "payment":
-                                                                                {
-                                                                              "1month": course.payment!.s1month,
-                                                                              "6month": course.payment!.s6month,
-                                                                              "12month": course.payment!.s12month,
-                                                                              "24months": course.payment!.s24months,
-                                                                            },
-                                                                            "batches":
-                                                                                batchesList
-                                                                          }
-                                                                        })
-                                                                        .then((value) =>
-                                                                            print(
-                                                                                "Batch Added"))
-                                                                        .catchError((error) =>
-                                                                            print("Failed to add batch: $error"));
+                                                                        .toLowerCase()).then((value) async{
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                          'cat')
+                                                                          .doc(document
+                                                                          .id)
+                                                                          .update({
+                                                                        "courses.${course.courseName!.toLowerCase()}":
+                                                                        {
+                                                                          "startDate":
+                                                                          startdateController.text,
+                                                                          "endDate":
+                                                                          enddateController.text,
+                                                                          "courseName":
+                                                                          course.courseName,
+                                                                          "cid":
+                                                                          course.cid,
+                                                                          "payment":
+                                                                          {
+                                                                            "1month": course.payment!.s1month,
+                                                                            "6month": course.payment!.s6month,
+                                                                            "12month": course.payment!.s12month,
+                                                                            "24months": course.payment!.s24months,
+                                                                          },
+                                                                          "batches":
+                                                                          value
+                                                                        }
+                                                                      })
+                                                                          .then((value){
+                                                                            batchesList.clear();
+                                                                            _batchController.clear();
+                                                                            startdateController.clear();
+                                                                            enddateController.clear();
+                                                                          print(
+                                                                              "Batch Added");})
+                                                                          .catchError((error) =>
+                                                                          print("Failed to add batch: $error"));
+                                                                    });
+
                                                                   } on FirebaseAuthException catch (error) {
                                                                     switch (error
                                                                         .code) {
@@ -610,8 +632,10 @@ class _BatchManagementState extends State<BatchManagement> {
                                               color: Colors.black,
                                             ),
                                             onPressed: () {
-                                              String teacherDropDownValue =
-                                                  model.teachers![0];
+                                              // String teacherDropDownValue =
+                                              //     model.teachers![0];
+
+                                              String teacherDropDownValue=teachersList.first;
                                               showDialog(
                                                   context: context,
                                                   builder:
@@ -735,7 +759,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             value:
                                                                                 teacherDropDownValue,
                                                                             items:
-                                                                                model.teachers!.map((String items) {
+                                                                                teachersList.map((String items) {
                                                                               return DropdownMenuItem(
                                                                                 value: items,
                                                                                 child: Text(items),
@@ -749,7 +773,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                               });
                                                                             },
                                                                           ),
-                                                                        ],
+                                                                         ],
                                                                       ),
                                                                     ),
                                                                     Wrap(
@@ -820,6 +844,8 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                             documentBatches =
                                                                             <String>[] +
                                                                                 course.batches!;
+                                                                      //  await FirebaseFirestore.instance.collection('cat').doc(title).update({"courses.${course.courseName!.toLowerCase()}.batches":FieldValue.arrayRemove([batch])});
+                                                                      //  await FirebaseFirestore.instance.collection('batches').doc(batch).delete();
                                                                         await FirebaseFirestore
                                                                             .instance
                                                                             .collection(
@@ -871,7 +897,7 @@ class _BatchManagementState extends State<BatchManagement> {
                                                                                 'batches')
                                                                             .doc(
                                                                                 title)
-                                                                            .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList.toList())
+                                                                            .set(BatchModel(batchName: _batchController.text.trim(), teachers: teachersList.toList(), courseName: course.courseName!.toLowerCase(), cid: course.cid)
                                                                                 .toJson())
                                                                             .then((value) =>
                                                                                 print("Batch Added"))
@@ -935,32 +961,33 @@ class _BatchManagementState extends State<BatchManagement> {
                                             onPressed: () async {
                                               try {
                                                 final title = document.id;
-                                                await FirebaseFirestore.instance
-                                                    .collection('cat')
-                                                    .doc(title)
-                                                    .update({
-                                                      "courses.${course.courseName!.toLowerCase()}":
-                                                          {
-                                                        "courseName":
-                                                            course.courseName!,
-                                                        "cid": course.cid,
-                                                        "payment": {
-                                                          "1month": course
-                                                              .payment!.s1month,
-                                                          "6month": course
-                                                              .payment!.s6month,
-                                                          "12month": course
-                                                              .payment!
-                                                              .s12month,
-                                                          "24months": course
-                                                              .payment!
-                                                              .s24months,
-                                                        },
-                                                        "batches": FieldValue
-                                                            .arrayRemove(
-                                                                [batch])
-                                                      }
-                                                    })
+                                                await FirebaseFirestore.instance.collection('cat').doc(title).update({"courses.${course.courseName!.toLowerCase()}.batches":FieldValue.arrayRemove([batch])})
+                                                // await FirebaseFirestore.instance
+                                                //     .collection('cat')
+                                                //     .doc(title)
+                                                //     .update({
+                                                //       "courses.${course.courseName!.toLowerCase()}":
+                                                //           {
+                                                //         "courseName":
+                                                //             course.courseName!,
+                                                //         "cid": course.cid,
+                                                //         "payment": {
+                                                //           "1month": course
+                                                //               .payment!.s1month,
+                                                //           "6month": course
+                                                //               .payment!.s6month,
+                                                //           "12month": course
+                                                //               .payment!
+                                                //               .s12month,
+                                                //           "24months": course
+                                                //               .payment!
+                                                //               .s24months,
+                                                //         },
+                                                //         "batches": FieldValue
+                                                //             .arrayRemove(
+                                                //                 [batch])
+                                                //       }
+                                                //     })
                                                     .then((value) =>
                                                         print("Batch Added"))
                                                     .catchError((error) => print(
@@ -976,28 +1003,30 @@ class _BatchManagementState extends State<BatchManagement> {
                                               }
                                               Fluttertoast.showToast(
                                                   msg:
-                                                      "Batch Added Successfully");
+                                                      "Batch Deleted Successfully");
                                               try {
                                                 String title = _batchController
                                                     .text
                                                     .trim();
-                                                await FirebaseFirestore.instance
-                                                    .collection('batches')
-                                                    .doc(title)
-                                                    .set(BatchModel(
-                                                            batchName:
-                                                                _batchController
-                                                                    .text
-                                                                    .trim(),
-                                                            teachers:
-                                                                teachersList
-                                                                    .toList())
-                                                        .toJson())
+                                                print('batch is $batch');
+                                                await FirebaseFirestore.instance.collection('batches').doc(batch).delete()
+                                                // await FirebaseFirestore.instance
+                                                //     .collection('batches')
+                                                //     .doc(title)
+                                                //     .set(BatchModel(
+                                                //             batchName:
+                                                //                 _batchController
+                                                //                     .text
+                                                //                     .trim(),
+                                                //             teachers:
+                                                //                 teachersList
+                                                //                     .toList())
+                                                //         .toJson())
                                                     .then((value) =>
-                                                        print("Batch Added"))
+                                                        print('batch removed'))
                                                     .catchError((error) {
                                                   print(
-                                                      "Failed to add Batch: $error");
+                                                      "Failed to remove Batch: $error");
                                                   return Fluttertoast.showToast(
                                                       msg: error!);
                                                 });
@@ -1010,15 +1039,15 @@ class _BatchManagementState extends State<BatchManagement> {
                                                 Fluttertoast.showToast(
                                                     msg: errorMessage!);
                                               }
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Batch Added Successfully in batches");
+                                              // Fluttertoast.showToast(
+                                              //     msg:
+                                              //         "Batch Added Successfully in batches");
                                               if (!mounted) {
                                                 return;
                                               }
-                                              Navigator.of(context,
-                                                      rootNavigator: true)
-                                                  .pop();
+                                              // Navigator.of(context,
+                                              //         rootNavigator: true)
+                                              //     .pop();
                                             },
                                             icon: const Icon(
                                               Icons.delete_outline_rounded,
